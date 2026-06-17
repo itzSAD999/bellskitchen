@@ -960,7 +960,7 @@ export default function LandingScreen() {
         </div>
       </section>
 
-      {/* ── BRANCHES — deep brown chocolate ───────────────────────────── */}
+      {/* ── BRANCHES — deep brown chocolate with Google Map embed ── */}
       <section id="branches" className="py-24 text-white relative select-none" style={{ background: '#1c0a04' }}>
         <div className="absolute inset-0 opacity-10 pointer-events-none"
           style={{ backgroundImage: 'linear-gradient(to right,#ffffff04 1px,transparent 1px),linear-gradient(to bottom,#ffffff04 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
@@ -975,51 +975,48 @@ export default function LandingScreen() {
             <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-gradient-to-r from-red-600 to-amber-500" />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch max-w-4xl mx-auto">
-            {/* Branch card */}
-            <div className="lg:col-span-6 rounded-3xl p-8 flex flex-col justify-between" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-black text-white">Bells Kitchen KNUST</h3>
-                  <span className="text-[8px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 px-3 py-1 rounded-full tracking-wider animate-pulse">Open</span>
-                </div>
-                <div className="space-y-4 text-xs text-white/80">
-                  <p className="flex items-start gap-2.5">
-                    <MapPin size={16} className="text-amber-400 flex-shrink-0 mt-0.5" />
-                    <span className="leading-relaxed font-semibold">Near KNUST, opposite No Weapon Hostel Annex, Kumasi</span>
-                  </p>
-                  <p className="flex items-center gap-2.5">
-                    <Phone size={16} className="text-amber-400 flex-shrink-0" />
-                    <span className="font-semibold">+233 302 810 990</span>
-                  </p>
-                  <p className="flex items-start gap-2.5">
-                    <Clock size={16} className="text-amber-400 flex-shrink-0 mt-0.5" />
-                    <span>
-                      <strong className="block text-[10px] text-amber-400 uppercase font-black tracking-wider">Working Hours</strong>
-                      <span className="block mt-0.5 font-medium">Mon – Sat: 9:00 AM – 10:00 PM</span>
-                      <span className="block font-medium">Sun: 11:00 AM – 9:00 PM</span>
-                    </span>
-                  </p>
-                </div>
+          {/* Full bleed google map card with overlay details card */}
+          <div className="relative w-full h-[500px] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl max-w-4xl mx-auto group">
+            {/* Google Map Iframe */}
+            <iframe
+              title="Bells Kitchen KNUST Location"
+              src="https://maps.google.com/maps?q=No%20Weapon%20Hostel,%20KNUST,%20Kumasi,%20Ghana&t=&z=16&ie=UTF8&iwloc=&output=embed"
+              className="w-full h-full border-0 filter grayscale-[15%] contrast-[105%] brightness-[85%] transition-all duration-700 group-hover:scale-105"
+              allowFullScreen={false}
+              loading="lazy"
+            />
+            
+            {/* Overlay Details Card */}
+            <div className="absolute bottom-6 left-6 md:top-6 md:bottom-auto z-10 max-w-sm w-[90%] md:w-80 bg-[#1c0a04]/95 backdrop-blur-xl border border-white/15 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-left">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-black text-white tracking-widest uppercase">KNUST Counter</h3>
+                <span className="text-[8px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 px-2.5 py-0.5 rounded-full tracking-wider animate-pulse">Open</span>
               </div>
-              <a href="tel:+233302810990"
-                className="mt-8 w-full flex items-center justify-center gap-2 py-3.5 font-black text-xs uppercase rounded-2xl shadow-md transition-all hover:scale-[1.01] text-[#431407]"
-                style={{ background: '#f59e0b' }}>
-                <Phone size={13} /> Call KNUST Counter
-              </a>
-            </div>
-            {/* Right image */}
-            <div className="lg:col-span-6 relative rounded-3xl overflow-hidden border border-white/10 shadow-lg min-h-[300px]">
-              <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&q=80&w=800"
-                alt="Bells Kitchen KNUST Counter Interior" className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1c0a04] via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 text-white text-left">
-                <span className="text-[8px] text-white font-black uppercase tracking-wider px-2 py-0.5 rounded" style={{ background: '#b91c1c' }}>Kumasi Outlet</span>
-                <h4 className="text-sm font-black mt-2">Dine-In, Takeaway &amp; Delivery</h4>
-                <p className="text-[10px] text-white/80 mt-1 font-medium leading-relaxed">
-                  Located conveniently right opposite the No Weapon Hostel Annex — hot food right on campus.
+              
+              <div className="space-y-3.5 text-xs text-amber-100/80 font-semibold">
+                <p className="flex items-start gap-2.5">
+                  <MapPin size={16} className="text-orange-500 flex-shrink-0 mt-0.5" />
+                  <span className="leading-relaxed font-semibold">Opposite No Weapon Hostel Annex, KNUST, Kumasi</span>
                 </p>
+                <p className="flex items-center gap-2.5">
+                  <Phone size={16} className="text-orange-500 flex-shrink-0" />
+                  <span className="font-semibold">+233 302 810 990</span>
+                </p>
+                <div className="flex items-start gap-2.5">
+                  <Clock size={16} className="text-orange-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="block text-[9px] text-orange-400 uppercase font-black tracking-wider">Working Hours</strong>
+                    <span className="block mt-0.5 font-semibold">Mon – Sat: 9:00 AM – 10:00 PM</span>
+                    <span className="block font-semibold">Sun: 11:00 AM – 9:00 PM</span>
+                  </div>
+                </div>
               </div>
+
+              <a href="tel:+233302810990"
+                className="mt-2 w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs uppercase shadow-md transition-all hover:scale-[1.02] text-[#431407] bg-gradient-to-r from-amber-400 to-orange-500"
+              >
+                <Phone size={12} /> Call KNUST Counter
+              </a>
             </div>
           </div>
         </div>
