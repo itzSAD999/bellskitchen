@@ -49,7 +49,7 @@ export default function LandingScreen() {
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
 
   // Reviews & Rating Filters State
-  const [ratingFilter, setRatingFilter] = useState<'all' | '5' | '4'>('all');
+  const [ratingFilter, setRatingFilter] = useState<'all' | '5' | '4' | '3' | '2' | '1'>('all');
   const [dishFilter, setDishFilter] = useState<string>('all');
 
   // Write a Review modal form states
@@ -172,48 +172,90 @@ export default function LandingScreen() {
     {
       id: 'rev-1', name: 'Kwame Asante', role: 'Food Blogger', rating: 5,
       avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150',
-      title: 'Best Jollof in Accra!',
-      text: 'Bells Kitchen has become my absolute favorite spot for authentic Ghanaian meals. Their smokey Jollof rice is divine and the fried chicken is incredibly crispy and flavorful!',
-      dish: 'Signature Smokey Jollof Rice', date: '2 days ago', verified: true
+      title: 'Best Jollof in Kumasi!',
+      text: 'Bells Kitchen Jollof Rice has become my absolute favorite. The rice is perfectly cooked, smoky, and full of rich aromatic spices. Highly recommended!',
+      dish: 'Jollof Rice', date: '2 days ago', verified: true
     },
     {
       id: 'rev-2', name: 'Sarah Osei', role: 'Hospitality Critic', rating: 5,
       avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150',
-      title: 'Perfect Tilapia seasoning',
-      text: 'The charcoal grilled tilapia is fresh, seasoned inside-out, and cooked to juicy perfection. Pairing it with hot banku and the green shito sauce makes it the best weekend treat.',
-      dish: 'Charcoal Grilled Tilapia', date: '1 week ago', verified: true
+      title: 'Perfect Tilapia & Banku',
+      text: 'The grilled tilapia is seasoned inside-out and grilled to tender perfection. Pairing it with fresh hot banku and the shito is unmatched.',
+      dish: 'Banku & Tilapia', date: '1 week ago', verified: true
     },
     {
-      id: 'rev-3', name: 'Emmanuel Mensah', role: 'Local Tech Manager', rating: 5,
+      id: 'rev-3', name: 'Emmanuel Mensah', role: 'KNUST Student', rating: 5,
       avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150',
-      title: 'Amazing waakye package!',
-      text: 'Ordered Waakye catering for my startup office. The food arrived piping hot, beautifully packaged, and the staff absolutely devoured it. Excellent local flavor!',
-      dish: 'Classic Waakye Feast', date: '2 weeks ago', verified: true
+      title: 'Incredible Fried Rice!',
+      text: 'Their Fried Rice is so flavorful and fresh. Never oily, with lots of fresh veggies. It is my go-to lunch on campus!',
+      dish: 'Fried Rice', date: '2 weeks ago', verified: true
     },
     {
-      id: 'rev-4', name: 'Abena Mensah', role: 'Diner Enthusiast', rating: 4,
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150',
-      title: 'Super spicy kelewele!',
-      text: 'The ginger kelewele is soft and has just the right amount of ginger heat. I always order extra portions for late-night snacks. Highly recommend the Hibiscus Sobolo too!',
-      dish: 'Spicy Ginger Kelewele', date: '3 weeks ago', verified: true
+      id: 'rev-4', name: 'Abena Boateng', role: 'Local Foodie', rating: 5,
+      avatarUrl: '',
+      title: 'Mixture is the best combo',
+      text: 'Can\'t decide between Jollof and Fried Rice? Get the Mixture! You get both on one plate. Truly the best of both worlds.',
+      dish: 'Mixture', date: '3 weeks ago', verified: true
     },
     {
-      id: 'rev-5', name: 'Michael Boateng', role: 'Regular Customer', rating: 5,
-      avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=150',
-      title: 'Red-Red is top tier',
-      text: 'Bells Gobe is outstanding! Paired with hot palm oil and gari, it is the perfect comfort food. Comes back every single week without fail.',
-      dish: 'Crispy Red-Red (Gobe)', date: '1 month ago', verified: true
+      id: 'rev-5', name: 'Michael Ofori', role: 'Regular Diner', rating: 5,
+      avatarUrl: '',
+      title: 'Deluxe Asorted Jollof',
+      text: 'The Asorted Jollof Rice is loaded with beef, chicken, and sausages. Every bite is packed with protein and smoky goodness.',
+      dish: 'Asorted Jollof Rice', date: '1 month ago', verified: true
+    },
+    {
+      id: 'rev-6', name: 'Anita Mensah', role: 'Tech Manager', rating: 4,
+      avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150',
+      title: 'Hearty Asorted Fried Rice',
+      text: 'Ordered the Asorted Fried Rice for our team lunch. Extremely generous portions, fully loaded with meat and veggies. Super satisfying!',
+      dish: 'Asorted Fried Rice', date: '1 month ago', verified: true
     }
   ]);
 
   const ratingCounts = useMemo(() => {
-    const counts = { all: reviewsList.length, 5: 0, 4: 0 };
+    const counts = { all: reviewsList.length, 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     reviewsList.forEach(rev => {
-      if (rev.rating === 5) counts[5]++;
-      if (rev.rating === 4) counts[4]++;
+      const r = rev.rating as 5 | 4 | 3 | 2 | 1;
+      if (counts[r] !== undefined) {
+        counts[r]++;
+      }
     });
     return counts;
   }, [reviewsList]);
+
+  const ratingPercentages = useMemo(() => {
+    const total = reviewsList.length || 1;
+    const star5 = reviewsList.filter(r => r.rating === 5).length;
+    const star4 = reviewsList.filter(r => r.rating === 4).length;
+    const star3 = reviewsList.filter(r => r.rating === 3).length;
+    const star2 = reviewsList.filter(r => r.rating === 2).length;
+    const star1 = reviewsList.filter(r => r.rating === 1).length;
+    return {
+      5: Math.round((star5 / total) * 100),
+      4: Math.round((star4 / total) * 100),
+      3: Math.round((star3 / total) * 100),
+      2: Math.round((star2 / total) * 100),
+      1: Math.round((star1 / total) * 100),
+    };
+  }, [reviewsList]);
+
+  const getAvatarGradient = (name: string) => {
+    const gradients = [
+      'from-red-600 to-orange-500',
+      'from-orange-600 to-amber-500',
+      'from-amber-600 to-yellow-500',
+      'from-rose-600 to-pink-500',
+      'from-red-800 to-orange-600',
+      'from-orange-700 to-red-500',
+    ];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % gradients.length;
+    return gradients[index];
+  };
 
   const filteredReviews = useMemo(() => {
     return reviewsList.filter(rev => {
@@ -636,8 +678,8 @@ export default function LandingScreen() {
         </div>
       </div>
 
-      {/* ── TESTIMONIALS — colorful red/brown/orange gradient with modern glass cards ── */}
-      <section id="testimonials" className="py-24 scroll-mt-20 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1c0a04 0%, #0d0302 100%)' }}>
+      {/* ── TESTIMONIALS — High-End KFC / E-commerce Style Social Proof Board ── */}
+      <section id="testimonials" className="py-24 scroll-mt-20 relative overflow-hidden bg-gradient-to-b from-[#1c0a04] via-[#0d0302] to-[#070100]">
         {/* Breathtaking Ambient Orbs */}
         <div className="absolute top-1/6 left-[-10%] w-[500px] h-[500px] opacity-25 pointer-events-none rounded-full filter blur-[120px] mix-blend-screen animate-pulse"
           style={{ background: 'radial-gradient(circle, #ffa02e 0%, transparent 70%)', animationDuration: '8s' }} />
@@ -645,219 +687,272 @@ export default function LandingScreen() {
           style={{ background: 'radial-gradient(circle, #b91c1c 0%, transparent 70%)', animationDuration: '10s', animationDelay: '2s' }} />
         
         {/* Subtle Overlay Grid */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
           style={{ backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
+          {/* Header */}
           <div className="mb-16 text-center space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[10px] font-black uppercase tracking-widest shadow-inner">
-              <Sparkles size={11} className="fill-orange-400 animate-spin" style={{ animationDuration: '6s' }} /> Loved by Thousands
+            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[10px] font-black uppercase tracking-widest shadow-inner animate-pulse">
+              <Sparkles size={11} className="fill-orange-400" /> Diner Feedback
             </span>
-            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
-              What Our <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-orange-500 bg-clip-text text-transparent">Diners Say</span>
+            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
+              What Our <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-orange-500 bg-clip-text text-transparent">Guests Experience</span>
             </h2>
             <p className="text-sm max-w-xl mx-auto font-medium text-amber-200/70 leading-relaxed">
-              Real reviews from culinary bloggers, university students, and local foodies about Kumasi's premium dining standard.
+              Explore authentic reviews from local food bloggers, KNUST students, and regulars about Bells Kitchen.
             </p>
             <div className="w-24 h-1.5 rounded-full mx-auto bg-gradient-to-r from-[#b91c1c] via-orange-500 to-amber-400 shadow-lg shadow-orange-500/20" />
           </div>
 
-          {/* Premium Social Proof Dashboard */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-16 bg-gradient-to-br from-[#2a0e05]/30 via-white/[0.01] to-[#1c0a04]/40 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6.5 shadow-2xl transition-all duration-500 hover:border-orange-500/20 hover:shadow-[0_25px_60px_-15px_rgba(249,127,10,0.08)] divide-y md:divide-y-0 md:divide-x divide-white/10 text-center">
-            <div className="flex flex-col items-center justify-center py-3 md:py-0 transition-transform duration-300 hover:scale-105">
-              <div className="flex items-center gap-1 text-white">
-                <span className="text-3xl md:text-4xl font-black tracking-tight drop-shadow-sm">4.9</span>
-                <Star size={18} className="fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
-              </div>
-              <div className="flex gap-0.5 text-amber-400 my-1.5">
-                {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={11} className="fill-amber-400 text-amber-400" />)}
-              </div>
-              <span className="text-[9px] font-black uppercase tracking-widest text-amber-300/80">Overall Rating</span>
-            </div>
+          {/* 12-Column Dashboard Grid Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <div className="flex flex-col items-center justify-center py-3 md:py-0 px-4 transition-transform duration-300 hover:scale-105">
-              <div className="flex items-center gap-1.5">
-                <span className="text-3xl md:text-4xl font-black text-orange-400 tracking-tight drop-shadow-sm">98%</span>
-                <Heart size={18} className="fill-rose-500 text-rose-500 drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />
-              </div>
-              <span className="text-xs font-black mt-1 text-white">Satisfaction Rate</span>
-              <span className="text-[9px] font-black uppercase tracking-widest mt-0.5 text-amber-300/50">1.2k+ guest records</span>
-            </div>
-
-            <div className="flex flex-col items-center justify-center py-3 md:py-0 px-4 transition-transform duration-300 hover:scale-105">
-              <div className="flex items-center gap-1.5">
-                <span className="text-3xl md:text-4xl font-black text-amber-400 tracking-tight drop-shadow-sm">4.9</span>
-                <MapPin size={18} className="text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
-              </div>
-              <span className="text-xs font-black mt-1 text-white">Google Business</span>
-              <span className="text-[9px] font-black uppercase tracking-widest mt-0.5 text-amber-300/50">920+ local listings</span>
-            </div>
-
-            <div className="flex flex-col items-center justify-center py-3 md:py-0 px-4 transition-transform duration-300 hover:scale-105">
-              <div className="flex items-center gap-1.5">
-                <span className="text-3xl md:text-4xl font-black text-red-500 tracking-tight drop-shadow-sm">4.8</span>
-                <Award size={18} className="text-amber-300 drop-shadow-[0_0_8px_rgba(252,211,77,0.5)]" />
-              </div>
-              <span className="text-xs font-black mt-1 text-white">TripAdvisor</span>
-              <span className="text-[9px] font-black uppercase tracking-widest mt-0.5 text-amber-300/50">Top Kumasi Kitchen</span>
-            </div>
-          </div>
-
-          {/* Filters Control Bar */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-10 pb-6 border-b border-white/10">
-            <div className="flex items-center flex-wrap gap-3">
-              <span className="text-[10px] font-black uppercase tracking-wider text-amber-300/80 mr-1">Filter Ratings:</span>
-              <div className="flex bg-black/30 p-1 rounded-2xl border border-white/5 gap-1">
-                {(['all', '5', '4'] as const).map((star) => (
-                  <button key={star} onClick={() => setRatingFilter(star)}
-                    className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border flex items-center gap-1.5 ${
-                      ratingFilter === star 
-                        ? 'bg-gradient-to-r from-orange-500 to-[#b91c1c] text-white border-orange-400/35 shadow-md shadow-orange-500/10 scale-105' 
-                        : 'text-amber-100/55 hover:text-white hover:bg-white/5 border-transparent'
-                    }`}>
-                    {star === 'all' ? (
-                      <>🍛 All Reviews</>
-                    ) : (
-                      <>
-                        <span>{star} Stars</span>
-                        <span className="text-amber-400">★</span>
-                      </>
-                    )}
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded-lg ml-1 font-black ${
-                      ratingFilter === star ? 'bg-white/20 text-white' : 'bg-white/5 text-amber-200/50'
-                    }`}>
-                      {ratingCounts[star]}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4 flex-wrap lg:flex-nowrap">
-              <button onClick={() => setIsWriteReviewOpen(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[#1c0a04] font-black text-xs shadow-lg transition-all active:scale-[0.98] hover:scale-105 hover:shadow-orange-500/10 bg-gradient-to-r from-amber-400 via-orange-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 duration-200">
-                <Sparkles size={13} className="fill-[#1c0a04] animate-pulse" />
-                Write a Review
-              </button>
-            </div>
-          </div>
-
-          {/* Horizontal scroll specialties tab filters */}
-          <div className="mb-10">
-            <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-orange-500/25 scrollbar-track-transparent max-w-full -mx-4 px-4 md:mx-0 md:px-0">
-              {[
-                { id: 'all', label: 'All Specialties', emoji: '🍛' },
-                { id: 'Signature Smokey Jollof Rice', label: 'Smokey Jollof', emoji: '🍚' },
-                { id: 'Charcoal Grilled Tilapia', label: 'Grilled Tilapia', emoji: '🐟' },
-                { id: 'Classic Waakye Feast', label: 'Classic Waakye', emoji: '🥘' },
-                { id: 'Spicy Ginger Kelewele', label: 'Ginger Kelewele', emoji: '🍌' },
-                { id: 'Crispy Red-Red (Gobe)', label: 'Red-Red (Gobe)', emoji: '🫘' },
-                { id: 'Bells Premium Hibiscus Sobolo', label: 'Hibiscus Sobolo', emoji: '🍹' },
-              ].map(spec => {
-                const isActive = dishFilter === spec.id;
-                return (
-                  <button
-                    key={spec.id}
-                    onClick={() => setDishFilter(spec.id)}
-                    className={`flex items-center gap-2 px-4.5 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all border shrink-0 ${
-                      isActive
-                        ? 'bg-gradient-to-r from-orange-500 to-[#b91c1c] text-white border-orange-400/35 shadow-md shadow-orange-500/10 scale-105'
-                        : 'bg-[#2a0e05]/65 text-amber-100/60 border-white/5 hover:text-white hover:bg-[#2a0e05]/95 hover:border-white/10'
-                    }`}
-                  >
-                    <span>{spec.emoji}</span>
-                    <span>{spec.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Review Cards Grid */}
-          {filteredReviews.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredReviews.map((rev) => (
-                <div key={rev.id}
-                  className="bg-gradient-to-br from-[#2a0e05]/90 to-[#120502]/95 border border-white/10 rounded-3xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:border-orange-500/40 hover:-translate-y-2 hover:shadow-[0_20px_45px_rgba(249,127,10,0.18)] transition-all duration-500 ease-out flex flex-col justify-between relative overflow-hidden group">
-                  
-                  {/* Decorative double quote watermark */}
-                  <div className="absolute -top-4 -right-1 text-8xl font-serif text-white/[0.03] select-none pointer-events-none group-hover:text-orange-500/[0.06] transition-colors duration-500">
-                    ”
+            {/* LEFT SIDE PANEL (Span 4): Amazon/KFC style aggregates card */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="bg-gradient-to-br from-[#2a0e05] to-[#170803] border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group hover:border-orange-500/25 transition-all duration-300">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full filter blur-xl pointer-events-none"></div>
+                
+                <h3 className="text-amber-300/80 font-black text-xs tracking-wider uppercase mb-5 leading-none">Rating Summary</h3>
+                
+                <div className="text-center pb-6 border-b border-white/5">
+                  <div className="text-6xl md:text-7xl font-black text-white tracking-tight flex items-baseline justify-center gap-1.5 drop-shadow-sm">
+                    4.9
+                    <span className="text-xl text-amber-200/50 font-bold">/5</span>
                   </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-4.5">
-                      <div className="flex gap-0.5 text-amber-400 drop-shadow-sm">
-                        {Array.from({ length: rev.rating }).map((_, i) => (
-                          <Star key={i} size={11.5} className="fill-amber-400 text-amber-400" />
-                        ))}
-                      </div>
-                      {rev.verified ? (
-                        <span className="flex items-center gap-1 text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider shadow-sm">
-                          <CheckCircle size={9.5} className="fill-emerald-400 text-[#120502]" /> Verified Diner
-                        </span>
-                      ) : (
-                        <span className="text-[8px] bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider animate-pulse">
-                          Guest Post
-                        </span>
-                      )}
-                    </div>
-                    
-                    <h4 className="text-sm font-black mb-2.5 leading-snug text-white group-hover:text-amber-300 transition-colors duration-300">
-                      {rev.title}
-                    </h4>
-                    
-                    <div className="relative pl-3 border-l-2 border-orange-500/30 group-hover:border-orange-500/70 transition-colors duration-300 mb-5">
-                      <p className="text-[11.5px] leading-relaxed italic text-amber-100/90 font-medium">
-                        "{rev.text}"
-                      </p>
-                    </div>
+                  <div className="flex justify-center gap-1 text-amber-400 my-3.5 drop-shadow-[0_2px_8px_rgba(245,158,11,0.2)]">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} size={16} className="fill-amber-400 text-amber-400" />
+                    ))}
                   </div>
+                  <p className="text-xs text-amber-200/60 font-semibold">Based on 1.2k+ guest ratings</p>
+                </div>
 
-                  <div className="mt-2 pt-4 border-t border-white/5 flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2.5">
-                      <img src={rev.avatarUrl} alt={rev.name}
-                        className="w-10 h-10 rounded-full object-cover ring-2 ring-orange-500/35 ring-offset-2 ring-offset-[#1c0a04] group-hover:scale-105 transition-transform duration-300 shadow-md" />
-                      <div>
-                        <h5 className="text-[11.5px] font-black leading-none text-white">{rev.name}</h5>
-                        <span className="text-[9px] font-bold block mt-1 text-amber-300/60 leading-none">{rev.role}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col items-end gap-2 shrink-0">
-                      <button
-                        onClick={() => handleHelpfulClick(rev.id)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-wider transition-all select-none ${
-                          upvotedReviews.includes(rev.id)
-                            ? 'bg-orange-500/20 text-orange-400 border-orange-500/40'
-                            : 'bg-white/5 text-amber-200/50 border-white/5 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/20'
-                        }`}
+                {/* Rating Distribution Bars */}
+                <div className="space-y-3.5 py-6 border-b border-white/5">
+                  {([5, 4, 3, 2, 1] as const).map((star) => (
+                    <div key={star} className="flex items-center justify-between text-[11px] text-amber-100/60 font-black gap-3 select-none">
+                      <button 
+                        onClick={() => setRatingFilter((ratingFilter === String(star) ? 'all' : String(star)) as any)}
+                        className={`w-12 text-left shrink-0 hover:text-white transition-colors duration-150 flex items-center gap-1 ${ratingFilter === String(star) ? 'text-orange-400' : ''}`}
                       >
-                        <ThumbsUp size={10} className={`transition-transform duration-200 ${upvotedReviews.includes(rev.id) ? 'scale-125 stroke-[3px]' : ''}`} />
-                        <span>Helpful {helpfulVotes[rev.id] > 0 ? `(${helpfulVotes[rev.id]})` : ''}</span>
+                        {star} Star{star > 1 ? 's' : ''}
                       </button>
-                      
-                      <span className="text-[8px] text-white/40 leading-none font-medium">{rev.date}</span>
+                      <div className="flex-1 h-2.5 rounded-full bg-black/40 overflow-hidden border border-white/5 relative">
+                        <div 
+                          className="h-full rounded-full bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 shadow-[0_0_8px_rgba(249,115,22,0.4)] transition-all duration-500" 
+                          style={{ width: `${ratingPercentages[star]}%` }}
+                        ></div>
+                      </div>
+                      <span className="w-8 text-right shrink-0 font-bold">{ratingPercentages[star]}%</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Local Stats */}
+                <div className="pt-6 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 shrink-0 border border-orange-500/10">
+                      <Heart size={14} className="fill-orange-400" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-white">98% Recommendation</h4>
+                      <p className="text-[10px] text-amber-200/50 mt-0.5">Diners loved their customized chicken toppings.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 shrink-0 border border-amber-500/10">
+                      <Award size={14} />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-white">Top Culinary Award</h4>
+                      <p className="text-[10px] text-amber-200/50 mt-0.5">Voted best Smokey Jollof opposite No Weapon Annex.</p>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20 bg-[#2a0e05]/30 border border-dashed border-white/10 rounded-[2rem] max-w-md mx-auto shadow-inner">
-              <Utensils size={28} className="mx-auto text-orange-500/30 mb-3 animate-pulse" />
-              <p className="text-xs text-amber-200/40">No reviews found matching these options.</p>
-              <button onClick={() => { setRatingFilter('all'); setDishFilter('all'); }}
-                className="mt-3.5 text-[10px] text-amber-400 font-black uppercase tracking-widest hover:text-white hover:underline transition-colors">
-                Reset Filter Settings
-              </button>
-            </div>
-          )}
 
-          <div className="mt-14 text-center">
-            <p className="text-xs text-white/60">
-              Have you dined at our KNUST outlet?{' '}
-              <button onClick={() => setIsWriteReviewOpen(true)} className="text-amber-400 hover:text-amber-300 font-black hover:underline transition-colors">
+                <button 
+                  onClick={() => setIsWriteReviewOpen(true)}
+                  className="w-full mt-8 flex items-center justify-center gap-2 py-4 rounded-2xl text-[#1c0a04] font-black text-xs shadow-lg transition-all active:scale-[0.98] hover:scale-[1.01] hover:shadow-orange-500/20 bg-gradient-to-r from-amber-400 via-orange-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 duration-200"
+                >
+                  <Sparkles size={13} className="fill-[#1c0a04] animate-pulse" />
+                  Leave a Dining Review
+                </button>
+              </div>
+            </div>
+
+            {/* RIGHT SIDE PANEL (Span 8): Review list with modern filters */}
+            <div className="lg:col-span-8 space-y-6">
+              
+              {/* Filter Controls Row */}
+              <div className="flex flex-col gap-4 bg-gradient-to-r from-[#2a0e05] to-[#1a0904] border border-white/5 rounded-3xl p-5 shadow-lg">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black uppercase tracking-wider text-amber-300/60">Rating filter:</span>
+                    <div className="flex bg-black/40 p-0.5 rounded-xl border border-white/5 gap-0.5">
+                      {(['all', '5', '4'] as const).map((star) => (
+                        <button 
+                          key={star} 
+                          onClick={() => setRatingFilter(star)}
+                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                            ratingFilter === star 
+                              ? 'bg-gradient-to-r from-orange-500 to-[#b91c1c] text-white shadow-sm' 
+                              : 'text-amber-100/55 hover:text-white'
+                          }`}
+                        >
+                          {star === 'all' ? 'All Reviews' : `${star} Stars`}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => { setRatingFilter('all'); setDishFilter('all'); }}
+                    className="text-[9px] font-black uppercase tracking-wider text-amber-400/70 hover:text-white transition-colors py-1 px-2.5 rounded-lg border border-white/10 hover:border-white/20 hover:bg-white/5"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+
+                <div className="border-t border-white/5 pt-3.5">
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-orange-500/25 scrollbar-track-transparent">
+                    {[
+                      { id: 'all', label: 'All Dishes', emoji: '🍛' },
+                      { id: 'Jollof Rice', label: 'Jollof Rice', emoji: '🍚' },
+                      { id: 'Fried Rice', label: 'Fried Rice', emoji: '🍳' },
+                      { id: 'Mixture', label: 'Mixture Combo', emoji: '🍛' },
+                      { id: 'Banku & Tilapia', label: 'Banku & Tilapia', emoji: '🐟' },
+                      { id: 'Asorted Fried Rice', label: 'Assorted Fried', emoji: '🍲' },
+                      { id: 'Asorted Jollof Rice', label: 'Assorted Jollof', emoji: '🔥' },
+                    ].map(spec => {
+                      const isActive = dishFilter === spec.id;
+                      return (
+                        <button
+                          key={spec.id}
+                          onClick={() => setDishFilter(spec.id)}
+                          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border shrink-0 ${
+                            isActive
+                              ? 'bg-gradient-to-r from-orange-500 to-[#b91c1c] text-white border-orange-400/35 shadow-md shadow-orange-500/10 scale-105'
+                              : 'bg-black/35 text-amber-100/60 border-white/5 hover:text-white hover:bg-black/60'
+                          }`}
+                        >
+                          <span>{spec.emoji}</span>
+                          <span>{spec.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Review Cards Grid */}
+              {filteredReviews.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {filteredReviews.map((rev) => (
+                    <div 
+                      key={rev.id}
+                      className="bg-gradient-to-br from-[#2a0e05]/75 to-[#1c0a04]/90 border border-white/10 rounded-[2rem] p-6 shadow-xl hover:border-orange-500/30 hover:-translate-y-1.5 hover:shadow-[0_15px_35px_rgba(249,127,10,0.12)] transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
+                    >
+                      <div className="absolute -top-4 -right-1 text-8xl font-serif text-white/[0.02] select-none pointer-events-none group-hover:text-orange-500/[0.05] transition-colors duration-500">
+                        ”
+                      </div>
+
+                      <div>
+                        {/* Rating Row */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex gap-0.5 text-amber-400">
+                            {Array.from({ length: rev.rating }).map((_, i) => (
+                              <Star key={i} size={11} className="fill-amber-400 text-amber-400" />
+                            ))}
+                          </div>
+                          
+                          {rev.verified ? (
+                            <span className="flex items-center gap-1 text-[8px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">
+                              <CheckCircle size={9} className="fill-emerald-400 text-[#120502]" /> Verified Diner
+                            </span>
+                          ) : (
+                            <span className="text-[8px] bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">
+                              Guest Diner
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Title & Review Tag */}
+                        <h4 className="text-[13px] font-black leading-snug text-white group-hover:text-amber-300 transition-colors duration-300">
+                          {rev.title}
+                        </h4>
+
+                        <div className="inline-flex items-center gap-1.5 my-2.5 px-3 py-1 rounded-full text-[8.5px] font-black uppercase tracking-wider bg-orange-950/45 text-orange-300 border border-orange-500/15">
+                          Ordered: {rev.dish}
+                        </div>
+
+                        {/* Text */}
+                        <p className="text-[11px] leading-relaxed italic text-amber-100/80 mb-5 font-medium">
+                          "{rev.text}"
+                        </p>
+                      </div>
+
+                      {/* Footer / Author info */}
+                      <div className="mt-2 pt-4 border-t border-white/5 flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2.5">
+                          {rev.avatarUrl ? (
+                            <img 
+                              src={rev.avatarUrl} 
+                              alt={rev.name}
+                              className="w-10 h-10 rounded-full object-cover ring-2 ring-orange-500/35 ring-offset-2 ring-offset-[#1c0a04] group-hover:scale-105 transition-transform duration-300 shadow-md"
+                            />
+                          ) : (
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-black text-white bg-gradient-to-tr ${getAvatarGradient(rev.name)} ring-2 ring-orange-500/35 ring-offset-2 ring-offset-[#1c0a04] group-hover:scale-105 transition-transform duration-300 shadow-md`}>
+                              {rev.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
+                            </div>
+                          )}
+                          <div>
+                            <h5 className="text-[11.5px] font-black leading-none text-white">{rev.name}</h5>
+                            <span className="text-[9px] font-bold block mt-1 text-amber-300/50 leading-none">{rev.role}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col items-end gap-1.5 shrink-0">
+                          <button
+                            onClick={() => handleHelpfulClick(rev.id)}
+                            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-wider transition-all select-none ${
+                              upvotedReviews.includes(rev.id)
+                                ? 'bg-orange-500/20 text-orange-400 border-orange-500/40'
+                                : 'bg-white/5 text-amber-200/50 border-white/5 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/20'
+                            }`}
+                          >
+                            <ThumbsUp size={10} className={`transition-transform duration-200 ${upvotedReviews.includes(rev.id) ? 'scale-125 stroke-[3px]' : ''}`} />
+                            <span>Helpful {helpfulVotes[rev.id] > 0 ? `(${helpfulVotes[rev.id]})` : ''}</span>
+                          </button>
+                          <span className="text-[8px] text-white/30 font-medium">{rev.date}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-20 bg-[#2a0e05]/30 border border-dashed border-white/10 rounded-[2rem] shadow-inner select-none">
+                  <Utensils size={28} className="mx-auto text-orange-500/30 mb-3 animate-pulse" />
+                  <p className="text-xs text-amber-200/40 font-bold">No reviews found matching these options.</p>
+                  <button 
+                    onClick={() => { setRatingFilter('all'); setDishFilter('all'); }}
+                    className="mt-3.5 text-[9px] text-amber-400 font-black uppercase tracking-widest hover:text-white hover:underline transition-colors"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              )}
+            </div>
+
+          </div>
+
+          <div className="mt-16 text-center">
+            <p className="text-xs text-white/50">
+              Have you dined at our KNUST counter?{' '}
+              <button 
+                onClick={() => setIsWriteReviewOpen(true)} 
+                className="text-amber-400 hover:text-amber-300 font-black hover:underline transition-colors ml-1"
+              >
                 Share your dining experience
               </button>
             </p>
@@ -961,60 +1056,78 @@ export default function LandingScreen() {
         </div>
       </section>
 
-      {/* ── FOOTER — near-black with red + amber accents ───────────────── */}
-      <footer className="text-white pt-16 pb-12 relative overflow-hidden" style={{ background: '#0d0302' }}>
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🔔</span>
-              <span className="text-lg font-black tracking-tight text-white">Bells Kitchen</span>
+      {/* ── FOOTER — high-end dark chocolate with gold and crimson accents ── */}
+      <footer className="text-white pt-20 pb-12 relative overflow-hidden bg-gradient-to-b from-[#0d0302] to-[#050100] border-t border-white/5">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[150px] opacity-10 pointer-events-none rounded-full filter blur-[80px]"
+          style={{ background: 'radial-gradient(circle, #ffa02e 0%, transparent 70%)' }} />
+
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative z-10">
+          <div className="space-y-5">
+            <div className="flex items-center gap-2.5 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#b91c1c] to-orange-500 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200">
+                <ChefHat size={20} className="text-white fill-white" />
+              </div>
+              <span className="text-lg font-black tracking-wider text-white">BELLS KITCHEN</span>
             </div>
-            <p className="text-xs leading-relaxed" style={{ color: '#6b3020' }}>
-              Ghana's modern dining concept. Preserving local cooking heritage with premium recipes, fast cashier service, and excellent customer care.
+            <p className="text-xs leading-relaxed text-amber-200/60 font-medium">
+              Ghana's modern dining concept. Preserving local cooking heritage with premium recipes, fast cashier service, and excellent customer care opposite No Weapon Annex.
             </p>
           </div>
-          <div className="space-y-4">
-            <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-2">
-              <span className="w-6 h-0.5 rounded-full" style={{ background: '#b91c1c' }} /> Quick Navigation
+          
+          <div className="space-y-5">
+            <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-2.5">
+              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-red-600 to-orange-500" /> Quick Navigation
             </h3>
-            <ul className="space-y-2.5 text-xs" style={{ color: '#6b3020' }}>
-              {[['Menu Catalog', '#explore-menu'], ['About Sourcing', '#why-choose'], ['Find Branch', '#branches'], ['Diner Reviews', '#testimonials']].map(([label, href]) => (
-                <li key={label}><a href={href} className="hover:text-amber-400 transition-colors">{label}</a></li>
+            <ul className="space-y-3 text-xs text-amber-100/70 font-semibold">
+              {[
+                ['Menu Catalog', '#explore-menu'],
+                ['Why Choose Bells', '#why-choose'],
+                ['Find Branch Outlet', '#branches'],
+                ['Diner Reviews', '#testimonials']
+              ].map(([label, href]) => (
+                <li key={label} className="transition-transform duration-150 hover:translate-x-1">
+                  <a href={href} className="hover:text-orange-400 transition-colors flex items-center gap-1.5">
+                    <ChevronRight size={10} className="text-orange-500/50" /> {label}
+                  </a>
+                </li>
               ))}
             </ul>
           </div>
-          <div className="space-y-4">
-            <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-2">
-              <span className="w-6 h-0.5 rounded-full" style={{ background: '#b91c1c' }} /> Menu Highlights
+          
+          <div className="space-y-5">
+            <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-2.5">
+              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-red-600 to-orange-500" /> Menu Highlights
             </h3>
-            <ul className="space-y-2.5 text-xs" style={{ color: '#6b3020' }}>
-              <li>🍳 Signature Smokey Jollof</li>
-              <li>🐟 Grilled Tilapia &amp; Banku</li>
-              <li>🍛 Traditional Waakye Feast</li>
-              <li>🔥 Spicy Fried Kelewele</li>
+            <ul className="space-y-3 text-xs text-amber-100/70 font-semibold">
+              <li className="flex items-center gap-2">🍚 Jollof Rice</li>
+              <li className="flex items-center gap-2">🍳 Fried Rice</li>
+              <li className="flex items-center gap-2">🍛 Mixture Combo</li>
+              <li className="flex items-center gap-2">🐟 Banku &amp; Tilapia</li>
             </ul>
           </div>
-          <div className="space-y-4">
-            <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-2">
-              <span className="w-6 h-0.5 rounded-full" style={{ background: '#b91c1c' }} /> Newsletter
+          
+          <div className="space-y-5">
+            <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-2.5">
+              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-red-600 to-orange-500" /> Newsletter
             </h3>
-            <p className="text-xs" style={{ color: '#6b3020' }}>Get special weekend promo codes in your inbox.</p>
+            <p className="text-xs text-amber-200/60 font-medium">Get special weekend promo codes and discounts in your inbox.</p>
             <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
               <input type="email" value={newsletterEmail} onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="Your email address" required
-                className="rounded-xl px-3.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none w-full"
-                style={{ background: '#1c0a04', border: '1px solid #3d1508' }} />
-              <button type="submit" className="p-2.5 text-white rounded-xl transition-all shadow-md hover:scale-105" style={{ background: '#b91c1c' }}>
+                className="rounded-2xl px-4 py-3 text-xs text-white placeholder-white/20 focus:outline-none w-full border border-white/10 focus:ring-2 focus:ring-orange-500/40 focus:border-transparent transition-all"
+                style={{ background: '#1c0a04' }} />
+              <button type="submit" className="p-3 text-white rounded-2xl transition-all shadow-md hover:scale-105 active:scale-95 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 duration-200">
                 <Send size={12} />
               </button>
             </form>
-            {newsletterSubscribed && <p className="text-[10px] text-emerald-400 animate-pulse">Thanks for subscribing!</p>}
+            {newsletterSubscribed && <p className="text-[10px] text-emerald-400 animate-pulse font-bold">✓ Thanks for subscribing!</p>}
           </div>
         </div>
-        <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center text-[10px] gap-4" style={{ borderTop: '1px solid #1c0a04', color: '#4a1a0a' }}>
+        
+        <div className="max-w-6xl mx-auto px-6 mt-16 pt-8 flex flex-col sm:flex-row justify-between items-center text-[10px] font-black uppercase tracking-wider gap-4 border-t border-white/5 text-amber-200/30">
           <p>© {new Date().getFullYear()} Bells Kitchen. All rights reserved. Registered in Ghana.</p>
-          <button onClick={() => setIsLoginOpen(true)} className="hover:text-amber-400 uppercase font-bold tracking-wider transition-colors">
-            Staff Portal Access
+          <button onClick={() => setIsLoginOpen(true)} className="hover:text-amber-400 transition-colors flex items-center gap-1.5 py-1 px-3.5 rounded-xl border border-white/5 bg-white/[0.01] hover:border-white/10 hover:bg-white/5 duration-150">
+            <Lock size={9} /> Staff Portal Access
           </button>
         </div>
       </footer>
@@ -1493,12 +1606,12 @@ export default function LandingScreen() {
                   <div className="relative">
                     <select value={reviewDish} onChange={(e) => setReviewDish(e.target.value)}
                       className="w-full rounded-2xl px-4 py-2.5 text-xs outline-none transition-all cursor-pointer bg-[#1c0a04] border border-white/10 text-white appearance-none focus:ring-2 focus:ring-orange-500/40 font-bold">
-                      <option className="bg-[#1c0a04] text-white">🍳 Signature Smokey Jollof Rice</option>
-                      <option className="bg-[#1c0a04] text-white">🐟 Charcoal Grilled Tilapia</option>
-                      <option className="bg-[#1c0a04] text-white">🍛 Classic Waakye Feast</option>
-                      <option className="bg-[#1c0a04] text-white">🔥 Spicy Ginger Kelewele</option>
-                      <option className="bg-[#1c0a04] text-white">🍲 Crispy Red-Red (Gobe)</option>
-                      <option className="bg-[#1c0a04] text-white">🍷 Bells Premium Hibiscus Sobolo</option>
+                      <option className="bg-[#1c0a04] text-white">🍚 Jollof Rice</option>
+                      <option className="bg-[#1c0a04] text-white">🍳 Fried Rice</option>
+                      <option className="bg-[#1c0a04] text-white">🍛 Mixture</option>
+                      <option className="bg-[#1c0a04] text-white">🐟 Banku & Tilapia</option>
+                      <option className="bg-[#1c0a04] text-white">🍲 Asorted Fried Rice</option>
+                      <option className="bg-[#1c0a04] text-white">🔥 Asorted Jollof Rice</option>
                     </select>
                     <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-white/50 text-[8px] font-bold">▼</div>
                   </div>
