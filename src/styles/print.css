@@ -1,0 +1,46 @@
+/* print.css — 58mm Thermal Receipt Print Styles
+   Pre-configured to correct sizing boundaries to save time.
+*/
+
+@media print {
+  @page {
+    margin: 0 !important;
+    size: 58mm auto !important;
+  }
+
+  /* Hide standard window elements on the body during print */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make sure the receipt-view is visible and takes up full bounds */
+  .receipt-view,
+  .receipt-view * {
+    visibility: visible;
+  }
+
+  /* Position receipt-view to top-left of printable page and enforce width */
+  .receipt-view {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 58mm !important;
+    max-width: 58mm !important;
+    margin: 0 !important;
+    padding: 2mm !important;
+    font-family: 'Courier New', monospace !important;
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    color: #000 !important;
+    background: #fff !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Enforce 58mm canvas sizes for page body */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 58mm !important;
+    background: #fff !important;
+  }
+}
