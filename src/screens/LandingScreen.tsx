@@ -31,6 +31,32 @@ import {
   Trash2
 } from 'lucide-react';
 
+const BelsLogo = ({ className = "w-10 h-10" }: { className?: string }) => (
+  <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* Outer circle */}
+    <circle cx="50" cy="50" r="46" stroke="#e58e26" strokeWidth="2.5" />
+    {/* Inner brown circle */}
+    <circle cx="50" cy="50" r="42" fill="#431407" />
+    <circle cx="50" cy="50" r="38" stroke="#e58e26" strokeWidth="1.5" strokeDasharray="3 2" />
+    
+    {/* Stylized chef lid arch dome overlay */}
+    <path d="M 36 32 C 40 24, 60 24, 64 32" stroke="#e58e26" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+    <circle cx="50" cy="22" r="2.5" fill="#e58e26" /> {/* Lid handle/dot */}
+    
+    {/* "Bel's" text */}
+    <text x="50" y="44" fill="white" fontSize="17" fontFamily="Georgia, serif" fontStyle="italic" fontWeight="bold" textAnchor="middle">Bel's</text>
+    
+    {/* Horizontal divider line under Bels */}
+    <line x1="22" y1="50" x2="78" y2="50" stroke="#e58e26" strokeWidth="2" />
+    
+    {/* "KITCHEN" text */}
+    <text x="50" y="64" fill="#e58e26" fontSize="10" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" textAnchor="middle" letterSpacing="1.2">KITCHEN</text>
+    
+    {/* "CATERICE" text */}
+    <text x="50" y="76" fill="white" fontSize="7" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="bold" textAnchor="middle" letterSpacing="1.8">CATERICE</text>
+  </svg>
+);
+
 export default function LandingScreen() {
   const { state, dispatch } = useApp();
   
@@ -387,25 +413,23 @@ export default function LandingScreen() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white text-dark-950 font-sans overflow-y-auto select-none relative pb-0">
+    <div className="min-h-screen w-full bg-[#fffdf9] text-[#431407] font-sans overflow-y-auto select-none relative pb-0">
 
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#b91c1c]/95 backdrop-blur-md py-4 border-b border-red-900/50 shadow-lg">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#431407]/95 backdrop-blur-md py-4 border-b border-[#5c1f0e]/40 shadow-lg">
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-400 flex items-center justify-center shadow-md">
-              <span className="text-xl">🔔</span>
-            </div>
+            <BelsLogo className="w-12 h-12 hover:scale-105 transition-all duration-300" />
             <div className="flex flex-col">
               <span className="text-base font-black tracking-tight text-white leading-none">Bells Kitchen</span>
-              <span className="text-[9px] text-amber-300 font-bold uppercase tracking-wider mt-1">Total Food Care</span>
+              <span className="text-[9px] text-[#fed7aa] font-bold uppercase tracking-wider mt-1">Total Food Care</span>
             </div>
           </div>
 
           <nav className="hidden lg:flex items-center gap-7">
             {['Home', 'Menu', 'About', 'Branches', 'Reviews'].map((item, i) => (
               <a key={item} href={['#', '#explore-menu', '#why-choose', '#branches', '#testimonials'][i]}
-                className={`font-bold text-xs uppercase transition-colors ${i === 0 ? 'text-amber-300' : 'text-white/90 hover:text-amber-300'}`}>
+                className={`font-bold text-xs uppercase transition-colors ${i === 0 ? 'text-[#e58e26]' : 'text-white/90 hover:text-[#e58e26]'}`}>
                 {item}
               </a>
             ))}
@@ -413,11 +437,11 @@ export default function LandingScreen() {
 
           <div className="flex items-center gap-3">
             <a href="tel:+233302810990" className="hidden sm:flex items-center gap-1.5 font-black text-xs text-white">
-              <Phone size={13} className="text-amber-300" />
+              <Phone size={13} className="text-[#e58e26]" />
               <span>+233 302 810 990</span>
             </a>
             <button onClick={() => setIsLoginOpen(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-[#7f1d1d] transition-all text-xs font-black shadow-md hover:scale-105">
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#e58e26] hover:bg-[#d97706] text-white transition-all text-xs font-black shadow-md hover:scale-105">
               <Lock size={12} />
               Terminal Portal
             </button>
@@ -425,81 +449,81 @@ export default function LandingScreen() {
         </div>
       </header>
 
-      {/* ── HERO — deep crimson + orange glow ─────────────────────────── */}
+      {/* ── HERO — cream/peach gradient + warm orange glow ─────────────────────────── */}
       <section className="relative min-h-[92vh] flex items-center overflow-hidden pt-24 pb-16"
-        style={{ background: 'linear-gradient(135deg, #7f1d1d 0%, #b91c1c 40%, #c2410c 80%, #92400e 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #fffdf9 0%, #fff7ed 40%, #ffedd5 80%, #fed7aa 100%)' }}>
         {/* Warm glow orbs */}
-        <div className="absolute top-20 right-0 w-[500px] h-[500px] rounded-full opacity-20 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #f59e0b, transparent 70%)' }} />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-15 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #fbbf24, transparent 70%)' }} />
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] rounded-full opacity-25 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, #fed7aa, transparent 70%)' }} />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-20 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, #ffe3c4, transparent 70%)' }} />
 
         {/* Floating emojis */}
-        <div className="absolute top-32 left-12 text-5xl opacity-20 animate-bounce hidden md:block" style={{ animationDuration: '3s' }}>🍗</div>
-        <div className="absolute bottom-32 right-16 text-4xl opacity-15 animate-bounce hidden md:block" style={{ animationDuration: '4s', animationDelay: '1s' }}>🔥</div>
+        <div className="absolute top-32 left-12 text-5xl opacity-25 animate-bounce hidden md:block" style={{ animationDuration: '3s' }}>🍗</div>
+        <div className="absolute bottom-32 right-16 text-4xl opacity-20 animate-bounce hidden md:block" style={{ animationDuration: '4s', animationDelay: '1s' }}>🔥</div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10 w-full">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             {/* Left */}
-            <div className="lg:col-span-7 text-white text-center lg:text-left space-y-6">
-              <span className="inline-block bg-amber-400 text-[#7f1d1d] px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-wider shadow-lg">
+            <div className="lg:col-span-7 text-[#431407] text-center lg:text-left space-y-6">
+              <span className="inline-block bg-[#431407] text-[#fffbeb] px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-wider shadow-lg">
                 🔥 Ghana's #1 Fast Food Experience
               </span>
-              <h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.02] tracking-tight">
+              <h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.02] tracking-tight text-[#431407]">
                 Taste The<br />
-                <span className="text-amber-400">Authentic</span><br />
+                <span className="text-[#e58e26]">Authentic</span><br />
                 Ghanaian Flavor
               </h1>
-              <p className="text-base md:text-lg text-white/90 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
+              <p className="text-base md:text-lg text-[#5c1f0e] max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
                 From golden broasted crispy chicken to the famous smokey party Jollof rice — crafted with passion, served piping hot near KNUST.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
                 <a href="#explore-menu"
-                  className="inline-flex items-center justify-center gap-2 font-black text-sm uppercase bg-amber-400 hover:bg-amber-300 text-[#7f1d1d] shadow-xl hover:shadow-2xl hover:scale-105 h-14 rounded-2xl px-10 transition-all group">
+                  className="inline-flex items-center justify-center gap-2 font-black text-sm uppercase bg-[#e58e26] hover:bg-[#d97706] text-white shadow-xl hover:shadow-2xl hover:scale-105 h-14 rounded-2xl px-10 transition-all group">
                   Explore Menu
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </a>
                 <button onClick={() => setIsLoginOpen(true)}
-                  className="inline-flex items-center justify-center gap-2 font-black text-sm uppercase border-2 border-white/60 bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-[#b91c1c] h-14 rounded-2xl px-10 transition-all">
+                  className="inline-flex items-center justify-center gap-2 font-black text-sm uppercase border-2 border-[#431407]/40 bg-white/20 backdrop-blur-sm text-[#431407] hover:bg-[#431407] hover:text-white h-14 rounded-2xl px-10 transition-all">
                   Staff Terminal
                 </button>
               </div>
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/20 max-w-md mx-auto lg:mx-0">
-                <div><div className="text-3xl font-black text-amber-400">35+</div><div className="text-white/70 text-[10px] font-bold uppercase tracking-wider mt-1">Yrs Recipe</div></div>
-                <div><div className="text-3xl font-black text-amber-400">50+</div><div className="text-white/70 text-[10px] font-bold uppercase tracking-wider mt-1">Staff Members</div></div>
-                <div><div className="text-3xl font-black text-amber-400">1k+</div><div className="text-white/70 text-[10px] font-bold uppercase tracking-wider mt-1">Happy Diners</div></div>
+              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-[#431407]/15 max-w-md mx-auto lg:mx-0">
+                <div><div className="text-3xl font-black text-[#e58e26]">35+</div><div className="text-[#431407]/60 text-[10px] font-bold uppercase tracking-wider mt-1">Yrs Recipe</div></div>
+                <div><div className="text-3xl font-black text-[#e58e26]">50+</div><div className="text-[#431407]/60 text-[10px] font-bold uppercase tracking-wider mt-1">Staff Members</div></div>
+                <div><div className="text-3xl font-black text-[#e58e26]">1k+</div><div className="text-[#431407]/60 text-[10px] font-bold uppercase tracking-wider mt-1">Happy Diners</div></div>
               </div>
             </div>
 
             {/* Right — food image circle */}
             <div className="lg:col-span-5 relative flex justify-center items-center">
               <div className="relative w-full aspect-square max-w-[380px] sm:max-w-[420px] mx-auto">
-                <div className="absolute inset-0 bg-amber-400/20 rounded-full filter blur-3xl animate-pulse" />
-                <div className="absolute inset-4 bg-white rounded-full shadow-2xl overflow-hidden border-8 border-amber-400/30 group">
+                <div className="absolute inset-0 bg-[#e58e26]/10 rounded-full filter blur-3xl animate-pulse" />
+                <div className="absolute inset-4 bg-white rounded-full shadow-2xl overflow-hidden border-8 border-[#e58e26]/20 group">
                   <img alt="Signature Crispy Chicken Jollof"
                     className="w-full h-full object-cover transform scale-105 group-hover:scale-110 transition-transform duration-500"
                     src="https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&q=80&w=800" />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#7f1d1d]/90 via-[#b91c1c]/50 to-transparent pt-12 pb-6 px-5 text-center z-10">
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#431407]/95 via-[#431407]/40 to-transparent pt-12 pb-6 px-5 text-center z-10">
                     <h3 className="text-white font-black text-base md:text-lg tracking-tight">Crispy Jollof Chicken</h3>
-                    <p className="text-amber-300 text-xs font-bold mt-0.5">Our Signature Dish</p>
+                    <p className="text-[#fed7aa] text-xs font-bold mt-0.5">Our Signature Dish</p>
                     <div className="flex items-center justify-center gap-1 mt-2">
-                      {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={11} className="fill-amber-400 text-amber-400" />)}
+                      {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={11} className="fill-[#e58e26] text-[#e58e26]" />)}
                       <span className="font-bold text-xs text-white ml-1.5">4.9</span>
                     </div>
                   </div>
                 </div>
                 {/* Pricing badge */}
-                <div className="absolute right-0 top-1/4 bg-amber-400 text-[#7f1d1d] px-4 py-2.5 rounded-2xl shadow-xl z-20 hover:scale-105 transition-transform">
-                  <div className="text-[8px] font-bold uppercase tracking-wider">Combo Deals</div>
+                <div className="absolute right-0 top-1/4 bg-[#e58e26] text-white px-4 py-2.5 rounded-2xl shadow-xl z-20 hover:scale-105 transition-transform">
+                  <div className="text-[8px] font-bold uppercase tracking-wider text-[#fff7ed]">Combo Deals</div>
                   <div className="text-lg font-black mt-0.5">GH₵ 45</div>
                 </div>
                 {/* Speed badge */}
-                <div className="absolute left-[-10px] bottom-1/4 bg-white px-4 py-3 rounded-2xl shadow-xl z-20 hover:scale-105 transition-transform flex items-center gap-2 border border-red-100">
-                  <Clock size={16} className="text-[#b91c1c]" />
+                <div className="absolute left-[-10px] bottom-1/4 bg-white px-4 py-3 rounded-2xl shadow-xl z-20 hover:scale-105 transition-transform flex items-center gap-2 border border-[#fff7ed]">
+                  <Clock size={16} className="text-[#e58e26]" />
                   <div className="text-left leading-none">
-                    <span className="text-[10px] font-black text-dark-950 block">Quick Pick</span>
-                    <span className="text-[8px] text-dark-500 font-bold mt-1 block">15 Min Serve</span>
+                    <span className="text-[10px] font-black text-[#431407] block">Quick Pick</span>
+                    <span className="text-[8px] text-[#431407]/60 font-bold mt-1 block">15 Min Serve</span>
                   </div>
                 </div>
               </div>
@@ -508,35 +532,35 @@ export default function LandingScreen() {
         </div>
       </section>
 
-      {/* ── MENU SECTION — near-black espresso with red/orange card accents ── */}
-      <section id="explore-menu" className="py-24 scroll-mt-20 relative" style={{ background: '#1a0a06' }}>
-        <div className="absolute inset-0 opacity-20 pointer-events-none"
-          style={{ backgroundImage: 'linear-gradient(to right,#ff000008 1px,transparent 1px),linear-gradient(to bottom,#ff000008 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
+      {/* ── MENU SECTION — elegant cream background with chocolate/orange card accents ── */}
+      <section id="explore-menu" className="py-24 scroll-mt-20 relative bg-[#fffdf9]">
+        <div className="absolute inset-0 opacity-10 pointer-events-none"
+          style={{ backgroundImage: 'linear-gradient(to right,#43140708 1px,transparent 1px),linear-gradient(to bottom,#43140708 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="mb-14 text-center">
-            <span className="text-[10px] text-amber-400 font-black uppercase tracking-wider flex items-center justify-center gap-1">
-              <Flame size={12} className="text-amber-400 animate-pulse" /> ON THE COUNTER
+            <span className="text-[10px] text-[#e58e26] font-black uppercase tracking-wider flex items-center justify-center gap-1">
+              <Flame size={12} className="text-[#e58e26] animate-pulse" /> ON THE COUNTER
             </span>
-            <h2 className="text-3xl md:text-4xl font-black text-white mt-1">Our Popular Menu</h2>
-            <p className="text-sm text-white/60 max-w-lg mx-auto mt-2">Discover our most loved dishes, crafted with passion and served piping hot near KNUST.</p>
-            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-gradient-to-r from-red-600 to-amber-500" />
+            <h2 className="text-3xl md:text-4xl font-black text-[#431407] mt-1">Our Popular Menu</h2>
+            <p className="text-sm text-[#5c1f0e]/70 max-w-lg mx-auto mt-2">Discover our most loved dishes, crafted with passion and served piping hot near KNUST.</p>
+            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-gradient-to-r from-[#431407] to-[#e58e26]" />
           </div>
 
           {/* Toolbar */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-10 gap-4 border-b border-white/10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-10 gap-4 border-b border-[#431407]/10">
             <div className="relative w-full md:w-64">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" />
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#431407]/40" />
               <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search jollof, tilapia, sides…"
-                className="w-full border focus:outline-none rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-white/30 transition-all"
-                style={{ background: '#2d1108', borderColor: '#4a1a0a' }} />
+                className="w-full border focus:outline-none rounded-xl pl-9 pr-4 py-2.5 text-xs text-[#431407] placeholder-[#431407]/30 transition-all"
+                style={{ background: '#fff7ed', borderColor: '#fed7aa' }} />
             </div>
-            <div className="flex p-1 rounded-xl border overflow-x-auto" style={{ background: '#2d1108', borderColor: '#4a1a0a' }}>
+            <div className="flex p-1 rounded-xl border overflow-x-auto" style={{ background: '#fff7ed', borderColor: '#fed7aa' }}>
               {(['all', 'mains'] as const).map((cat) => (
                 <button key={cat} onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                    selectedCategory === cat ? 'bg-red-700 text-white shadow-sm' : 'text-white/40 hover:text-white'
+                    selectedCategory === cat ? 'bg-[#431407] text-white shadow-sm' : 'text-[#431407]/40 hover:text-[#431407]'
                   }`}>
                   {cat}
                 </button>
@@ -549,15 +573,14 @@ export default function LandingScreen() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredMenu.map((item) => (
                 <div key={item.id}
-                  className="rounded-3xl overflow-hidden flex flex-col group transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(249,127,10,0.15)]"
-                  style={{ background: 'linear-gradient(135deg, rgba(42, 14, 5, 0.75) 0%, rgba(26, 10, 6, 0.95) 100%)', border: '1px solid rgba(249, 127, 10, 0.15)' }}>
+                  className="rounded-3xl overflow-hidden flex flex-col group transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(67,20,7,0.1)] bg-white border border-[#431407]/10 hover:border-[#e58e26]/30">
                   {/* Photo */}
                   <div className="aspect-video w-full overflow-hidden relative">
                     <img src={item.imageUrl} alt={item.name}
                       className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
                     {/* Gradient overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-tr ${item.accentColor} opacity-20 group-hover:opacity-35 transition-opacity duration-300`} />
-                    <span className={`absolute top-4 right-4 text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-xl text-white shadow-lg backdrop-blur-md border border-white/10 ${item.badgeBg}`}>
+                    <div className="absolute inset-0 bg-gradient-to-tr from-[#431407]/20 to-[#e58e26]/20 opacity-20 group-hover:opacity-35 transition-opacity duration-300" />
+                    <span className="absolute top-4 right-4 text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-xl text-white shadow-lg backdrop-blur-md border border-white/10 bg-[#431407]">
                       {item.badge}
                     </span>
                   </div>
@@ -565,23 +588,23 @@ export default function LandingScreen() {
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-2.5">
-                        <span className="text-[10px] text-amber-400 font-extrabold uppercase tracking-widest">{item.tag}</span>
-                        <div className="flex items-center gap-1 text-[10px] text-amber-400 font-extrabold bg-white/5 border border-white/10 px-2 py-0.5 rounded-lg">
-                          <Star size={10} className="fill-amber-400 text-amber-400" />
+                        <span className="text-[10px] text-[#e58e26] font-extrabold uppercase tracking-widest">{item.tag}</span>
+                        <div className="flex items-center gap-1 text-[10px] text-[#e58e26] font-extrabold bg-[#fff7ed] border border-[#fed7aa] px-2 py-0.5 rounded-lg">
+                          <Star size={10} className="fill-[#e58e26] text-[#e58e26]" />
                           <span>{item.rating}</span>
                         </div>
                       </div>
-                      <h3 className="text-base font-black text-white group-hover:text-amber-300 transition-colors duration-200">{item.name}</h3>
-                      <p className="text-xs leading-relaxed mt-2" style={{ color: '#c49080' }}>{item.description}</p>
+                      <h3 className="text-base font-black text-[#431407] group-hover:text-[#e58e26] transition-colors duration-200">{item.name}</h3>
+                      <p className="text-xs leading-relaxed mt-2 text-[#5c1f0e]/80">{item.description}</p>
                     </div>
                     
-                    <div className="mt-6 pt-4 flex items-center justify-between" style={{ borderTop: '1px solid rgba(249, 127, 10, 0.15)' }}>
+                    <div className="mt-6 pt-4 flex items-center justify-between border-t border-[#431407]/10">
                       <div className="flex flex-col">
-                        <span className="text-[8px] uppercase tracking-wider font-extrabold text-white/45 leading-none mb-1">Price</span>
-                        <span className="text-base font-black text-amber-400 leading-none">{item.price}</span>
+                        <span className="text-[8px] uppercase tracking-wider font-extrabold text-[#431407]/45 leading-none mb-1">Price</span>
+                        <span className="text-base font-black text-[#e58e26] leading-none">{item.price}</span>
                       </div>
                       <button onClick={() => setPendingPublicItem(item)}
-                        className="inline-flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider text-[#7f1d1d] bg-amber-400 hover:bg-amber-300 hover:scale-105 active:scale-95 transition-all shadow-md">
+                        className="inline-flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider text-white bg-[#e58e26] hover:bg-[#d97706] hover:scale-105 active:scale-95 transition-all shadow-md">
                         Order Now <ArrowRight size={11} />
                       </button>
                     </div>
@@ -590,44 +613,39 @@ export default function LandingScreen() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 rounded-3xl" style={{ border: '1px dashed rgba(249, 127, 10, 0.25)', background: '#2a0e05' }}>
-              <Utensils size={28} className="mx-auto text-white/20 mb-3" />
-              <p className="text-xs text-white/30">No items match your filters.</p>
+            <div className="text-center py-16 rounded-3xl border border-dashed border-[#431407]/20 bg-[#fff7ed]">
+              <Utensils size={28} className="mx-auto text-[#431407]/20 mb-3" />
+              <p className="text-xs text-[#431407]/40">No items match your filters.</p>
             </div>
           )}
         </div>
       </section>
 
-      {/* ── WHY CHOOSE — burnt orange + chocolate brown background image ──────── */}
-      <section id="why-choose" className="py-24 relative overflow-hidden text-white border-t border-black/20"
-        style={{
-          backgroundImage: `linear-gradient(135deg, rgba(42, 14, 5, 0.95) 0%, rgba(67, 20, 7, 0.92) 40%, rgba(124, 45, 18, 0.88) 80%, rgba(154, 52, 18, 0.85) 100%), url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=1200')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}>
-        <div className="absolute top-0 right-0 w-96 h-96 opacity-10 pointer-events-none rounded-full"
-          style={{ background: 'radial-gradient(circle, #fbbf24, transparent 70%)' }} />
-        <div className="absolute bottom-0 left-0 w-80 h-80 opacity-10 pointer-events-none rounded-full"
-          style={{ background: 'radial-gradient(circle, #f97316, transparent 70%)' }} />
+      {/* ── WHY CHOOSE — cream + chocolate packaging branding ──────── */}
+      <section id="why-choose" className="py-24 relative overflow-hidden text-[#431407] border-t border-[#431407]/5"
+        style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #fffdf9 100%)' }}>
+        <div className="absolute top-0 right-0 w-96 h-96 opacity-30 pointer-events-none rounded-full"
+          style={{ background: 'radial-gradient(circle, #fed7aa, transparent 70%)' }} />
+        <div className="absolute bottom-0 left-0 w-80 h-80 opacity-20 pointer-events-none rounded-full"
+          style={{ background: 'radial-gradient(circle, #ffe3c4, transparent 70%)' }} />
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="mb-16 text-center">
-            <span className="text-[10px] text-amber-300 font-black uppercase tracking-wider flex items-center justify-center gap-1">
-              <Sparkles size={10} className="text-amber-300 fill-amber-300" /> THE BELLS PROMISE
+            <span className="text-[10px] text-[#e58e26] font-black uppercase tracking-wider flex items-center justify-center gap-1">
+              <Sparkles size={10} className="text-[#e58e26] fill-[#e58e26]" /> THE BELLS PROMISE
             </span>
-            <h2 className="text-3xl md:text-4xl font-black text-white mt-1">Why Choose Bells Kitchen?</h2>
-            <p className="text-sm text-white/70 max-w-lg mx-auto mt-2">Experience the difference that has made our kitchen Ghana's beloved dining concept near KNUST.</p>
-            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-amber-400" />
+            <h2 className="text-3xl md:text-4xl font-black text-[#431407] mt-1">Why Choose Bells Kitchen?</h2>
+            <p className="text-sm text-[#5c1f0e]/70 max-w-lg mx-auto mt-2">Experience the difference that has made our kitchen Ghana's beloved dining concept near KNUST.</p>
+            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-[#e58e26]" />
           </div>
 
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             {/* Left — photo */}
             <div className="lg:col-span-5 relative flex justify-center items-center">
-              <div className="relative rounded-[32px] p-1 shadow-2xl overflow-hidden group" style={{ border: '1px solid rgba(251,191,36,0.2)' }}>
+              <div className="relative rounded-[32px] p-1 shadow-2xl overflow-hidden group border border-[#431407]/10 bg-white">
                 <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
-                  alt="Happy friends dining at Bells Kitchen" className="w-full h-auto object-cover rounded-[28px] border border-amber-400/10" />
-                <div className="absolute top-4 right-4 bg-amber-400 text-[#431407] font-black text-[8px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-md">
+                  alt="Happy friends dining at Bells Kitchen" className="w-full h-auto object-cover rounded-[28px]" />
+                <div className="absolute top-4 right-4 bg-[#431407] text-white font-black text-[8px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-md">
                   Vibrant Vibe & Taste
                 </div>
               </div>
@@ -636,22 +654,21 @@ export default function LandingScreen() {
             <div className="lg:col-span-7 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { icon: ChefHat, label: 'Expert Chefs', text: 'Our skilled chefs bring years of culinary expertise to authentic local recipes.', color: 'text-amber-300', border: 'hover:border-amber-400/40' },
-                  { icon: Leaf, label: 'Fresh Ingredients', text: 'We source clean, premium local farm products and freshly caught tilapia daily.', color: 'text-emerald-300', border: 'hover:border-emerald-400/40' },
-                  { icon: Clock, label: 'Express Service', text: 'Fast-casual counter collection workflows without compromising on taste.', color: 'text-orange-300', border: 'hover:border-orange-400/40' },
-                  { icon: Award, label: 'Quality Assured', text: 'Strict sanitary standards, deep seasoning, and pristine presentation guides.', color: 'text-sky-300', border: 'hover:border-sky-400/40' },
-                  { icon: Truck, label: 'Warm Packaging', text: 'Delivered inside heat-insulated biodegradable packs keeping meals piping hot.', color: 'text-blue-300', border: 'hover:border-blue-400/40' },
-                  { icon: Heart, label: 'Made with Love', text: 'Every single box prepared with immense care, joy, and deep culinary passion.', color: 'text-rose-300', border: 'hover:border-rose-400/40' },
+                  { icon: ChefHat, label: 'Expert Chefs', text: 'Our skilled chefs bring years of culinary expertise to authentic local recipes.', color: 'text-[#e58e26]', border: 'hover:border-[#e58e26]/40' },
+                  { icon: Leaf, label: 'Fresh Ingredients', text: 'We source clean, premium local farm products and freshly caught tilapia daily.', color: 'text-emerald-600', border: 'hover:border-emerald-600/40' },
+                  { icon: Clock, label: 'Express Service', text: 'Fast-casual counter collection workflows without compromising on taste.', color: 'text-orange-600', border: 'hover:border-orange-600/40' },
+                  { icon: Award, label: 'Quality Assured', text: 'Strict sanitary standards, deep seasoning, and pristine presentation guides.', color: 'text-sky-600', border: 'hover:border-sky-600/40' },
+                  { icon: Truck, label: 'Warm Packaging', text: 'Delivered inside heat-insulated biodegradable packs keeping meals piping hot.', color: 'text-blue-600', border: 'hover:border-blue-600/40' },
+                  { icon: Heart, label: 'Made with Love', text: 'Every single box prepared with immense care, joy, and deep culinary passion.', color: 'text-rose-600', border: 'hover:border-rose-600/40' },
                 ].map(({ icon: Icon, label, text, color, border }) => (
-                  <div key={label} className={`p-5 rounded-2xl transition-all duration-300 group ${border}`}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div key={label} className={`p-5 rounded-2xl transition-all duration-300 group bg-white border border-[#431407]/10 hover:shadow-lg ${border}`}>
                     <div className="flex items-center gap-3 mb-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <div className="w-9 h-9 rounded-xl bg-[#fff7ed] flex items-center justify-center group-hover:scale-110 transition-transform border border-[#fed7aa]/35">
                         <Icon size={18} className={color} />
                       </div>
-                      <h3 className={`text-xs font-black uppercase tracking-wider ${color}`}>{label}</h3>
+                      <h3 className={`text-xs font-black uppercase tracking-wider text-[#431407]`}>{label}</h3>
                     </div>
-                    <p className="text-[11px] text-white/60 leading-relaxed">{text}</p>
+                    <p className="text-[11px] text-[#5c1f0e]/80 leading-relaxed">{text}</p>
                   </div>
                 ))}
               </div>
@@ -660,13 +677,71 @@ export default function LandingScreen() {
         </div>
       </section>
 
+      {/* ── PACKAGING SHOWCASE GALLERY — cream background, custom cropped mockups ── */}
+      <section id="packaging-showcase" className="py-24 relative bg-[#fffdf9] border-t border-[#431407]/5">
+        <div className="absolute inset-0 opacity-10 pointer-events-none"
+          style={{ backgroundImage: 'linear-gradient(to right,#43140708 1px,transparent 1px),linear-gradient(to bottom,#43140708 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
+
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="mb-16 text-center">
+            <span className="text-[10px] text-[#e58e26] font-black uppercase tracking-wider flex items-center justify-center gap-1">
+              <Sparkles size={11} className="text-[#e58e26] fill-[#e58e26]" /> SIGNATURE PACKAGING
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black text-[#431407] mt-1">Designed For Pure Freshness</h2>
+            <p className="text-sm text-[#5c1f0e]/70 max-w-xl mx-auto mt-2">
+              Every meal is packed in our premium, heat-insulated custom bags to lock in flavor and ensure it arrives piping hot.
+            </p>
+            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-gradient-to-r from-[#431407] to-[#e58e26]" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                img: '/packaging_trio.jpg',
+                title: 'The Showcase Lineup',
+                desc: 'Insulated custom paper bags on display, designed to hold assorted boxes securely.'
+              },
+              {
+                img: '/packaging_front.jpg',
+                title: 'Flat Bag Design',
+                desc: 'Showcases our official numbers, hostel location, and custom QR scan menu label.'
+              },
+              {
+                img: '/packaging_iso.jpg',
+                title: '3D Isometric View',
+                desc: 'A folded premium perspective displaying rigid sides that prevent spills during transit.'
+              },
+              {
+                img: '/packaging_logo.jpg',
+                title: 'Official Brand Seal',
+                desc: 'Close-up of the circular Bel\'s Kitchen logo and scanning code for online portal access.'
+              }
+            ].map((pack) => (
+              <div key={pack.title}
+                className="bg-white rounded-3xl overflow-hidden border border-[#431407]/10 shadow-sm group hover:-translate-y-1.5 hover:shadow-[0_15px_30px_rgba(67,20,7,0.08)] hover:border-[#e58e26]/30 transition-all duration-300 flex flex-col">
+                <div className="aspect-square w-full overflow-hidden bg-[#fff7ed] border-b border-[#431407]/5 relative">
+                  <img src={pack.img} alt={pack.title}
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xs font-black text-[#431407] tracking-tight group-hover:text-[#e58e26] transition-colors duration-200">{pack.title}</h3>
+                    <p className="text-[10px] text-[#5c1f0e]/70 leading-normal mt-2">{pack.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── COMMUNITY BANNER — full bleed image ───────────────────────── */}
       <div className="relative h-[420px] flex items-center justify-center overflow-hidden select-none">
         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=1200')" }} />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(127,29,29,0.95) 0%, rgba(180,60,10,0.7) 60%, transparent 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(67,20,7,0.95) 0%, rgba(229,142,38,0.7) 60%, transparent 100%)' }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10 w-full text-white text-left space-y-5">
-          <span className="inline-block bg-amber-400 text-[#7f1d1d] font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md">
+          <span className="inline-block bg-[#e58e26] text-white font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md">
             🔥 Join The Bells Community
           </span>
           <h2 className="text-3xl md:text-5xl font-black max-w-lg leading-tight tracking-tight">
@@ -679,30 +754,30 @@ export default function LandingScreen() {
       </div>
 
       {/* ── TESTIMONIALS — High-End KFC / E-commerce Style Social Proof Board ── */}
-      <section id="testimonials" className="py-24 scroll-mt-20 relative overflow-hidden bg-gradient-to-b from-[#1c0a04] via-[#0d0302] to-[#070100]">
-        {/* Breathtaking Ambient Orbs */}
-        <div className="absolute top-1/6 left-[-10%] w-[500px] h-[500px] opacity-25 pointer-events-none rounded-full filter blur-[120px] mix-blend-screen animate-pulse"
-          style={{ background: 'radial-gradient(circle, #ffa02e 0%, transparent 70%)', animationDuration: '8s' }} />
-        <div className="absolute bottom-1/6 right-[-10%] w-[600px] h-[600px] opacity-20 pointer-events-none rounded-full filter blur-[150px] mix-blend-screen animate-pulse"
-          style={{ background: 'radial-gradient(circle, #b91c1c 0%, transparent 70%)', animationDuration: '10s', animationDelay: '2s' }} />
+      <section id="testimonials" className="py-24 scroll-mt-20 relative overflow-hidden bg-gradient-to-b from-[#fffdf9] via-[#fff7ed] to-[#fffdf9]">
+        {/* Ambient Orbs */}
+        <div className="absolute top-1/6 left-[-10%] w-[500px] h-[500px] opacity-15 pointer-events-none rounded-full filter blur-[120px] mix-blend-multiply animate-pulse"
+          style={{ background: 'radial-gradient(circle, #fed7aa 0%, transparent 70%)', animationDuration: '8s' }} />
+        <div className="absolute bottom-1/6 right-[-10%] w-[600px] h-[600px] opacity-10 pointer-events-none rounded-full filter blur-[150px] mix-blend-multiply animate-pulse"
+          style={{ background: 'radial-gradient(circle, #ffe3c4 0%, transparent 70%)', animationDuration: '10s', animationDelay: '2s' }} />
         
         {/* Subtle Overlay Grid */}
-        <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
-          style={{ backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{ backgroundImage: 'linear-gradient(to right, #431407 1px, transparent 1px), linear-gradient(to bottom, #431407 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           {/* Header */}
           <div className="mb-16 text-center space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[10px] font-black uppercase tracking-widest shadow-inner animate-pulse">
-              <Sparkles size={11} className="fill-orange-400" /> Diner Feedback
+            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#e58e26]/10 text-[#e58e26] border border-[#e58e26]/20 text-[10px] font-black uppercase tracking-widest shadow-inner animate-pulse">
+              <Sparkles size={11} className="fill-[#e58e26]" /> Diner Feedback
             </span>
-            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
-              What Our <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-orange-500 bg-clip-text text-transparent">Guests Experience</span>
+            <h2 className="text-4xl md:text-5xl font-black text-[#431407] tracking-tight">
+              What Our <span className="text-[#e58e26]">Guests Experience</span>
             </h2>
-            <p className="text-sm max-w-xl mx-auto font-medium text-amber-200/70 leading-relaxed">
+            <p className="text-sm max-w-xl mx-auto font-medium text-[#5c1f0e]/80 leading-relaxed">
               Explore authentic reviews from local food bloggers, KNUST students, and regulars about Bells Kitchen.
             </p>
-            <div className="w-24 h-1.5 rounded-full mx-auto bg-gradient-to-r from-[#b91c1c] via-orange-500 to-amber-400 shadow-lg shadow-orange-500/20" />
+            <div className="w-24 h-1.5 rounded-full mx-auto bg-gradient-to-r from-[#431407] via-[#e58e26] to-[#fed7aa] shadow-md" />
           </div>
 
           {/* 12-Column Dashboard Grid Layout */}
@@ -710,37 +785,37 @@ export default function LandingScreen() {
             
             {/* LEFT SIDE PANEL (Span 4): Amazon/KFC style aggregates card */}
             <div className="lg:col-span-4 space-y-6">
-              <div className="bg-gradient-to-br from-[#2a0e05] to-[#170803] border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group hover:border-orange-500/25 transition-all duration-300">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full filter blur-xl pointer-events-none"></div>
+              <div className="bg-white border border-[#431407]/10 rounded-[2.5rem] p-8 shadow-md relative overflow-hidden group hover:border-[#e58e26]/25 transition-all duration-300">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[#e58e26]/5 rounded-full filter blur-xl pointer-events-none"></div>
                 
-                <h3 className="text-amber-300/80 font-black text-xs tracking-wider uppercase mb-5 leading-none">Rating Summary</h3>
+                <h3 className="text-[#431407]/80 font-black text-xs tracking-wider uppercase mb-5 leading-none">Rating Summary</h3>
                 
-                <div className="text-center pb-6 border-b border-white/5">
-                  <div className="text-6xl md:text-7xl font-black text-white tracking-tight flex items-baseline justify-center gap-1.5 drop-shadow-sm">
+                <div className="text-center pb-6 border-b border-[#431407]/5">
+                  <div className="text-6xl md:text-7xl font-black text-[#431407] tracking-tight flex items-baseline justify-center gap-1.5 drop-shadow-sm">
                     4.9
-                    <span className="text-xl text-amber-200/50 font-bold">/5</span>
+                    <span className="text-xl text-[#431407]/40 font-bold">/5</span>
                   </div>
-                  <div className="flex justify-center gap-1 text-amber-400 my-3.5 drop-shadow-[0_2px_8px_rgba(245,158,11,0.2)]">
+                  <div className="flex justify-center gap-1 text-[#e58e26] my-3.5">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} size={16} className="fill-amber-400 text-amber-400" />
+                      <Star key={i} size={16} className="fill-[#e58e26] text-[#e58e26]" />
                     ))}
                   </div>
-                  <p className="text-xs text-amber-200/60 font-semibold">Based on 1.2k+ guest ratings</p>
+                  <p className="text-xs text-[#5c1f0e]/60 font-semibold">Based on 1.2k+ guest ratings</p>
                 </div>
 
                 {/* Rating Distribution Bars */}
-                <div className="space-y-3.5 py-6 border-b border-white/5">
+                <div className="space-y-3.5 py-6 border-b border-[#431407]/5">
                   {([5, 4, 3, 2, 1] as const).map((star) => (
-                    <div key={star} className="flex items-center justify-between text-[11px] text-amber-100/60 font-black gap-3 select-none">
+                    <div key={star} className="flex items-center justify-between text-[11px] text-[#5c1f0e]/70 font-black gap-3 select-none">
                       <button 
                         onClick={() => setRatingFilter((ratingFilter === String(star) ? 'all' : String(star)) as any)}
-                        className={`w-12 text-left shrink-0 hover:text-white transition-colors duration-150 flex items-center gap-1 ${ratingFilter === String(star) ? 'text-orange-400' : ''}`}
+                        className={`w-12 text-left shrink-0 hover:text-[#e58e26] transition-colors duration-150 flex items-center gap-1 ${ratingFilter === String(star) ? 'text-[#e58e26]' : ''}`}
                       >
                         {star} Star{star > 1 ? 's' : ''}
                       </button>
-                      <div className="flex-1 h-2.5 rounded-full bg-black/40 overflow-hidden border border-white/5 relative">
+                      <div className="flex-1 h-2.5 rounded-full bg-[#fff7ed] overflow-hidden border border-[#fed7aa]/30 relative">
                         <div 
-                          className="h-full rounded-full bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 shadow-[0_0_8px_rgba(249,115,22,0.4)] transition-all duration-500" 
+                          className="h-full rounded-full bg-gradient-to-r from-[#431407] to-[#e58e26] shadow-sm transition-all duration-500" 
                           style={{ width: `${ratingPercentages[star]}%` }}
                         ></div>
                       </div>
@@ -752,30 +827,30 @@ export default function LandingScreen() {
                 {/* Local Stats */}
                 <div className="pt-6 space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 shrink-0 border border-orange-500/10">
-                      <Heart size={14} className="fill-orange-400" />
+                    <div className="w-8 h-8 rounded-xl bg-[#e58e26]/10 flex items-center justify-center text-[#e58e26] shrink-0 border border-[#e58e26]/15">
+                      <Heart size={14} className="fill-[#e58e26]" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-black text-white">98% Recommendation</h4>
-                      <p className="text-[10px] text-amber-200/50 mt-0.5">Diners loved their customized chicken toppings.</p>
+                      <h4 className="text-xs font-black text-[#431407]">98% Recommendation</h4>
+                      <p className="text-[10px] text-[#5c1f0e]/60 mt-0.5 font-medium">Diners loved their customized chicken toppings.</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 shrink-0 border border-amber-500/10">
+                    <div className="w-8 h-8 rounded-xl bg-[#e58e26]/10 flex items-center justify-center text-[#e58e26] shrink-0 border border-[#e58e26]/15">
                       <Award size={14} />
                     </div>
                     <div>
-                      <h4 className="text-xs font-black text-white">Top Culinary Award</h4>
-                      <p className="text-[10px] text-amber-200/50 mt-0.5">Voted best Smokey Jollof opposite No Weapon Annex.</p>
+                      <h4 className="text-xs font-black text-[#431407]">Top Culinary Award</h4>
+                      <p className="text-[10px] text-[#5c1f0e]/60 mt-0.5 font-medium">Voted best Smokey Jollof opposite No Weapon Annex.</p>
                     </div>
                   </div>
                 </div>
 
                 <button 
                   onClick={() => setIsWriteReviewOpen(true)}
-                  className="w-full mt-8 flex items-center justify-center gap-2 py-4 rounded-2xl text-[#1c0a04] font-black text-xs shadow-lg transition-all active:scale-[0.98] hover:scale-[1.01] hover:shadow-orange-500/20 bg-gradient-to-r from-amber-400 via-orange-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 duration-200"
+                  className="w-full mt-8 flex items-center justify-center gap-2 py-4 rounded-2xl text-white font-black text-xs shadow-md transition-all active:scale-[0.98] hover:scale-[1.01] bg-[#e58e26] hover:bg-[#d97706] duration-200"
                 >
-                  <Sparkles size={13} className="fill-[#1c0a04] animate-pulse" />
+                  <Sparkles size={13} className="fill-white animate-pulse" />
                   Leave a Dining Review
                 </button>
               </div>
@@ -785,19 +860,19 @@ export default function LandingScreen() {
             <div className="lg:col-span-8 space-y-6">
               
               {/* Filter Controls Row */}
-              <div className="flex flex-col gap-4 bg-gradient-to-r from-[#2a0e05] to-[#1a0904] border border-white/5 rounded-3xl p-5 shadow-lg">
+              <div className="flex flex-col gap-4 bg-white border border-[#431407]/10 rounded-3xl p-5 shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black uppercase tracking-wider text-amber-300/60">Rating filter:</span>
-                    <div className="flex bg-black/40 p-0.5 rounded-xl border border-white/5 gap-0.5">
+                    <span className="text-[9px] font-black uppercase tracking-wider text-[#431407]/60">Rating filter:</span>
+                    <div className="flex bg-[#fff7ed] p-0.5 rounded-xl border border-[#fed7aa] gap-0.5">
                       {(['all', '5', '4'] as const).map((star) => (
                         <button 
                           key={star} 
                           onClick={() => setRatingFilter(star)}
                           className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
                             ratingFilter === star 
-                              ? 'bg-gradient-to-r from-orange-500 to-[#b91c1c] text-white shadow-sm' 
-                              : 'text-amber-100/55 hover:text-white'
+                              ? 'bg-[#431407] text-white shadow-sm' 
+                              : 'text-[#431407]/60 hover:text-[#431407]'
                           }`}
                         >
                           {star === 'all' ? 'All Reviews' : `${star} Stars`}
@@ -808,13 +883,13 @@ export default function LandingScreen() {
                   
                   <button 
                     onClick={() => { setRatingFilter('all'); setDishFilter('all'); }}
-                    className="text-[9px] font-black uppercase tracking-wider text-amber-400/70 hover:text-white transition-colors py-1 px-2.5 rounded-lg border border-white/10 hover:border-white/20 hover:bg-white/5"
+                    className="text-[9px] font-black uppercase tracking-wider text-[#431407]/70 hover:text-[#e58e26] transition-colors py-1 px-2.5 rounded-lg border border-[#431407]/10 hover:border-[#e58e26]/20 hover:bg-[#fff7ed]"
                   >
                     Reset Filters
                   </button>
                 </div>
 
-                <div className="border-t border-white/5 pt-3.5">
+                <div className="border-t border-[#431407]/10 pt-3.5">
                   <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-orange-500/25 scrollbar-track-transparent">
                     {[
                       { id: 'all', label: 'All Dishes', emoji: '🍛' },
@@ -832,8 +907,8 @@ export default function LandingScreen() {
                           onClick={() => setDishFilter(spec.id)}
                           className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border shrink-0 ${
                             isActive
-                              ? 'bg-gradient-to-r from-orange-500 to-[#b91c1c] text-white border-orange-400/35 shadow-md shadow-orange-500/10 scale-105'
-                              : 'bg-black/35 text-amber-100/60 border-white/5 hover:text-white hover:bg-black/60'
+                              ? 'bg-[#431407] text-white border-[#431407] shadow-sm scale-105'
+                              : 'bg-[#fff7ed] text-[#431407]/60 border-[#fed7aa] hover:text-[#431407] hover:bg-[#ffedd5]'
                           }`}
                         >
                           <span>{spec.emoji}</span>
@@ -851,64 +926,64 @@ export default function LandingScreen() {
                   {filteredReviews.map((rev) => (
                     <div 
                       key={rev.id}
-                      className="bg-gradient-to-br from-[#2a0e05]/75 to-[#1c0a04]/90 border border-white/10 rounded-[2rem] p-6 shadow-xl hover:border-orange-500/30 hover:-translate-y-1.5 hover:shadow-[0_15px_35px_rgba(249,127,10,0.12)] transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
+                      className="bg-white border border-[#431407]/10 rounded-[2rem] p-6 shadow-sm hover:border-[#e58e26]/30 hover:-translate-y-1.5 hover:shadow-[0_15px_35px_rgba(67,20,7,0.06)] transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
                     >
-                      <div className="absolute -top-4 -right-1 text-8xl font-serif text-white/[0.02] select-none pointer-events-none group-hover:text-orange-500/[0.05] transition-colors duration-500">
+                      <div className="absolute -top-4 -right-1 text-8xl font-serif text-[#431407]/[0.02] select-none pointer-events-none group-hover:text-[#e58e26]/[0.05] transition-colors duration-500">
                         ”
                       </div>
 
                       <div>
                         {/* Rating Row */}
                         <div className="flex items-center justify-between mb-4">
-                          <div className="flex gap-0.5 text-amber-400">
+                          <div className="flex gap-0.5 text-[#e58e26]">
                             {Array.from({ length: rev.rating }).map((_, i) => (
-                              <Star key={i} size={11} className="fill-amber-400 text-amber-400" />
+                              <Star key={i} size={11} className="fill-[#e58e26] text-[#e58e26]" />
                             ))}
                           </div>
                           
                           {rev.verified ? (
-                            <span className="flex items-center gap-1 text-[8px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">
-                              <CheckCircle size={9} className="fill-emerald-400 text-[#120502]" /> Verified Diner
+                            <span className="flex items-center gap-1 text-[8px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">
+                              <CheckCircle size={9} className="fill-emerald-600 text-white" /> Verified Diner
                             </span>
                           ) : (
-                            <span className="text-[8px] bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">
+                            <span className="text-[8px] bg-[#fff7ed] text-[#e58e26] border border-[#fed7aa] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">
                               Guest Diner
                             </span>
                           )}
                         </div>
 
                         {/* Title & Review Tag */}
-                        <h4 className="text-[13px] font-black leading-snug text-white group-hover:text-amber-300 transition-colors duration-300">
+                        <h4 className="text-[13px] font-black leading-snug text-[#431407] group-hover:text-[#e58e26] transition-colors duration-300">
                           {rev.title}
                         </h4>
 
-                        <div className="inline-flex items-center gap-1.5 my-2.5 px-3 py-1 rounded-full text-[8.5px] font-black uppercase tracking-wider bg-orange-950/45 text-orange-300 border border-orange-500/15">
+                        <div className="inline-flex items-center gap-1.5 my-2.5 px-3 py-1 rounded-full text-[8.5px] font-black uppercase tracking-wider bg-[#fff7ed] text-[#e58e26] border border-[#fed7aa]/50">
                           Ordered: {rev.dish}
                         </div>
 
                         {/* Text */}
-                        <p className="text-[11px] leading-relaxed italic text-amber-100/80 mb-5 font-medium">
+                        <p className="text-[11px] leading-relaxed italic text-[#5c1f0e]/80 mb-5 font-semibold">
                           "{rev.text}"
                         </p>
                       </div>
 
                       {/* Footer / Author info */}
-                      <div className="mt-2 pt-4 border-t border-white/5 flex items-center justify-between gap-2">
+                      <div className="mt-2 pt-4 border-t border-[#431407]/5 flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2.5">
                           {rev.avatarUrl ? (
                             <img 
                               src={rev.avatarUrl} 
                               alt={rev.name}
-                              className="w-10 h-10 rounded-full object-cover ring-2 ring-orange-500/35 ring-offset-2 ring-offset-[#1c0a04] group-hover:scale-105 transition-transform duration-300 shadow-md"
+                              className="w-10 h-10 rounded-full object-cover ring-2 ring-[#e58e26]/30 ring-offset-2 ring-offset-white group-hover:scale-105 transition-transform duration-300 shadow-md"
                             />
                           ) : (
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-black text-white bg-gradient-to-tr ${getAvatarGradient(rev.name)} ring-2 ring-orange-500/35 ring-offset-2 ring-offset-[#1c0a04] group-hover:scale-105 transition-transform duration-300 shadow-md`}>
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-black text-white bg-gradient-to-tr ${getAvatarGradient(rev.name)} ring-2 ring-[#e58e26]/30 ring-offset-2 ring-offset-white group-hover:scale-105 transition-transform duration-300 shadow-md`}>
                               {rev.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
                             </div>
                           )}
                           <div>
-                            <h5 className="text-[11.5px] font-black leading-none text-white">{rev.name}</h5>
-                            <span className="text-[9px] font-bold block mt-1 text-amber-300/50 leading-none">{rev.role}</span>
+                            <h5 className="text-[11.5px] font-black leading-none text-[#431407]">{rev.name}</h5>
+                            <span className="text-[9px] font-bold block mt-1 text-[#5c1f0e]/60 leading-none">{rev.role}</span>
                           </div>
                         </div>
 
@@ -917,26 +992,26 @@ export default function LandingScreen() {
                             onClick={() => handleHelpfulClick(rev.id)}
                             className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-wider transition-all select-none ${
                               upvotedReviews.includes(rev.id)
-                                ? 'bg-orange-500/20 text-orange-400 border-orange-500/40'
-                                : 'bg-white/5 text-amber-200/50 border-white/5 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/20'
+                                ? 'bg-[#e58e26]/15 text-[#e58e26] border-[#e58e26]/40'
+                                : 'bg-[#fff7ed] text-[#431407]/50 border-[#fed7aa]/60 hover:text-[#e58e26] hover:bg-[#fff7ed] hover:border-[#e58e26]/20'
                             }`}
                           >
                             <ThumbsUp size={10} className={`transition-transform duration-200 ${upvotedReviews.includes(rev.id) ? 'scale-125 stroke-[3px]' : ''}`} />
                             <span>Helpful {helpfulVotes[rev.id] > 0 ? `(${helpfulVotes[rev.id]})` : ''}</span>
                           </button>
-                          <span className="text-[8px] text-white/30 font-medium">{rev.date}</span>
+                          <span className="text-[8px] text-[#431407]/40 font-medium">{rev.date}</span>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-20 bg-[#2a0e05]/30 border border-dashed border-white/10 rounded-[2rem] shadow-inner select-none">
-                  <Utensils size={28} className="mx-auto text-orange-500/30 mb-3 animate-pulse" />
-                  <p className="text-xs text-amber-200/40 font-bold">No reviews found matching these options.</p>
+                <div className="text-center py-20 bg-[#fff7ed] border border-dashed border-[#431407]/15 rounded-[2rem] shadow-inner select-none">
+                  <Utensils size={28} className="mx-auto text-[#e58e26]/30 mb-3 animate-pulse" />
+                  <p className="text-xs text-[#431407]/50 font-bold">No reviews found matching these options.</p>
                   <button 
                     onClick={() => { setRatingFilter('all'); setDishFilter('all'); }}
-                    className="mt-3.5 text-[9px] text-amber-400 font-black uppercase tracking-widest hover:text-white hover:underline transition-colors"
+                    className="mt-3.5 text-[9px] text-[#e58e26] font-black uppercase tracking-widest hover:text-[#d97706] hover:underline transition-colors"
                   >
                     Clear Filters
                   </button>
@@ -947,11 +1022,11 @@ export default function LandingScreen() {
           </div>
 
           <div className="mt-16 text-center">
-            <p className="text-xs text-white/50">
+            <p className="text-xs text-[#431407]/50">
               Have you dined at our KNUST counter?{' '}
               <button 
                 onClick={() => setIsWriteReviewOpen(true)} 
-                className="text-amber-400 hover:text-amber-300 font-black hover:underline transition-colors ml-1"
+                className="text-[#e58e26] hover:text-[#d97706] font-black hover:underline transition-colors ml-1"
               >
                 Share your dining experience
               </button>
@@ -960,52 +1035,52 @@ export default function LandingScreen() {
         </div>
       </section>
 
-      {/* ── BRANCHES — deep brown chocolate with Google Map embed ── */}
-      <section id="branches" className="py-24 text-white relative select-none" style={{ background: '#1c0a04' }}>
-        <div className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{ backgroundImage: 'linear-gradient(to right,#ffffff04 1px,transparent 1px),linear-gradient(to bottom,#ffffff04 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
+      {/* ── LOCATION — cream background with Google Map & absolute details card ── */}
+      <section id="branches" className="py-24 relative select-none bg-[#fffdf9]" style={{ borderTop: '1px solid rgba(67, 20, 7, 0.05)' }}>
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{ backgroundImage: 'linear-gradient(to right,#431407 1px,transparent 1px),linear-gradient(to bottom,#431407 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="mb-16 text-center">
-            <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center justify-center gap-1">
-              <MapPin size={12} className="text-amber-400 animate-bounce" /> FIND US
+            <span className="text-[10px] text-[#e58e26] font-bold uppercase tracking-wider flex items-center justify-center gap-1">
+              <MapPin size={12} className="text-[#e58e26] animate-bounce" /> FIND US
             </span>
-            <h2 className="text-3xl md:text-4xl font-black mt-1 text-white">Our Outlet Location</h2>
-            <p className="text-sm max-w-lg mx-auto mt-2" style={{ color: '#a87060' }}>Visit us in Kumasi for the same authentic, fresh, and piping hot taste.</p>
-            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-gradient-to-r from-red-600 to-amber-500" />
+            <h2 className="text-3xl md:text-4xl font-black mt-1 text-[#431407]">Our Outlet Location</h2>
+            <p className="text-sm max-w-lg mx-auto mt-2 text-[#5c1f0e]/70">Visit us in Kumasi for the same authentic, fresh, and piping hot taste.</p>
+            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-gradient-to-r from-[#431407] to-[#e58e26]" />
           </div>
 
           {/* Full bleed google map card with overlay details card */}
-          <div className="relative w-full h-[500px] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl max-w-4xl mx-auto group">
+          <div className="relative w-full h-[500px] rounded-[2.5rem] overflow-hidden border border-[#431407]/10 shadow-2xl max-w-4xl mx-auto group">
             {/* Google Map Iframe */}
             <iframe
               title="Bells Kitchen KNUST Location"
               src="https://maps.google.com/maps?q=No%20Weapon%20Hostel,%20KNUST,%20Kumasi,%20Ghana&t=&z=16&ie=UTF8&iwloc=&output=embed"
-              className="w-full h-full border-0 filter grayscale-[15%] contrast-[105%] brightness-[85%] transition-all duration-700 group-hover:scale-105"
+              className="w-full h-full border-0 filter grayscale-[5%] contrast-[105%] brightness-[90%] transition-all duration-700 group-hover:scale-105"
               allowFullScreen={false}
               loading="lazy"
             />
             
             {/* Overlay Details Card */}
-            <div className="absolute bottom-6 left-6 md:top-6 md:bottom-auto z-10 max-w-sm w-[90%] md:w-80 bg-[#1c0a04]/95 backdrop-blur-xl border border-white/15 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-left">
+            <div className="absolute bottom-6 left-6 md:top-8 md:bottom-auto z-10 max-w-sm w-[90%] md:w-80 bg-white/95 backdrop-blur-xl border border-[#431407]/15 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-left">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-black text-white tracking-widest uppercase">KNUST Counter</h3>
-                <span className="text-[8px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 px-2.5 py-0.5 rounded-full tracking-wider animate-pulse">Open</span>
+                <h3 className="text-xs font-black text-[#431407] tracking-widest uppercase">KNUST Counter</h3>
+                <span className="text-[8px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full tracking-wider animate-pulse">Open</span>
               </div>
               
-              <div className="space-y-3.5 text-xs text-amber-100/80 font-semibold">
+              <div className="space-y-3.5 text-xs text-[#5c1f0e]/80 font-semibold">
                 <p className="flex items-start gap-2.5">
-                  <MapPin size={16} className="text-orange-500 flex-shrink-0 mt-0.5" />
+                  <MapPin size={16} className="text-[#e58e26] flex-shrink-0 mt-0.5" />
                   <span className="leading-relaxed font-semibold">Opposite No Weapon Hostel Annex, KNUST, Kumasi</span>
                 </p>
                 <p className="flex items-center gap-2.5">
-                  <Phone size={16} className="text-orange-500 flex-shrink-0" />
+                  <Phone size={16} className="text-[#e58e26] flex-shrink-0" />
                   <span className="font-semibold">+233 302 810 990</span>
                 </p>
                 <div className="flex items-start gap-2.5">
-                  <Clock size={16} className="text-orange-500 flex-shrink-0 mt-0.5" />
+                  <Clock size={16} className="text-[#e58e26] flex-shrink-0 mt-0.5" />
                   <div>
-                    <strong className="block text-[9px] text-orange-400 uppercase font-black tracking-wider">Working Hours</strong>
+                    <strong className="block text-[9px] text-[#e58e26] uppercase font-black tracking-wider">Working Hours</strong>
                     <span className="block mt-0.5 font-semibold">Mon – Sat: 9:00 AM – 10:00 PM</span>
                     <span className="block font-semibold">Sun: 11:00 AM – 9:00 PM</span>
                   </div>
@@ -1013,7 +1088,7 @@ export default function LandingScreen() {
               </div>
 
               <a href="tel:+233302810990"
-                className="mt-2 w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs uppercase shadow-md transition-all hover:scale-[1.02] text-[#431407] bg-gradient-to-r from-amber-400 to-orange-500"
+                className="mt-2 w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs uppercase shadow-md transition-all hover:scale-[1.02] text-white bg-gradient-to-r from-[#e58e26] to-[#d97706]"
               >
                 <Phone size={12} /> Call KNUST Counter
               </a>
@@ -1022,30 +1097,30 @@ export default function LandingScreen() {
         </div>
       </section>
 
-      {/* ── PROMO CTA — vivid crimson red ─────────────────────────────── */}
-      <section className="py-20 text-center relative overflow-hidden" style={{ background: '#b91c1c' }}>
-        <div className="absolute top-10 left-10 text-6xl opacity-15 pointer-events-none animate-pulse">🍗</div>
-        <div className="absolute bottom-10 right-10 text-6xl opacity-15 pointer-events-none animate-pulse">🍟</div>
+      {/* ── PROMO CTA — chocolate and aromatic orange ─────────────────────────────── */}
+      <section className="py-20 text-center relative overflow-hidden" style={{ background: '#431407' }}>
+        <div className="absolute top-10 left-10 text-6xl opacity-10 pointer-events-none animate-pulse">🍗</div>
+        <div className="absolute bottom-10 right-10 text-6xl opacity-10 pointer-events-none animate-pulse">🍟</div>
         <div className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, #fbbf24 0%, transparent 60%)' }} />
+          style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, #e58e26 0%, transparent 60%)' }} />
         <div className="max-w-3xl mx-auto px-6 relative z-10 space-y-6">
-          <span className="inline-block bg-amber-400 text-[#7f1d1d] font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md">
+          <span className="inline-block bg-[#e58e26] text-white font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md">
             🎉 Limited Time Offer
           </span>
           <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
             Hungry? Order Now &amp;<br />Get Free Delivery!
           </h2>
           <p className="text-sm md:text-base text-white/80 max-w-xl mx-auto leading-relaxed">
-            Use checkout coupon code <span className="font-bold bg-[#7f1d1d] text-amber-300 px-3 py-1 rounded-md uppercase text-xs">BELLS2026</span> for free delivery on your first order.
+            Use checkout coupon code <span className="font-bold bg-[#1c0a04] text-[#fed7aa] px-3 py-1 rounded-md uppercase text-xs">BELLS2026</span> for free delivery on your first order.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
             <a href="#explore-menu"
-              className="inline-flex items-center justify-center gap-2 font-black text-xs uppercase text-[#7f1d1d] shadow-md h-12 rounded-xl px-8 transition-all hover:scale-105"
-              style={{ background: '#f59e0b' }}>
+              className="inline-flex items-center justify-center gap-2 font-black text-xs uppercase text-white shadow-md h-12 rounded-xl px-8 transition-all hover:scale-105"
+              style={{ background: '#e58e26' }}>
               Order Online
             </a>
             <a href="tel:+233302810990"
-              className="inline-flex items-center justify-center gap-2 font-black text-xs uppercase border-2 border-white/50 bg-transparent text-white hover:bg-white hover:text-red-700 h-12 rounded-xl px-8 transition-all">
+              className="inline-flex items-center justify-center gap-2 font-black text-xs uppercase border-2 border-white/50 bg-transparent text-white hover:bg-white hover:text-[#431407] h-12 rounded-xl px-8 transition-all">
               Call to Order
             </a>
           </div>
@@ -1054,28 +1129,26 @@ export default function LandingScreen() {
       </section>
 
       {/* ── FOOTER — high-end dark chocolate with gold and crimson accents ── */}
-      <footer className="text-white pt-20 pb-12 relative overflow-hidden bg-gradient-to-b from-[#0d0302] to-[#050100] border-t border-white/5">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[150px] opacity-10 pointer-events-none rounded-full filter blur-[80px]"
-          style={{ background: 'radial-gradient(circle, #ffa02e 0%, transparent 70%)' }} />
+      <footer className="text-[#fff7ed] pt-20 pb-12 relative overflow-hidden bg-gradient-to-b from-[#2a0e05] to-[#1c0a04] border-t border-[#431407]/10">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[150px] opacity-15 pointer-events-none rounded-full filter blur-[80px]"
+          style={{ background: 'radial-gradient(circle, #e58e26 0%, transparent 70%)' }} />
 
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative z-10">
           <div className="space-y-5">
             <div className="flex items-center gap-2.5 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#b91c1c] to-orange-500 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200">
-                <ChefHat size={20} className="text-white fill-white" />
-              </div>
+              <BelsLogo className="w-12 h-12 group-hover:rotate-6 transition-transform duration-300" />
               <span className="text-lg font-black tracking-wider text-white">BELLS KITCHEN</span>
             </div>
-            <p className="text-xs leading-relaxed text-amber-200/60 font-medium">
+            <p className="text-xs leading-relaxed text-[#fed7aa]/70 font-medium">
               Ghana's modern dining concept. Preserving local cooking heritage with premium recipes, fast cashier service, and excellent customer care opposite No Weapon Annex.
             </p>
           </div>
           
           <div className="space-y-5">
-            <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-2.5">
-              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-red-600 to-orange-500" /> Quick Navigation
+            <h3 className="text-xs font-black text-[#e58e26] uppercase tracking-widest flex items-center gap-2.5">
+              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-[#e58e26] to-[#fed7aa]" /> Quick Navigation
             </h3>
-            <ul className="space-y-3 text-xs text-amber-100/70 font-semibold">
+            <ul className="space-y-3 text-xs text-[#fed7aa]/80 font-semibold">
               {[
                 ['Menu Catalog', '#explore-menu'],
                 ['Why Choose Bells', '#why-choose'],
@@ -1083,8 +1156,8 @@ export default function LandingScreen() {
                 ['Diner Reviews', '#testimonials']
               ].map(([label, href]) => (
                 <li key={label} className="transition-transform duration-150 hover:translate-x-1">
-                  <a href={href} className="hover:text-orange-400 transition-colors flex items-center gap-1.5">
-                    <ChevronRight size={10} className="text-orange-500/50" /> {label}
+                  <a href={href} className="hover:text-[#e58e26] transition-colors flex items-center gap-1.5">
+                    <ChevronRight size={10} className="text-[#e58e26]/50" /> {label}
                   </a>
                 </li>
               ))}
@@ -1092,10 +1165,10 @@ export default function LandingScreen() {
           </div>
           
           <div className="space-y-5">
-            <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-2.5">
-              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-red-600 to-orange-500" /> Menu Highlights
+            <h3 className="text-xs font-black text-[#e58e26] uppercase tracking-widest flex items-center gap-2.5">
+              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-[#e58e26] to-[#fed7aa]" /> Menu Highlights
             </h3>
-            <ul className="space-y-3 text-xs text-amber-100/70 font-semibold">
+            <ul className="space-y-3 text-xs text-[#fed7aa]/80 font-semibold">
               <li className="flex items-center gap-2">🍚 Jollof Rice</li>
               <li className="flex items-center gap-2">🍳 Fried Rice</li>
               <li className="flex items-center gap-2">🍛 Mixture Combo</li>
@@ -1104,16 +1177,16 @@ export default function LandingScreen() {
           </div>
           
           <div className="space-y-5">
-            <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-2.5">
-              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-red-600 to-orange-500" /> Newsletter
+            <h3 className="text-xs font-black text-[#e58e26] uppercase tracking-widest flex items-center gap-2.5">
+              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-[#e58e26] to-[#fed7aa]" /> Newsletter
             </h3>
-            <p className="text-xs text-amber-200/60 font-medium">Get special weekend promo codes and discounts in your inbox.</p>
+            <p className="text-xs text-[#fed7aa]/70 font-medium">Get special weekend promo codes and discounts in your inbox.</p>
             <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
               <input type="email" value={newsletterEmail} onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="Your email address" required
-                className="rounded-2xl px-4 py-3 text-xs text-white placeholder-white/20 focus:outline-none w-full border border-white/10 focus:ring-2 focus:ring-orange-500/40 focus:border-transparent transition-all"
+                className="rounded-2xl px-4 py-3 text-xs text-white placeholder-white/20 focus:outline-none w-full border border-white/10 focus:ring-2 focus:ring-[#e58e26]/40 focus:border-transparent transition-all"
                 style={{ background: '#1c0a04' }} />
-              <button type="submit" className="p-3 text-white rounded-2xl transition-all shadow-md hover:scale-105 active:scale-95 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 duration-200">
+              <button type="submit" className="p-3 text-white rounded-2xl transition-all shadow-md hover:scale-105 active:scale-95 bg-gradient-to-r from-[#e58e26] to-[#d97706] duration-200">
                 <Send size={12} />
               </button>
             </form>
@@ -1121,9 +1194,9 @@ export default function LandingScreen() {
           </div>
         </div>
         
-        <div className="max-w-6xl mx-auto px-6 mt-16 pt-8 flex flex-col sm:flex-row justify-between items-center text-[10px] font-black uppercase tracking-wider gap-4 border-t border-white/5 text-amber-200/30">
+        <div className="max-w-6xl mx-auto px-6 mt-16 pt-8 flex flex-col sm:flex-row justify-between items-center text-[10px] font-black uppercase tracking-wider gap-4 border-t border-white/5 text-[#fed7aa]/35">
           <p>© {new Date().getFullYear()} Bells Kitchen. All rights reserved. Registered in Ghana.</p>
-          <button onClick={() => setIsLoginOpen(true)} className="hover:text-amber-400 transition-colors flex items-center gap-1.5 py-1 px-3.5 rounded-xl border border-white/5 bg-white/[0.01] hover:border-white/10 hover:bg-white/5 duration-150">
+          <button onClick={() => setIsLoginOpen(true)} className="hover:text-[#e58e26] transition-colors flex items-center gap-1.5 py-1 px-3.5 rounded-xl border border-white/5 bg-white/[0.01] hover:border-white/10 hover:bg-white/5 duration-150">
             <Lock size={9} /> Staff Portal Access
           </button>
         </div>
@@ -1153,18 +1226,7 @@ export default function LandingScreen() {
 
             {/* Modal header */}
             <div className="p-6 pb-2 text-center mt-6">
-              <div className="w-12 h-9 rounded-lg mx-auto mb-4 opacity-90 flex flex-col justify-between p-1.5"
-                style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706, #f59e0b)', border: '1px solid rgba(180,83,9,0.3)' }}>
-                <div className="flex justify-between">
-                  <div className="w-3 h-2 rounded-sm" style={{ background: 'rgba(120,53,15,0.25)' }} />
-                  <div className="w-3 h-2 rounded-sm" style={{ background: 'rgba(120,53,15,0.25)' }} />
-                </div>
-                <div className="h-[1px] w-full" style={{ background: 'rgba(120,53,15,0.25)' }} />
-                <div className="flex justify-between">
-                  <div className="w-3 h-2 rounded-sm" style={{ background: 'rgba(120,53,15,0.25)' }} />
-                  <div className="w-3 h-2 rounded-sm" style={{ background: 'rgba(120,53,15,0.25)' }} />
-                </div>
-              </div>
+              <BelsLogo className="w-14 h-14 mx-auto mb-4" />
               <h2 className="text-lg font-black tracking-tight" style={{ color: '#431407' }}>Staff Keycard Portal</h2>
               <p className="text-xs mt-1" style={{ color: '#92400e' }}>Authorized POS cashiers and administrators only.</p>
             </div>
