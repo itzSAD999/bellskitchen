@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Home, Menu as MenuIcon, Store, Users, FileText, User, ChevronLeft, ChevronRight,
@@ -54,10 +54,36 @@ const NavItem = ({ icon, label, active = false, onClick }: { icon: React.ReactNo
 const CategorySlider = ({ categoryName, items, isOpen, onOrder }: { categoryName: string, items: any[], isOpen: boolean, onOrder: (item: any) => void }) => {
   const [index, setIndex] = useState(0);
   const featured = items[index];
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const viewHeight = window.innerHeight;
+      const viewportCenter = viewHeight / 2;
+
+      // Check if the container is currently intersecting the center area of viewport
+      if (rect.top < viewHeight && rect.bottom > 0) {
+        // Calculate progress as the element crosses the viewport center
+        const relativeScroll = viewportCenter - rect.top;
+        const progress = Math.max(0, Math.min(0.99, relativeScroll / rect.height));
+        const newIndex = Math.floor(progress * items.length);
+        if (newIndex >= 0 && newIndex < items.length) {
+          setIndex(newIndex);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial run
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [items.length]);
+
   if (!featured) return null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center border-t border-gray-200/50 mt-8">
+    <div ref={containerRef} className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center border-t border-gray-200/50 mt-8">
       {/* Brand Identity */}
       <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
         <div className="flex items-center gap-6">
@@ -77,7 +103,7 @@ const CategorySlider = ({ categoryName, items, isOpen, onOrder }: { categoryName
       {/* Slider */}
       <div className="w-full lg:w-[65%]">
         <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9]">
-          <img src={featured.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={featured.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          <img src={featured.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={featured.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
           {!featured.available && (
              <div className="absolute inset-0 bg-black/60 z-20 flex items-center justify-center">
                 <span className="bg-red-500 text-white font-black px-6 py-2 rounded-full uppercase tracking-widest text-sm shadow-xl">Sold Out</span>
@@ -188,7 +214,7 @@ export default function LandingScreen() {
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.05 });
 
     const timeoutId = setTimeout(() => {
       document.querySelectorAll('.scroll-anim').forEach(el => observer.observe(el));
@@ -289,7 +315,7 @@ export default function LandingScreen() {
 
           {/* Right: Order Now Button & Login */}
           <div className="flex items-center gap-3">
-            <button disabled={!state.storeSettings.isOpen} onClick={() => setView('menu')} className="bg-white disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center p-1.5 pr-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 group relative border-2 border-transparent hover:border-[#d97706]">
+            <button disabled={!state.storeSettings.isOpen} onClick={() => setView('menu')} className="hidden sm:flex bg-white disabled:opacity-50 disabled:cursor-not-allowed rounded-full items-center p-1.5 pr-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 group relative border-2 border-transparent hover:border-[#d97706]">
               <div className="bg-[#ffefd4] rounded-full w-9 h-9 flex items-center justify-center relative overflow-hidden">
                 <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-cover" alt="User" />
               </div>
@@ -392,7 +418,7 @@ export default function LandingScreen() {
         <div className="w-full lg:w-[65%]">
           {/* Main Image Slider */}
           <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if(state.storeSettings.isOpen && featuredJollof.available) setPendingPublicItem(featuredJollof); }}>
-            <img src={featuredJollof.imageUrl} alt={featuredJollof.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src={featuredJollof.imageUrl} alt={featuredJollof.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             {/* Arrows */}
             <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p > 0 ? p - 1 : jollofItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
             <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p < jollofItems.length - 1 ? p + 1 : 0)); }} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
@@ -463,7 +489,7 @@ export default function LandingScreen() {
         <div className="w-full lg:w-[65%]">
           {/* Main Image Slider */}
           <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if(state.storeSettings.isOpen && featuredBanku.available) setPendingPublicItem(featuredBanku); }}>
-            <img src={featuredBanku.imageUrl} alt={featuredBanku.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src={featuredBanku.imageUrl} alt={featuredBanku.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             {/* Arrows */}
             <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p > 0 ? p - 1 : bankuItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
             <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p < bankuItems.length - 1 ? p + 1 : 0)); }} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
@@ -533,7 +559,7 @@ export default function LandingScreen() {
         <div className="w-full lg:w-[65%]">
           {/* Main Image Slider */}
           <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if(state.storeSettings.isOpen && featuredFried.available) setPendingPublicItem(featuredFried); }}>
-            <img src={featuredFried.imageUrl} alt={featuredFried.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src={featuredFried.imageUrl} alt={featuredFried.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             <button onClick={(e) => { e.stopPropagation(); setFriedIndex((p) => (p > 0 ? p - 1 : friedItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
             <button onClick={(e) => { e.stopPropagation(); setFriedIndex((p) => (p < friedItems.length - 1 ? p + 1 : 0)); }} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
@@ -1082,8 +1108,16 @@ export default function LandingScreen() {
       <style>{`
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .scroll-anim { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .scroll-anim.animate-slide-up-fade { opacity: 1; transform: translateY(0); }
+         .scroll-anim {
+          opacity: 0;
+          transform: translateY(60px) scale(0.97);
+          transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: opacity, transform;
+        }
+        .scroll-anim.animate-slide-up-fade {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
         @keyframes slow-zoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
         @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
         @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(217,119,6,0.2); } 50% { box-shadow: 0 0 40px rgba(217,119,6,0.6); } }
