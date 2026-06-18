@@ -158,9 +158,9 @@ export default function LandingScreen() {
   const jollofItems = landingMenu.filter(m => m.category === 'jollof');
   const friedItems = landingMenu.filter(m => m.category === 'fried');
   const bankuItems = landingMenu.filter(m => m.category === 'banku');
-  const featuredJollof = jollofItems[jollofIndex];
-  const featuredFried = friedItems[friedIndex];
-  const featuredBanku = bankuItems[bankuIndex];
+  const featuredJollof = jollofItems[jollofIndex] || jollofItems[0];
+  const featuredFried = friedItems[friedIndex] || friedItems[0];
+  const featuredBanku = bankuItems[bankuIndex] || bankuItems[0];
   const [toastMessage, setToastMessage] = useState('');
 
   /* ── Scroll effect for header & image toggling ── */
@@ -169,8 +169,8 @@ export default function LandingScreen() {
     const onScroll = () => {
       setScrolled(window.scrollY > 20);
       
-      // Auto-toggle images as user scrolls down
-      const scrubY = window.scrollY;
+      // Auto-toggle images as user scrolls down, ensuring scroll position index is non-negative
+      const scrubY = Math.max(0, window.scrollY);
       if (jollofItems.length > 0) setJollofIndex(Math.floor(scrubY / 400) % jollofItems.length);
       if (friedItems.length > 0) setFriedIndex(Math.floor(scrubY / 400) % friedItems.length);
       if (bankuItems.length > 0) setBankuIndex(Math.floor(scrubY / 400) % bankuItems.length);
