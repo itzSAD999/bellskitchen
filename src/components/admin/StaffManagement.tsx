@@ -89,10 +89,10 @@ export default function StaffManagement() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 p-6 h-full overflow-hidden select-none">
+    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-6 md:h-full overflow-y-auto md:overflow-hidden select-none">
       
       {/* List of active staff (Left/Main Panel) */}
-      <div className="flex-1 bg-white border border-dark-100 rounded-3xl p-6 shadow-card flex flex-col min-h-[350px] overflow-hidden">
+      <div className="flex-1 bg-white border border-dark-100 rounded-3xl p-5 md:p-6 shadow-card flex flex-col min-h-[300px] md:min-h-[350px] md:overflow-hidden">
         <div className="flex items-center justify-between pb-4 border-b border-dark-100 flex-shrink-0">
           <div>
             <h2 className="text-base font-black text-dark-950">Active Terminals & Staff</h2>
@@ -104,7 +104,7 @@ export default function StaffManagement() {
         </div>
 
         {/* Scrollable list */}
-        <div className="flex-1 overflow-y-auto mt-4 pr-1 space-y-3.5 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto mt-4 pr-1 space-y-3.5 custom-scrollbar max-h-[350px] md:max-h-none">
           {state.staff.map((member) => {
             const isSelf = state.currentUser?.id === member.id;
             return (
@@ -166,7 +166,7 @@ export default function StaffManagement() {
       </div>
 
       {/* Add New Staff (Right Panel Form) */}
-      <div className="w-full md:w-80 bg-white border border-dark-100 rounded-3xl p-6 shadow-card flex flex-col flex-shrink-0">
+      <div className="w-full md:w-80 bg-white border border-dark-100 rounded-3xl p-5 md:p-6 shadow-card flex flex-col flex-shrink-0">
         <div className="flex items-center gap-2 pb-4 border-b border-dark-100 mb-4">
           <UserPlus className="text-brand-500" size={18} />
           <h2 className="text-sm font-black text-dark-950">Add Staff Member</h2>

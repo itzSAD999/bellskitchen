@@ -748,13 +748,13 @@ export default function LandingScreen() {
           <h2 className="text-[#ffefd4] text-xs font-black uppercase tracking-[0.2em] mb-2 drop-shadow-sm">Testimonials</h2>
           <h3 className="text-4xl font-black text-white italic tracking-tight drop-shadow-md">What Our Family Says</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 lg:px-8 relative z-10">
+        <div className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto md:overflow-x-visible pb-8 md:pb-0 px-4 lg:px-8 relative z-10 hide-scrollbar snap-x snap-mandatory">
           {[
             { name: "Ama K.", review: "The best Jollof in Kumasi! The packaging kept it so hot, and the flavors are incredibly rich.", rating: 5 },
             { name: "Kwame D.", review: "I order the Assorted Fried Rice every weekend. Consistent quality and the delivery is always swift.", rating: 5 },
             { name: "Sarah O.", review: "Finally, proper party Jollof without having to wait for a wedding. Absolutely love the new branding too!", rating: 5 },
           ].map((rev, i) => (
-            <div key={i} className="bg-[#431407] p-10 rounded-[2rem] border-2 border-[#b45309]/50 shadow-xl hover:shadow-2xl transition-all relative group hover:-translate-y-2" style={{ backgroundImage: bgPatternBrownUrl }}>
+            <div key={i} className="flex-shrink-0 w-[85%] md:w-auto snap-center bg-[#431407] p-10 rounded-[2rem] border-2 border-[#b45309]/50 shadow-xl hover:shadow-2xl transition-all relative group hover:-translate-y-2" style={{ backgroundImage: bgPatternBrownUrl }}>
                <div className="absolute top-8 right-8 text-white/5 group-hover:text-white/10 transition-colors">
                  <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
                </div>
@@ -1087,9 +1087,34 @@ export default function LandingScreen() {
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/50">
               {publicCart.length === 0 ? (
-                <div className="text-center py-20">
-                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"><ShoppingBag size={32} className="text-gray-300"/></div>
-                  <p className="font-bold text-gray-400">Your cart is empty.</p>
+                <div className="text-center py-12 px-6 flex flex-col items-center justify-center my-auto cursor-pointer" onClick={() => {
+                  setIsPublicCartOpen(false);
+                  setTimeout(() => {
+                    document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 300);
+                }}>
+                  <img 
+                    src="/empty_cart_toy.png" 
+                    alt="Cute Chef Mascot" 
+                    className="w-48 h-48 object-contain mb-4 animate-bounce-sm hover:scale-110 transition-transform duration-500" 
+                  />
+                  <h3 className="font-black text-gray-800 text-lg uppercase tracking-wider mb-2">Your Cart is Empty</h3>
+                  <p className="text-gray-500 text-xs font-semibold leading-relaxed max-w-[280px] mb-6">
+                    Mmm... smells delicious out there! Tap here or browse our menu to add your favorite hot meals to your plate.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsPublicCartOpen(false);
+                      setTimeout(() => {
+                        document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' });
+                      }, 300);
+                    }}
+                    className="px-8 py-3.5 bg-gradient-to-r from-[#d97706] to-amber-500 hover:from-amber-600 hover:to-amber-500 text-white font-black text-xs uppercase tracking-widest rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all select-none"
+                  >
+                    Add Items to Cart
+                  </button>
                 </div>
               ) : (
                 publicCart.map((item: any) => (

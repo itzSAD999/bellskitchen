@@ -43,41 +43,44 @@ function AppContent() {
                 to="/"
                 end
                 className={({ isActive }) =>
-                  `flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all select-none border border-transparent ${
+                  `flex items-center gap-1.5 px-2.5 sm:px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all select-none border border-transparent ${
                     isActive
                       ? 'bg-orange-500 text-white shadow-md border-orange-400/20'
                       : 'text-red-100 hover:text-white hover:bg-white/5'
                   }`
                 }
               >
-                <ShoppingCart size={12} strokeWidth={2.5} /> Cashier
+                <ShoppingCart size={12} strokeWidth={2.5} />
+                <span className="hidden sm:inline">Cashier</span>
               </NavLink>
               
               <NavLink
                 to="/orders"
                 className={({ isActive }) =>
-                  `flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all select-none border border-transparent ${
+                  `flex items-center gap-1.5 px-2.5 sm:px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all select-none border border-transparent ${
                     isActive
                       ? 'bg-orange-500 text-white shadow-md border-orange-400/20'
                       : 'text-red-100 hover:text-white hover:bg-white/5'
                   }`
                 }
               >
-                <Clock size={12} strokeWidth={2.5} /> History
+                <Clock size={12} strokeWidth={2.5} />
+                <span className="hidden sm:inline">History</span>
               </NavLink>
 
               {isAdmin && (
                 <NavLink
                   to="/admin"
                   className={({ isActive }) =>
-                    `flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all select-none border border-transparent ${
+                    `flex items-center gap-1.5 px-2.5 sm:px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all select-none border border-transparent ${
                       isActive
                         ? 'bg-orange-500 text-white shadow-md border-orange-400/20'
                         : 'text-red-100 hover:text-white hover:bg-white/5'
                     }`
                   }
                 >
-                  <Settings size={12} strokeWidth={2.5} /> Admin
+                  <Settings size={12} strokeWidth={2.5} />
+                  <span className="hidden sm:inline">Admin</span>
                 </NavLink>
               )}
             </div>

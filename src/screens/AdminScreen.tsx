@@ -24,61 +24,61 @@ export default function AdminScreen() {
   return (
     <div className="flex flex-col h-full bg-[#f8f9fa]">
       {/* Tab selection and Lock button row */}
-      <div className="flex items-center justify-between bg-[#431407] border-b-4 border-brand-500 px-5 flex-shrink-0 shadow-lg relative z-10">
-        <div className="flex gap-1 pt-2">
+      <div className="flex items-center justify-between bg-[#431407] border-b-4 border-brand-500 px-3 sm:px-5 flex-shrink-0 shadow-lg relative z-10">
+        <div className="flex gap-0.5 sm:gap-1 pt-2">
           <button
             onClick={() => setActiveTab('sales')}
-            className={`flex items-center gap-2 px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
               activeTab === 'sales'
                 ? 'border-brand-500 text-brand-500 bg-brand-500/10 rounded-t-xl'
                 : 'border-transparent text-white/60 hover:text-white hover:bg-white/5 rounded-t-xl'
             }`}
           >
             <BarChart2 size={16} />
-            Sales
+            <span className="hidden sm:inline">Sales</span>
           </button>
           <button
             onClick={() => setActiveTab('menu')}
-            className={`flex items-center gap-2 px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
               activeTab === 'menu'
                 ? 'border-brand-500 text-brand-500 bg-brand-500/10 rounded-t-xl'
                 : 'border-transparent text-white/60 hover:text-white hover:bg-white/5 rounded-t-xl'
             }`}
           >
             <UtensilsCrossed size={16} />
-            Menu
+            <span className="hidden sm:inline">Menu</span>
           </button>
           <button
             onClick={() => setActiveTab('staff')}
-            className={`flex items-center gap-2 px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
               activeTab === 'staff'
                 ? 'border-brand-500 text-brand-500 bg-brand-500/10 rounded-t-xl'
                 : 'border-transparent text-white/60 hover:text-white hover:bg-white/5 rounded-t-xl'
             }`}
           >
             <Users size={16} />
-            Staff
+            <span className="hidden sm:inline">Staff</span>
           </button>
           <button
             onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-2 px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
               activeTab === 'settings'
                 ? 'border-brand-500 text-brand-500 bg-brand-500/10 rounded-t-xl'
                 : 'border-transparent text-white/60 hover:text-white hover:bg-white/5 rounded-t-xl'
             }`}
           >
             <Settings size={16} />
-            Settings
+            <span className="hidden sm:inline">Settings</span>
           </button>
         </div>
         
         {/* Lock button inline */}
         <button
           onClick={lock}
-          className="flex items-center gap-1.5 bg-white/10 border border-white/20 hover:bg-red-500 hover:border-red-500 hover:text-white text-white text-[10px] font-black uppercase tracking-wider px-4 py-2 rounded-xl transition-all duration-300 shadow-sm mb-2"
+          className="flex items-center gap-1.5 bg-white/10 border border-white/20 hover:bg-red-500 hover:border-red-500 hover:text-white text-white text-[10px] font-black uppercase tracking-wider px-3 sm:px-4 py-2 rounded-xl transition-all duration-300 shadow-sm"
         >
           <LogOut size={14} />
-          Lock Terminal
+          <span className="hidden sm:inline">Lock Terminal</span>
         </button>
       </div>
 

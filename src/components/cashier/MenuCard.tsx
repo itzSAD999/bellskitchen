@@ -69,11 +69,17 @@ export default function MenuCard({ item, onTap }: Props) {
 
   return (
     <div
+      onClick={() => {
+        if (!item.available) return;
+        const defaultSize = 'M';
+        const price = item.hasSizes ? (item.prices.M ?? item.prices.S) : item.prices.fixed;
+        onTap(item, defaultSize, price);
+      }}
       className={`
-        relative flex flex-col items-start p-4 rounded-2xl border-2 transition-all duration-150 text-left w-full select-none
+        relative flex flex-col items-start p-4 rounded-2xl border-2 transition-all duration-150 text-left w-full select-none cursor-pointer
         ${item.available
           ? 'bg-white border-dark-100 hover:border-brand-500 hover:shadow-lg shadow-sm'
-          : 'bg-dark-50/50 border-dark-100 opacity-50'
+          : 'bg-dark-50/50 border-dark-100 opacity-50 cursor-not-allowed'
         }
       `}
     >
@@ -103,9 +109,10 @@ export default function MenuCard({ item, onTap }: Props) {
                 <button
                   key={size}
                   onClick={(e) => { e.stopPropagation(); onTap(item, size, item.prices[size]); }}
-                  className="flex-1 py-2 bg-dark-50 hover:bg-brand-50 text-dark-800 hover:text-brand-600 rounded-lg text-xs font-bold transition-colors border border-dark-100 hover:border-brand-200"
+                  className="flex-1 py-2 bg-dark-50 hover:bg-brand-50 text-dark-850 hover:text-brand-600 rounded-lg text-[10px] sm:text-xs font-bold transition-colors border border-dark-100 hover:border-brand-200 flex flex-col items-center justify-center leading-none gap-0.5"
                 >
-                  {size} - ¢{item.prices[size]}
+                  <span className="font-black">{size}</span>
+                  <span className="text-[9px] text-dark-500 font-medium">¢{item.prices[size]}</span>
                 </button>
               )
             ))
