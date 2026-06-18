@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import {
   Home, Menu as MenuIcon, Store, Users, FileText, User, ChevronLeft, ChevronRight,
   MapPin, Search, ArrowUpRight, Flame, Plus, Minus, Trash2, X, ShoppingBag, Send,
-  Mail, ArrowRight, Star, Quote, MessageCircle, HelpCircle, ChevronDown
+  Mail, ArrowRight, Star, Quote, MessageCircle, HelpCircle, ChevronDown, Sparkles
 } from 'lucide-react';
 
 import { bgPatternUrl, bgPatternBrownUrl } from '../utils/bgPattern';
@@ -339,8 +339,8 @@ export default function LandingScreen() {
         </div>
         
         {/* Floating Decorative Elements */}
-        <div className="absolute top-1/4 left-10 w-24 h-24 bg-[#d97706]/20 rounded-full blur-2xl animate-pulse pointer-events-none" />
-        <div className="absolute bottom-1/4 right-10 w-32 h-32 bg-[#ffefd4]/10 rounded-full blur-3xl animate-pulse delay-1000 pointer-events-none" />
+        <div className="absolute top-1/4 left-10 w-24 h-24 bg-[#d97706]/20 rounded-full blur-2xl animate-float pointer-events-none" />
+        <div className="absolute bottom-1/4 right-10 w-32 h-32 bg-[#ffefd4]/10 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '2s' }} />
         
         {/* Hero Content */}
         <div className="relative z-10 text-center max-w-5xl mx-auto px-4 mt-20 scroll-anim">
@@ -358,7 +358,7 @@ export default function LandingScreen() {
                 Experience the finest Jollof and Fried Rice, delivered hot in our signature premium packaging. <span className="text-[#ffefd4]">True flavors of Kumasi.</span>
              </p>
              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10">
-                <button disabled={!state.storeSettings.isOpen} onClick={() => setView('menu')} className="w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-[#d97706] to-[#b45309] text-white font-black text-sm tracking-wider py-4 px-12 rounded-full shadow-[0_10px_30px_rgba(217,119,6,0.5)] hover:shadow-[0_15px_40px_rgba(217,119,6,0.7)] hover:-translate-y-1 hover:scale-105 transition-all">
+                <button disabled={!state.storeSettings.isOpen} onClick={() => setView('menu')} className="w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed hover-sweep text-white font-black text-sm tracking-wider py-4 px-12 rounded-full shadow-[0_10px_30px_rgba(217,119,6,0.5)] hover:shadow-[0_15px_40px_rgba(217,119,6,0.7)] hover:-translate-y-1 hover:scale-105 transition-all">
                   {state.storeSettings.isOpen ? 'EXPLORE MENU' : 'STORE CLOSED'}
                 </button>
                 <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-black text-sm tracking-wider py-4 px-12 rounded-full hover:bg-white hover:text-[#431407] hover:border-white transition-all shadow-lg hover:-translate-y-1 hover:scale-105">
@@ -374,7 +374,7 @@ export default function LandingScreen() {
         {/* Left Side: Brand Identity */}
         <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
           <div className="flex items-center gap-6">
-            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center -rotate-[10deg] shadow-[0_15px_30px_rgba(67,20,7,0.3)] border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
+            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
                <div className="w-12 h-6 bg-white/20 rounded-md mb-2 flex items-center justify-center"><Flame size={16} className="text-white"/></div>
                <span className="font-black text-xs">BELLS BOX</span>
             </div>
@@ -413,7 +413,7 @@ export default function LandingScreen() {
               {featuredJollof.description}
             </p>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
-              <button disabled={!featuredJollof.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredJollof)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+              <button disabled={!featuredJollof.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredJollof)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
                 {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
@@ -445,7 +445,7 @@ export default function LandingScreen() {
         {/* Left Side: Brand Identity */}
         <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
           <div className="flex items-center gap-6">
-            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center -rotate-[10deg] shadow-[0_15px_30px_rgba(67,20,7,0.3)] border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
+            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
                <div className="w-12 h-6 bg-white/20 rounded-md mb-2 flex items-center justify-center"><Flame size={16} className="text-white"/></div>
                <span className="font-black text-xs text-center">BELLS<br/>LOCAL</span>
             </div>
@@ -484,7 +484,7 @@ export default function LandingScreen() {
               {featuredBanku.description}
             </p>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
-              <button disabled={!featuredBanku.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredBanku)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+              <button disabled={!featuredBanku.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredBanku)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
                 {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
@@ -516,7 +516,7 @@ export default function LandingScreen() {
         {/* Left Side: Brand Identity */}
         <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
           <div className="flex items-center gap-6">
-            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center rotate-[10deg] shadow-[0_15px_30px_rgba(67,20,7,0.3)] border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
+            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center rotate-[10deg] animate-pulse-glow border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
                <div className="w-10 h-12 bg-[#ffefd4] rounded-t-lg rounded-b-sm mb-1 opacity-90 flex items-center justify-center font-black text-[#d97706] text-xs shadow-inner">B</div>
                <span className="font-black text-xs">RICE BAG</span>
             </div>
@@ -552,7 +552,7 @@ export default function LandingScreen() {
               {featuredFried.description}
             </p>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
-              <button disabled={!featuredFried.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredFried)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+              <button disabled={!featuredFried.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredFried)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
                 {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
@@ -589,12 +589,12 @@ export default function LandingScreen() {
              <p className="text-white/80 font-medium leading-relaxed mb-10 text-lg">
                Our premium packaging is designed to keep your food piping hot and perfectly intact. From our kitchen to your table, we ensure every detail reflects our commitment to excellence.
              </p>
-             <button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="bg-[#d97706] text-white font-black text-sm tracking-wider py-4 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-1 transition-all">
+             <button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="hover-sweep text-white font-black text-sm tracking-wider py-4 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:-translate-y-1 transition-all">
                ORDER NOW
              </button>
           </div>
           <div className="w-full md:w-1/2 p-8 relative z-10 flex justify-center">
-             <img src="/packaging_trio.jpg" alt="Bells Packaging" className="w-[85%] rounded-[2rem] shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 border-[8px] border-white/10" />
+             <img src="/packaging_trio.jpg" alt="Bells Packaging" className="w-[85%] rounded-[2rem] shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 border-[8px] border-white/10 animate-float" />
           </div>
         </div>
       </div>
@@ -1085,6 +1085,12 @@ export default function LandingScreen() {
         .scroll-anim { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .scroll-anim.animate-slide-up-fade { opacity: 1; transform: translateY(0); }
         @keyframes slow-zoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(217,119,6,0.2); } 50% { box-shadow: 0 0 40px rgba(217,119,6,0.6); } }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+        .hover-sweep { background-size: 200% auto; transition: background-position 0.5s; background-image: linear-gradient(to right, #d97706 0%, #b45309 51%, #d97706 100%); }
+        .hover-sweep:hover { background-position: right center; }
       `}</style>
     </div>
   );
