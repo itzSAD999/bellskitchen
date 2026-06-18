@@ -563,40 +563,60 @@ export default function LandingScreen() {
 
         {/* Map & Details */}
         <div className="flex flex-col lg:flex-row gap-8 h-[550px]">
-          {/* Details panel */}
-          <div className="w-full lg:w-[35%] flex flex-col gap-6 h-full">
-            <div className="relative">
-              <input type="text" placeholder="Search for branches by name or location" className="w-full border border-gray-200 rounded-full py-4 px-6 text-sm font-semibold shadow-sm focus:outline-none focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] transition-all text-gray-700"/>
-              <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
-            </div>
-            
-            <div className="bg-[#431407] rounded-[2rem] border-[4px] border-[#d97706]/20 shadow-2xl p-8 flex-1 flex flex-col hover:shadow-[0_15px_30px_rgba(217,119,6,0.2)] transition-shadow relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none"/>
-              <div className="flex justify-between items-start mb-6 relative z-10">
-                <h3 className="font-black text-xl text-white uppercase tracking-wide">{selectedBranch}</h3>
-                <div className="w-10 h-10 rounded-full bg-[#d97706] border border-[#b45309] flex items-center justify-center shadow-lg"><ArrowUpRight size={18} className="text-white"/></div>
+          {selectedBranch === 'KNUST BRANCH' ? (
+            <>
+              {/* Details panel */}
+              <div className="w-full lg:w-[35%] flex flex-col gap-6 h-full">
+                <div className="relative">
+                  <input type="text" placeholder="Search for branches by name or location" className="w-full border border-gray-200 rounded-full py-4 px-6 text-sm font-semibold shadow-sm focus:outline-none focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] transition-all text-gray-700"/>
+                  <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
+                </div>
+                
+                <div className="bg-[#431407] rounded-[2rem] border-[4px] border-[#d97706]/20 shadow-2xl p-8 flex-1 flex flex-col hover:shadow-[0_15px_30px_rgba(217,119,6,0.2)] transition-shadow relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none"/>
+                  <div className="flex justify-between items-start mb-6 relative z-10">
+                    <h3 className="font-black text-xl text-white uppercase tracking-wide">{selectedBranch}</h3>
+                    <div className="w-10 h-10 rounded-full bg-[#d97706] border border-[#b45309] flex items-center justify-center shadow-lg"><ArrowUpRight size={18} className="text-white"/></div>
+                  </div>
+                  <div className="text-sm text-white/80 mb-8 font-semibold leading-relaxed relative z-10">
+                    Opposite No Weapon Hostel Annex<br/>
+                    KUMASI REGION
+                  </div>
+                  <h4 className="font-black text-[#d97706] mb-4 relative z-10 tracking-widest uppercase text-[10px]">Hours Of Operation</h4>
+                  <div className="text-sm text-white font-semibold relative z-10 bg-white/5 rounded-xl p-4 border border-white/10 shadow-inner">
+                    <p>Sunday - Saturday<br/>09:00 - 22:00</p>
+                  </div>
+                </div>
               </div>
-              <div className="text-sm text-white/80 mb-8 font-semibold leading-relaxed relative z-10">
-                Opposite No Weapon Hostel Annex<br/>
-                KUMASI REGION
-              </div>
-              <h4 className="font-black text-[#d97706] mb-4 relative z-10 tracking-widest uppercase text-[10px]">Hours Of Operation</h4>
-              <div className="text-sm text-white font-semibold relative z-10 bg-white/5 rounded-xl p-4 border border-white/10 shadow-inner">
-                <p>Sunday - Saturday<br/>09:00 - 22:00</p>
-              </div>
-            </div>
-          </div>
 
-          {/* Map panel */}
-          <div className="w-full lg:w-[65%] h-full rounded-[2.5rem] overflow-hidden shadow-lg border border-gray-200 bg-white relative p-2">
-            <div className="w-full h-full rounded-[2rem] overflow-hidden relative">
-              <iframe title="map" src="https://maps.google.com/maps?q=No%20Weapon%20Hostel,%20KNUST,%20Kumasi,%20Ghana&t=&z=16&ie=UTF8&iwloc=&output=embed" className="w-full h-full border-0 filter brightness-95 contrast-125 saturate-50 hover:filter-none transition-all duration-700"/>
-              {/* Map pin overlay mimicking image */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none drop-shadow-xl animate-bounce">
-                <MapPin size={48} className="text-[#d97706] fill-[#d97706]" />
+              {/* Map panel */}
+              <div className="w-full lg:w-[65%] h-full rounded-[2.5rem] overflow-hidden shadow-lg border border-gray-200 bg-white relative p-2">
+                <div className="w-full h-full rounded-[2rem] overflow-hidden relative">
+                  <iframe title="map" src="https://maps.google.com/maps?q=No%20Weapon%20Hostel,%20KNUST,%20Kumasi,%20Ghana&t=&z=16&ie=UTF8&iwloc=&output=embed" className="w-full h-full border-0 filter brightness-95 contrast-125 saturate-50 hover:filter-none transition-all duration-700"/>
+                  {/* Map pin overlay mimicking image */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none drop-shadow-xl animate-bounce">
+                    <MapPin size={48} className="text-[#d97706] fill-[#d97706]" />
+                  </div>
+                </div>
               </div>
+            </>
+          ) : (
+            <div className="w-full h-full bg-[#431407] rounded-[2.5rem] border-4 border-[#d97706]/20 shadow-2xl p-12 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-5 filter grayscale group-hover:grayscale-0 transition-all duration-1000"/>
+               <div className="absolute inset-0 bg-gradient-to-t from-[#431407] via-[#431407]/80 to-transparent"/>
+               <div className="absolute top-0 right-0 w-64 h-64 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none blur-3xl animate-pulse"/>
+               <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#ffefd4] rounded-tr-full opacity-10 pointer-events-none blur-3xl animate-pulse delay-700"/>
+               
+               <Store size={80} className="text-[#d97706] mb-8 relative z-10 animate-bounce shadow-xl rounded-full bg-white/5 p-4 border border-white/10" />
+               <h3 className="font-black text-5xl md:text-6xl text-white uppercase tracking-tighter italic mb-6 relative z-10 drop-shadow-lg">{selectedBranch}</h3>
+               <div className="bg-[#d97706] text-white font-black px-6 py-2 rounded-full text-xs sm:text-sm tracking-[0.3em] shadow-xl uppercase relative z-10 mb-6 border border-[#ffefd4]/30">
+                 Coming Soon
+               </div>
+               <p className="text-white/80 font-medium text-lg max-w-xl mx-auto relative z-10 leading-relaxed">
+                 We are actively preparing to bring the authentic Bells Kitchen experience to this location. Stay tuned for our grand opening!
+               </p>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
