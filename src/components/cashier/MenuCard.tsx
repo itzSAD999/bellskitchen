@@ -45,7 +45,7 @@ const DEFAULT_THEME = {
 
 interface Props {
   item: MenuItem;
-  onTap: (item: MenuItem) => void;
+  onTap: (item: MenuItem, size: 'S'|'M'|'L', customPrice?: number) => void;
 }
 
 export default function MenuCard({ item, onTap }: Props) {
@@ -68,48 +68,64 @@ export default function MenuCard({ item, onTap }: Props) {
   const IconComponent = theme.icon;
 
   return (
-    <button
-      onClick={() => item.available && onTap(item)}
-      disabled={!item.available}
+    <div
       className={`
-        relative flex flex-col items-start p-6 rounded-[2rem] border-2 transition-all duration-300 text-left w-full select-none
+        relative flex flex-col items-start p-4 rounded-2xl border-2 transition-all duration-150 text-left w-full select-none
         ${item.available
-          ? 'bg-white border-dark-100/50 hover:border-brand-500 hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 cursor-pointer active:scale-95 shadow-md'
-          : 'bg-dark-50/50 border-dark-100 opacity-50 cursor-not-allowed'
+          ? 'bg-white border-dark-100 hover:border-brand-500 hover:shadow-lg shadow-sm'
+          : 'bg-dark-50/50 border-dark-100 opacity-50'
         }
       `}
     >
-      {/* Visual Badge wrapper for Vector Icon */}
-      <div className={`
-        w-14 h-14 rounded-full flex items-center justify-center text-2xl mb-5 shadow-inner transition-colors
-        ${item.available ? theme.bgClass : 'bg-dark-100 border-dark-200 text-dark-400'}
-      `}>
-        <IconComponent className={item.available ? theme.textClass : 'text-dark-400'} size={24} strokeWidth={2.5} />
-      </div>
-
-      {/* Name */}
-      <h3 className="font-black text-dark-950 text-[15px] uppercase tracking-wide leading-tight mb-2 select-none">
-        {item.name}
-      </h3>
-
-      {/* Price & sizes */}
-      <div className="flex flex-col gap-1.5 w-full mt-auto pt-4 border-t-2 border-dark-100/30">
-        <span className="text-brand-500 font-black text-xl leading-none select-none">
-          {priceDisplay}
-        </span>
-        {item.hasSizes && (
-          <span className="text-[10px] text-dark-400 font-bold uppercase tracking-[0.1em] select-none">
-            Sizes: S · M · L
+      <div className="flex items-center gap-3 w-full">
+        <div className={`
+          w-10 h-10 rounded-xl flex flex-shrink-0 items-center justify-center text-xl shadow-inner
+          ${item.available ? theme.bgClass : 'bg-dark-100 border-dark-200 text-dark-400'}
+        `}>
+          <IconComponent className={item.available ? theme.textClass : 'text-dark-400'} size={18} strokeWidth={2.5} />
+        </div>
+        
+        <div className="flex-1 min-w-0">
+          <h3 className="font-black text-dark-950 text-sm uppercase tracking-wide leading-tight truncate">
+            {item.name}
+          </h3>
+          <span className="text-brand-500 font-black text-sm leading-none">
+            {priceDisplay}
           </span>
-        )}
+        </div>
       </div>
+
+      {item.available && (
+        <div className="w-full mt-3 pt-3 border-t border-dark-100/30 flex gap-2">
+          {item.hasSizes ? (
+            (['S', 'M', 'L'] as const).map(size => (
+              item.prices[size] !== undefined && (
+                <button
+                  key={size}
+                  onClick={(e) => { e.stopPropagation(); onTap(item, size, item.prices[size]); }}
+                  className="flex-1 py-2 bg-dark-50 hover:bg-brand-50 text-dark-800 hover:text-brand-600 rounded-lg text-xs font-bold transition-colors border border-dark-100 hover:border-brand-200"
+                >
+                  {size} - ¢{item.prices[size]}
+                </button>
+              )
+            ))
+          ) : (
+            <button
+              onClick={(e) => { e.stopPropagation(); onTap(item, 'M', item.prices.fixed); }}
+              className="w-full py-2 bg-brand-50 hover:bg-brand-500 text-brand-600 hover:text-white rounded-lg text-xs font-black uppercase tracking-widest transition-colors border border-brand-200"
+            >
+              Add to Order
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Sold out badge */}
       {!item.available && (
-        <span className="absolute top-4 right-4 bg-red-100 text-red-600 border border-red-200 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+        <span className="absolute top-3 right-3 bg-red-100 text-red-600 border border-red-200 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
           Sold Out
         </span>
       )}
-    </button>
+    </div>
   );
 }

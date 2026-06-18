@@ -1,6 +1,6 @@
 // components/admin/MenuItemRow.tsx
 import React, { useState } from 'react';
-import { Check, X, ToggleLeft, ToggleRight, Edit2, Utensils, Flame, Layers, Fish, Sparkles, ChefHat, PlusCircle } from 'lucide-react';
+import { Check, X, ToggleLeft, ToggleRight, Edit2, Utensils, Flame, Layers, Fish, Sparkles, ChefHat, PlusCircle, Trash2 } from 'lucide-react';
 import { MenuItem } from '../../types';
 import { useAppContext } from '../../context/AppContext';
 import { supabase } from '../../lib/supabase';
@@ -52,7 +52,13 @@ interface Props {
 export default function MenuItemRow({ item }: Props) {
   const { dispatch } = useAppContext();
   const [editing, setEditing]   = useState(false);
-  const [prices, setPrices]     = useState(item.prices);
+  const [formData, setFormData] = useState({
+    name: item.name,
+    category: item.category,
+    description: item.description || '',
+    imageUrl: item.imageUrl || '',
+  });
+  const [prices, setPrices] = useState(item.prices);
 
   const handleToggleAvailable = async () => {
     dispatch({ type: 'TOGGLE_AVAILABLE', payload: item.id });
@@ -63,8 +69,13 @@ export default function MenuItemRow({ item }: Props) {
     } catch { /* optimistic update already applied */ }
   };
 
-  const handleSavePrices = async () => {
-    const update: Record<string, number | undefined> = {};
+  const handleSave = async () => {
+    const update: any = {
+      name: formData.name,
+      category: formData.category,
+      description: formData.description,
+      image_url: formData.imageUrl
+    };
     if (item.hasSizes) {
       update.price_s = prices.S;
       update.price_m = prices.M;
@@ -73,15 +84,89 @@ export default function MenuItemRow({ item }: Props) {
       update.price_fixed = prices.fixed;
     }
 
-    dispatch({ type: 'UPDATE_MENU_ITEM', payload: { id: item.id, prices } });
+    dispatch({ type: 'UPDATE_MENU_ITEM', payload: { id: item.id, ...formData, prices } });
     try {
       await supabase.from('menu_items').update(update).eq('id', item.id);
     } catch { /* ignore */ }
     setEditing(false);
   };
 
+  const handleDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${item.name}?`)) {
+      dispatch({ type: 'DELETE_MENU_ITEM', payload: item.id });
+      try {
+        await supabase.from('menu_items').delete().eq('id', item.id);
+      } catch { /* optimistic */ }
+    }
+  };
+
   const theme = ITEM_THEMES[item.id] || DEFAULT_THEME;
   const IconComponent = theme.icon;
+
+  if (editing) {
+    return (
+      <div className="bg-white rounded-2xl p-4 border border-brand-300 shadow-warm transition-all duration-200 select-none">
+        <div className="flex flex-col gap-3">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-sm font-black text-brand-600">Edit Menu Item</h3>
+            <div className="flex gap-2">
+              <button onClick={handleDelete} className="p-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 transition-all cursor-pointer">
+                <Trash2 size={16} />
+              </button>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] font-black uppercase tracking-wider text-dark-500">Name</label>
+              <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="input text-sm py-2" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] font-black uppercase tracking-wider text-dark-500">Category</label>
+              <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value as 'main' | 'addon' })} className="input text-sm py-2 bg-white">
+                <option value="main">Main</option>
+                <option value="addon">Add-on</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] font-black uppercase tracking-wider text-dark-500">Description</label>
+            <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="input text-sm py-2 h-16 resize-none" />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] font-black uppercase tracking-wider text-dark-500">Image URL</label>
+            <input type="text" value={formData.imageUrl} onChange={e => setFormData({ ...formData, imageUrl: e.target.value })} className="input text-sm py-2" />
+          </div>
+
+          <div className="flex flex-col gap-1 mt-2">
+            <label className="text-[10px] font-black uppercase tracking-wider text-dark-500">Prices</label>
+            <div className="flex gap-2 flex-wrap">
+              {item.hasSizes ? (
+                (['S', 'M', 'L'] as const).map(s => (
+                  <div key={s} className="relative flex items-center">
+                    <span className="absolute left-3 text-[10px] font-black text-dark-400 uppercase select-none">{s}</span>
+                    <input type="number" value={prices[s] ?? ''} onChange={e => setPrices(p => ({ ...p, [s]: Number(e.target.value) }))} className="w-20 input text-sm py-2 pl-6 pr-2 text-center font-bold text-brand-600" placeholder={s} />
+                  </div>
+                ))
+              ) : (
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 text-[10px] font-black text-dark-400 select-none">¢</span>
+                  <input type="number" value={prices.fixed ?? ''} onChange={e => setPrices(p => ({ ...p, fixed: Number(e.target.value) }))} className="w-24 input text-sm py-2 pl-6 pr-2 font-bold text-brand-600" />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-dark-100/50">
+            <button onClick={() => { setEditing(false); setPrices(item.prices); setFormData({name: item.name, category: item.category, description: item.description||'', imageUrl: item.imageUrl||''}); }} className="px-4 py-2 rounded-xl text-xs font-bold text-dark-500 hover:bg-dark-100 transition-all">Cancel</button>
+            <button onClick={handleSave} className="px-6 py-2 rounded-xl text-xs font-bold bg-brand-500 text-white shadow-md hover:bg-brand-600 transition-all flex items-center gap-1.5"><Check size={14}/> Save</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`bg-white rounded-2xl p-4 border transition-all duration-200 shadow-sm select-none ${
@@ -109,75 +194,27 @@ export default function MenuItemRow({ item }: Props) {
 
         {/* Prices area */}
         <div className="flex-shrink-0">
-          {!editing ? (
-            <div>
-              {item.hasSizes ? (
-                <div className="flex gap-1 text-[10px] font-black text-dark-600 select-none">
-                  <span className="bg-dark-50 px-2 py-1 rounded-lg border border-dark-100/50">S: ¢{item.prices.S}</span>
-                  <span className="bg-dark-50 px-2 py-1 rounded-lg border border-dark-100/50">M: ¢{item.prices.M}</span>
-                  <span className="bg-dark-50 px-2 py-1 rounded-lg border border-dark-100/50">L: ¢{item.prices.L}</span>
-                </div>
-              ) : (
-                <span className="bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg border border-brand-100/50 text-xs font-black select-none">
-                  ¢{item.prices.fixed}
-                </span>
-              )}
+          {item.hasSizes ? (
+            <div className="flex gap-1 text-[10px] font-black text-dark-600 select-none">
+              <span className="bg-dark-50 px-2 py-1 rounded-lg border border-dark-100/50">S: ¢{item.prices.S}</span>
+              <span className="bg-dark-50 px-2 py-1 rounded-lg border border-dark-100/50">M: ¢{item.prices.M}</span>
+              <span className="bg-dark-50 px-2 py-1 rounded-lg border border-dark-100/50">L: ¢{item.prices.L}</span>
             </div>
           ) : (
-            <div className="flex gap-1.5 flex-wrap">
-              {item.hasSizes ? (
-                (['S', 'M', 'L'] as const).map(s => (
-                  <div key={s} className="relative flex items-center">
-                    <span className="absolute left-2 text-[9px] font-black text-dark-400 uppercase select-none">{s}</span>
-                    <input
-                      type="number"
-                      value={prices[s] ?? ''}
-                      onChange={e => setPrices(p => ({ ...p, [s]: Number(e.target.value) }))}
-                      className="w-14 input text-xs py-1.5 pl-4.5 pr-0.5 text-center font-bold text-brand-600 rounded-xl"
-                      placeholder={s}
-                    />
-                  </div>
-                ))
-              ) : (
-                <div className="relative flex items-center">
-                  <span className="absolute left-2 text-[9px] font-black text-dark-400 select-none">¢</span>
-                  <input
-                    type="number"
-                    value={prices.fixed ?? ''}
-                    onChange={e => setPrices(p => ({ ...p, fixed: Number(e.target.value) }))}
-                    className="w-18 input text-xs py-1.5 pl-4.5 pr-0.5 font-bold text-brand-600 rounded-xl"
-                  />
-                </div>
-              )}
-            </div>
+            <span className="bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg border border-brand-100/50 text-xs font-black select-none">
+              ¢{item.prices.fixed}
+            </span>
           )}
         </div>
 
         {/* Actions panel */}
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          {editing ? (
-            <div className="flex gap-1">
-              <button
-                onClick={handleSavePrices}
-                className="p-1.5 rounded-xl bg-green-50 hover:bg-green-100 border border-green-200 text-green-700 active:scale-90 transition-all cursor-pointer"
-              >
-                <Check size={14} strokeWidth={2.5} />
-              </button>
-              <button
-                onClick={() => { setEditing(false); setPrices(item.prices); }}
-                className="p-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-red-500 active:scale-90 transition-all cursor-pointer"
-              >
-                <X size={14} strokeWidth={2.5} />
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setEditing(true)}
-              className="p-1.5 rounded-xl hover:bg-brand-50 border border-transparent hover:border-brand-200 text-dark-400 hover:text-brand-600 active:scale-90 transition-all cursor-pointer"
-            >
-              <Edit2 size={14} />
-            </button>
-          )}
+          <button
+            onClick={() => setEditing(true)}
+            className="p-1.5 rounded-xl hover:bg-brand-50 border border-transparent hover:border-brand-200 text-dark-400 hover:text-brand-600 active:scale-90 transition-all cursor-pointer"
+          >
+            <Edit2 size={14} />
+          </button>
 
           <button
             onClick={handleToggleAvailable}

@@ -62,6 +62,12 @@ export interface CashierUser {
   createdAt: string;
 }
 
+export interface StoreSettings {
+  isOpen: boolean;
+  deliveryFee: number;
+  taxRate: number; // percentage
+}
+
 export interface AppState {
   menu:          MenuItem[];
   addons:        MenuItem[];      // filtered: category === 'addon'
@@ -75,5 +81,6 @@ export interface AppState {
   // START_BUNDLE stores the in-progress main + size here;
   // AddonSheet reads this to know what to display.
   pendingBundle: { menuItemId: string; size: 'S' | 'M' | 'L'; customPrice?: number; cartItemId?: string } | null;
+  storeSettings: StoreSettings;
 }
 

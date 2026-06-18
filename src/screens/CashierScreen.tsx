@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { useMenu } from '../hooks/useMenu';
 import { useOrders } from '../hooks/useOrders';
 import MenuGrid from '../components/cashier/MenuGrid';
-import SizePicker from '../components/cashier/SizePicker';
+
 import AddonSheet from '../components/cashier/AddonSheet';
 import CartPanel from '../components/cashier/CartPanel';
 import ReceiptView from '../components/receipt/ReceiptView';
@@ -15,40 +15,15 @@ export default function CashierScreen() {
 
   const { state, dispatch } = useApp();
 
-  // SizePicker needs to know which MenuItem was tapped before we can
-  // dispatch START_BUNDLE (which requires both menuItemId AND size).
-  const [selectedMain, setSelectedMain]     = useState<MenuItem | null>(null);
-  const [showSizePicker, setShowSizePicker] = useState(false);
-
-  const handleMenuCardTap = (item: MenuItem) => {
-    if (item.hasSizes) {
-      setSelectedMain(item);
-      setShowSizePicker(true);
-    } else {
-      // Skip size selection, trigger add-ons immediately using 'M' and its fixed price
-      dispatch({
-        type: 'START_BUNDLE',
-        payload: {
-          menuItemId:  item.id,
-          size:        'M',
-          customPrice: item.prices.fixed,
-        },
-      });
-    }
-  };
-
-  const handleSizeConfirm = (size: 'S' | 'M' | 'L', customPrice?: number) => {
-    if (!selectedMain) return;
-    // Dispatch START_BUNDLE → sets state.pendingBundle in reducer.
-    // AddonSheet renders because pendingBundle is now non-null.
-    dispatch({ type: 'START_BUNDLE', payload: { menuItemId: selectedMain.id, size, customPrice } });
-    setShowSizePicker(false);
-    setSelectedMain(null);
-  };
-
-  const handleSizePickerClose = () => {
-    setShowSizePicker(false);
-    setSelectedMain(null);
+  const handleMenuCardTap = (item: MenuItem, size: 'S' | 'M' | 'L', customPrice?: number) => {
+    dispatch({
+      type: 'START_BUNDLE',
+      payload: {
+        menuItemId:  item.id,
+        size,
+        customPrice: customPrice || item.prices.fixed,
+      },
+    });
   };
 
   return (
@@ -75,14 +50,7 @@ export default function CashierScreen() {
         </div>
       </div>
 
-      {/* Size Picker — shown before START_BUNDLE is dispatched */}
-      {showSizePicker && selectedMain && (
-        <SizePicker
-          item={selectedMain}
-          onConfirm={handleSizeConfirm}
-          onClose={handleSizePickerClose}
-        />
-      )}
+
 
       {/* Addon Sheet — driven by state.pendingBundle (set by START_BUNDLE reducer) */}
       {state.pendingBundle && <AddonSheet />}

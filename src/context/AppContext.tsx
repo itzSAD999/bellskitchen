@@ -34,7 +34,9 @@ export type AppAction =
   // Menu management (admin)
   | { type: 'UPDATE_MENU_ITEM'; payload: Partial<MenuItem> & { id: string } }
   | { type: 'ADD_MENU_ITEM';    payload: MenuItem }
+  | { type: 'DELETE_MENU_ITEM'; payload: string }
   | { type: 'TOGGLE_AVAILABLE'; payload: string }   // menuItemId
+  | { type: 'UPDATE_SETTINGS';  payload: Partial<import('../types').StoreSettings> }
 
   // Admin auth
   | { type: 'UNLOCK_ADMIN' }
@@ -105,6 +107,7 @@ const initialState: State = {
   currentUser:      null,
   staff:            initialStaff,
   pendingBundle:    null,
+  storeSettings:    { isOpen: true, deliveryFee: 20, taxRate: 0 },
   _nextOrderNumber: 1,
 };
 
@@ -289,6 +292,15 @@ function appReducer(state: State, action: AppAction): State {
       };
     }
 
+    case 'DELETE_MENU_ITEM': {
+      const filterItem = (list: MenuItem[]) => list.filter(item => item.id !== action.payload);
+      return {
+        ...state,
+        menu:   filterItem(state.menu),
+        addons: filterItem(state.addons),
+      };
+    }
+
     case 'TOGGLE_AVAILABLE': {
       const toggle = (list: MenuItem[]) =>
         list.map(item =>
@@ -298,6 +310,13 @@ function appReducer(state: State, action: AppAction): State {
         ...state,
         menu:   toggle(state.menu),
         addons: toggle(state.addons),
+      };
+    }
+
+    case 'UPDATE_SETTINGS': {
+      return {
+        ...state,
+        storeSettings: { ...state.storeSettings, ...action.payload },
       };
     }
 

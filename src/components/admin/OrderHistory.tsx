@@ -3,12 +3,15 @@ import React from 'react';
 import { Clock, Banknote, Smartphone } from 'lucide-react';
 import { Order } from '../../types';
 import { formatOrderNumber } from '../../utils/orderUtils';
+import OrderDetailsModal from './OrderDetailsModal';
 
 interface Props {
   orders: Order[];
 }
 
 export default function OrderHistory({ orders }: Props) {
+  const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
+
   if (orders.length === 0) {
     return (
       <div className="card text-center py-6 text-dark-400">
@@ -31,7 +34,11 @@ export default function OrderHistory({ orders }: Props) {
             hour: 'numeric', minute: '2-digit', hour12: true,
           });
           return (
-            <div key={order.id} className={`py-3 flex items-center gap-3 ${order.status === 'cancelled' ? 'opacity-50' : ''}`}>
+            <div 
+              key={order.id} 
+              onClick={() => setSelectedOrder(order)}
+              className={`py-3 flex items-center gap-3 cursor-pointer hover:bg-dark-50 px-2 -mx-2 rounded-xl transition-colors ${order.status === 'cancelled' ? 'opacity-50' : ''}`}
+            >
               <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${
                 order.paymentMethod === 'cash' ? 'bg-green-100' : 'bg-yellow-100'
               }`}>
@@ -58,6 +65,13 @@ export default function OrderHistory({ orders }: Props) {
           );
         })}
       </div>
+      
+      {selectedOrder && (
+        <OrderDetailsModal 
+          order={selectedOrder} 
+          onClose={() => setSelectedOrder(null)} 
+        />
+      )}
     </div>
   );
 }

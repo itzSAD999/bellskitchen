@@ -5,7 +5,7 @@ import MenuCard from './MenuCard';
 import { MenuItem } from '../../types';
 
 interface Props {
-  onSelect: (item: MenuItem) => void;
+  onSelect: (item: MenuItem, size: 'S'|'M'|'L', customPrice?: number) => void;
 }
 
 export default function MenuGrid({ onSelect }: Props) {

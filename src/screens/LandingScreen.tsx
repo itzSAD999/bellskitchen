@@ -6,7 +6,7 @@ import {
   Mail, ArrowRight, Star, Quote, MessageCircle, HelpCircle, ChevronDown
 } from 'lucide-react';
 
-import { bgPatternUrl } from '../utils/bgPattern';
+import { bgPatternUrl, bgPatternBrownUrl } from '../utils/bgPattern';
 
 /* ─── Faint Background Pattern ─── */
 const bgPattern = bgPatternUrl;
@@ -51,7 +51,7 @@ const NavItem = ({ icon, label, active = false, onClick }: { icon: React.ReactNo
   </button>
 );
 
-const CategorySlider = ({ categoryName, items, onOrder }: { categoryName: string, items: any[], onOrder: (item: any) => void }) => {
+const CategorySlider = ({ categoryName, items, isOpen, onOrder }: { categoryName: string, items: any[], isOpen: boolean, onOrder: (item: any) => void }) => {
   const [index, setIndex] = useState(0);
   const featured = items[index];
   if (!featured) return null;
@@ -100,8 +100,8 @@ const CategorySlider = ({ categoryName, items, onOrder }: { categoryName: string
             {featured.hasSizes ? 'Available in multiple sizes. Customize your order to perfection.' : 'Standard portion size. Perfect for a hearty meal.'}
           </p>
           <div className="flex items-center gap-6 mt-6">
-             <button disabled={!featured.available} onClick={() => onOrder(featured)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
-               ORDER NOW
+             <button disabled={!featured.available || !isOpen} onClick={() => onOrder(featured)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+               {isOpen ? 'ORDER NOW' : 'CLOSED'}
              </button>
              <span className="text-2xl font-black text-gray-900">¢{featured.hasSizes ? (featured.prices.M || featured.prices.S) : featured.prices.fixed}</span>
           </div>
@@ -238,17 +238,25 @@ export default function LandingScreen() {
   return (
     <div className="min-h-screen bg-[#f8f9fa] font-sans text-gray-800 pb-24 lg:pb-0" style={{ backgroundImage: bgPattern, backgroundAttachment: 'fixed' }}>
       
+      {/* ── STORE CLOSED BANNER ── */}
+      {!state.storeSettings.isOpen && (
+        <div className="bg-red-600 text-white text-center text-xs font-black uppercase tracking-widest py-2 z-[60] relative">
+          ⚠️ We are currently closed and not accepting online orders at this time.
+        </div>
+      )}
+
       {/* ── TOP NAV ── */}
-      <div className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled || view === 'menu' ? 'bg-[#431407]/95 border-b-4 border-[#d97706] backdrop-blur-md pb-4 pt-4 shadow-2xl' : 'bg-gradient-to-b from-black/60 to-transparent pb-10 pt-4'}`}>
+      <div className={`fixed ${!state.storeSettings.isOpen ? 'top-8' : 'top-0'} w-full z-50 transition-all duration-300 ${scrolled || view === 'menu' ? 'bg-[#431407]/95 border-b-4 border-[#d97706] backdrop-blur-md pb-4 pt-4 shadow-2xl' : 'bg-gradient-to-b from-black/60 to-transparent pb-10 pt-4'}`}>
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           
           {/* Left: Logos & Brand Pill */}
-          <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setView('home')}>
-            <div className="w-12 h-12 rounded-full overflow-hidden border-[3px] border-white shadow-md bg-white transition-transform group-hover:scale-110">
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('home')}>
+            <div className="w-12 h-12 rounded-full overflow-hidden border-[3px] border-white shadow-[0_5px_15px_rgba(217,119,6,0.3)] bg-white transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
                <img src="/packaging_logo.jpg" alt="Bells Kitchen" className="w-full h-full object-cover" style={{ objectPosition: '20% 50%', transform: 'scale(1.3)' }} />
             </div>
-            <div className="bg-white/30 backdrop-blur-md text-white font-black px-6 py-2.5 rounded-full text-xs tracking-widest hidden sm:block shadow-inner border border-white/20 transition-all group-hover:bg-white/40">
-              BELLSKITCHEN
+            <div className="hidden sm:flex flex-col items-start leading-none group-hover:translate-x-1 transition-transform">
+              <span className="font-black text-white text-xl tracking-tight drop-shadow-md">BELLS</span>
+              <span className="font-black text-[#d97706] text-[10px] tracking-[0.3em] uppercase drop-shadow-sm">KITCHEN</span>
             </div>
           </div>
 
@@ -261,11 +269,13 @@ export default function LandingScreen() {
 
           {/* Right: Order Now Button & Login */}
           <div className="flex items-center gap-3">
-            <button onClick={() => setView('menu')} className="bg-white rounded-full flex items-center p-1.5 pr-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 group relative border-2 border-transparent hover:border-[#d97706]">
+            <button disabled={!state.storeSettings.isOpen} onClick={() => setView('menu')} className="bg-white disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center p-1.5 pr-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 group relative border-2 border-transparent hover:border-[#d97706]">
               <div className="bg-[#ffefd4] rounded-full w-9 h-9 flex items-center justify-center relative overflow-hidden">
                 <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-cover" alt="User" />
               </div>
-              <span className="font-black px-3 text-sm text-gray-900 group-hover:text-[#d97706] transition-colors">Order Now</span>
+              <span className="font-black px-3 text-sm text-gray-900 group-hover:text-[#d97706] transition-colors">
+                {state.storeSettings.isOpen ? 'Order Now' : 'Closed'}
+              </span>
             </button>
             <button onClick={() => setIsPublicCartOpen(true)} className="relative w-10 h-10 bg-white hover:bg-gray-50 rounded-full flex items-center justify-center text-gray-900 shadow-lg transition-all hover:scale-110 group">
                <ShoppingBag size={18} className="group-hover:text-[#d97706] transition-colors" />
@@ -280,19 +290,19 @@ export default function LandingScreen() {
       </div>
 
       {/* ── MOBILE BOTTOM NAV ── */}
-      <div className="lg:hidden fixed bottom-0 left-0 w-full bg-[#431407]/95 backdrop-blur-md border-t border-white/10 z-40 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-        <div className="flex items-center justify-around px-2 py-3">
-          <button onClick={() => { setView('home'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className={`flex flex-col items-center gap-1 w-16 transition-colors ${view === 'home' ? 'text-[#d97706]' : 'text-white/60 hover:text-white'}`}>
-            <Home size={22} />
-            <span className="text-[10px] font-black tracking-widest uppercase">Home</span>
+      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[320px] bg-[#431407]/80 backdrop-blur-xl border border-[#d97706]/30 z-[60] shadow-[0_15px_40px_rgba(0,0,0,0.6)] rounded-full py-1.5 px-2">
+        <div className="flex items-center justify-between">
+          <button onClick={() => { setView('home'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className={`flex flex-col items-center justify-center gap-1 w-[30%] py-2 rounded-full transition-all ${view === 'home' ? 'bg-[#d97706] text-white shadow-lg scale-105' : 'text-white/60 hover:text-white'}`}>
+            <Home size={18} />
+            <span className="text-[9px] font-black tracking-widest uppercase">Home</span>
           </button>
-          <button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className={`flex flex-col items-center gap-1 w-16 transition-colors ${view === 'menu' ? 'text-[#d97706]' : 'text-white/60 hover:text-white'}`}>
-            <MenuIcon size={22} />
-            <span className="text-[10px] font-black tracking-widest uppercase">Menu</span>
+          <button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className={`flex flex-col items-center justify-center gap-1 w-[30%] py-2 rounded-full transition-all ${view === 'menu' ? 'bg-[#d97706] text-white shadow-lg scale-105' : 'text-white/60 hover:text-white'}`}>
+            <MenuIcon size={18} />
+            <span className="text-[9px] font-black tracking-widest uppercase">Menu</span>
           </button>
-          <button onClick={() => { setView('home'); setTimeout(() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="flex flex-col items-center gap-1 w-16 text-white/60 hover:text-white transition-colors">
-            <Store size={22} />
-            <span className="text-[10px] font-black tracking-widest uppercase">Outlets</span>
+          <button onClick={() => { setView('home'); setTimeout(() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="flex flex-col items-center justify-center gap-1 w-[30%] py-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-all">
+            <Store size={18} />
+            <span className="text-[9px] font-black tracking-widest uppercase">Outlets</span>
           </button>
         </div>
       </div>
@@ -328,8 +338,8 @@ export default function LandingScreen() {
                 Experience the finest Jollof and Fried Rice, delivered hot in our signature premium packaging. <span className="text-[#ffefd4]">True flavors of Kumasi.</span>
              </p>
              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10">
-                <button onClick={() => setView('menu')} className="w-full sm:w-auto bg-gradient-to-r from-[#d97706] to-[#b45309] text-white font-black text-sm tracking-wider py-4 px-12 rounded-full shadow-[0_10px_30px_rgba(217,119,6,0.5)] hover:shadow-[0_15px_40px_rgba(217,119,6,0.7)] hover:-translate-y-1 hover:scale-105 transition-all">
-                  EXPLORE MENU
+                <button disabled={!state.storeSettings.isOpen} onClick={() => setView('menu')} className="w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-[#d97706] to-[#b45309] text-white font-black text-sm tracking-wider py-4 px-12 rounded-full shadow-[0_10px_30px_rgba(217,119,6,0.5)] hover:shadow-[0_15px_40px_rgba(217,119,6,0.7)] hover:-translate-y-1 hover:scale-105 transition-all">
+                  {state.storeSettings.isOpen ? 'EXPLORE MENU' : 'STORE CLOSED'}
                 </button>
                 <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-black text-sm tracking-wider py-4 px-12 rounded-full hover:bg-white hover:text-[#431407] hover:border-white transition-all shadow-lg hover:-translate-y-1 hover:scale-105">
                   FIND US
@@ -383,8 +393,8 @@ export default function LandingScreen() {
               {featuredJollof.description}
             </p>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
-              <button disabled={!featuredJollof.available} onClick={() => setPendingPublicItem(featuredJollof)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
-                ORDER NOW
+              <button disabled={!featuredJollof.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredJollof)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
                 <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
@@ -454,8 +464,8 @@ export default function LandingScreen() {
               {featuredBanku.description}
             </p>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
-              <button disabled={!featuredBanku.available} onClick={() => setPendingPublicItem(featuredBanku)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
-                ORDER NOW
+              <button disabled={!featuredBanku.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredBanku)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
                 <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
@@ -522,8 +532,8 @@ export default function LandingScreen() {
               {featuredFried.description}
             </p>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
-              <button disabled={!featuredFried.available} onClick={() => setPendingPublicItem(featuredFried)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
-                ORDER NOW
+              <button disabled={!featuredFried.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredFried)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
                 <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
@@ -608,7 +618,11 @@ export default function LandingScreen() {
                   <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
                 </div>
                 
-                <div className="bg-[#431407] rounded-[2rem] border-[4px] border-[#d97706]/20 shadow-2xl p-8 flex-1 flex flex-col hover:shadow-[0_15px_30px_rgba(217,119,6,0.2)] transition-shadow relative overflow-hidden">
+                <div 
+                  className="bg-[#431407] rounded-[2rem] border-[4px] border-[#d97706]/20 shadow-2xl p-8 flex-1 flex flex-col hover:shadow-[0_15px_30px_rgba(217,119,6,0.2)] transition-shadow relative overflow-hidden cursor-pointer group" 
+                  onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(selectedBranch + ' Kumasi Ghana')}`, '_blank')}
+                  style={{ backgroundImage: bgPatternBrownUrl }}
+                >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none"/>
                   <div className="flex justify-between items-start mb-6 relative z-10">
                     <h3 className="font-black text-xl text-white uppercase tracking-wide">{selectedBranch}</h3>
@@ -637,7 +651,7 @@ export default function LandingScreen() {
               </div>
             </>
           ) : (
-            <div className="w-full h-full bg-[#431407] rounded-[2.5rem] border-4 border-[#d97706]/20 shadow-2xl p-12 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+            <div className="w-full h-full bg-[#431407] rounded-[2.5rem] border-4 border-[#d97706]/20 shadow-2xl p-12 flex flex-col items-center justify-center text-center relative overflow-hidden group" style={{ backgroundImage: bgPatternBrownUrl }}>
                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-5 filter grayscale group-hover:grayscale-0 transition-all duration-1000"/>
                <div className="absolute inset-0 bg-gradient-to-t from-[#431407] via-[#431407]/80 to-transparent"/>
                <div className="absolute top-0 right-0 w-64 h-64 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none blur-3xl animate-pulse"/>
@@ -672,7 +686,7 @@ export default function LandingScreen() {
             { name: "Kwame D.", review: "I order the Assorted Fried Rice every weekend. Consistent quality and the delivery is always swift.", rating: 5 },
             { name: "Sarah O.", review: "Finally, proper party Jollof without having to wait for a wedding. Absolutely love the new branding too!", rating: 5 },
           ].map((rev, i) => (
-            <div key={i} className="bg-[#431407] p-10 rounded-[2rem] border-2 border-[#b45309]/50 shadow-xl hover:shadow-2xl transition-all relative group hover:-translate-y-2">
+            <div key={i} className="bg-[#431407] p-10 rounded-[2rem] border-2 border-[#b45309]/50 shadow-xl hover:shadow-2xl transition-all relative group hover:-translate-y-2" style={{ backgroundImage: bgPatternBrownUrl }}>
                <div className="absolute top-8 right-8 text-white/5 group-hover:text-white/10 transition-colors">
                  <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
                </div>
@@ -681,7 +695,7 @@ export default function LandingScreen() {
                </div>
                <p className="text-white/90 font-semibold leading-relaxed mb-8 italic text-lg relative z-10">"{rev.review}"</p>
                <div className="flex items-center gap-4">
-                 <div className="w-12 h-12 bg-[#ffefd4] rounded-full flex items-center justify-center font-black text-[#d97706] text-xl shadow-inner">{rev.name.charAt(0)}</div>
+                 <div className="w-12 h-12 bg-[#ffefd4] rounded-full flex items-center justify-center font-black text-[#d97706] text-xl shadow-inner group-hover:scale-110 group-hover:opacity-100 opacity-90 transition-all duration-500">{rev.name.charAt(0)}</div>
                  <h4 className="font-black text-white uppercase tracking-wider">{rev.name}</h4>
                </div>
             </div>
@@ -749,6 +763,7 @@ export default function LandingScreen() {
                key={categoryName} 
                categoryName={categoryName} 
                items={items} 
+               isOpen={state.storeSettings.isOpen}
                onOrder={(item) => {
                  setPendingPublicItem(item);
                  setPublicSize(item.hasSizes ? (item.prices.M ? 'M' : 'S') : 'M');
@@ -879,9 +894,9 @@ export default function LandingScreen() {
             <button type="button" onClick={() => setPendingPublicItem(null)} className="absolute top-4 right-4 p-2 rounded-full bg-black/20 text-white hover:bg-black/40 transition-all z-20 shadow-md backdrop-blur-sm"><X size={18} strokeWidth={3} /></button>
             
             <div className="flex-shrink-0 bg-[#431407] pt-6 pb-4 px-6 border-b-4 border-[#d97706] relative">
-              <span className="text-[10px] text-white font-black uppercase tracking-widest bg-white/20 border border-white/20 px-3 py-1 rounded-full mb-3 inline-block">{pendingPublicItem.category}</span>
+              <span className="text-[10px] text-white font-black uppercase tracking-widest bg-white/20 border border-white/20 px-3 py-1 rounded-full mb-3 inline-block">Full Menu</span>
               <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2 pt-1">
-                 {landingMenu.filter(m => m.category === pendingPublicItem.category && m.available).map(m => (
+                 {landingMenu.filter(m => m.available).map(m => (
                     <button key={m.id} onClick={() => {
                        setPendingPublicItem(m);
                        setPublicSize(m.hasSizes ? (m.prices.M ? 'M' : 'S') : 'M');
@@ -1012,7 +1027,25 @@ export default function LandingScreen() {
                 ))
               )}
             </div>
-            <div className="p-6 border-t border-gray-100 bg-white">
+            
+            {/* Cross-Sell / Add-ons Section */}
+            {publicCart.length > 0 && (
+              <div className="bg-white border-t border-gray-100 p-4 pb-2">
+                <h3 className="text-[10px] font-black uppercase text-gray-500 tracking-widest mb-3">Frequently Bought Together</h3>
+                <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+                  {landingMenu.filter(m => m.available && m.category !== 'main' && !publicCart.some(c => c.item.id === m.id)).slice(0, 4).map(m => (
+                    <div key={m.id} className="flex-shrink-0 w-32 bg-gray-50 rounded-2xl p-2.5 border border-gray-100 shadow-sm flex flex-col items-center text-center">
+                       <img src={m.imageUrl} alt={m.name} className="w-12 h-12 rounded-full object-cover mb-2 shadow-sm border-2 border-white"/>
+                       <h4 className="text-[10px] font-black text-gray-900 leading-tight mb-1 truncate w-full">{m.name}</h4>
+                       <span className="text-[10px] font-bold text-[#d97706] mb-2">¢{m.prices.fixed}</span>
+                       <button onClick={() => setPendingPublicItem(m)} className="w-full py-1.5 bg-white border border-gray-200 rounded-lg text-[9px] font-black uppercase tracking-wider text-gray-700 hover:bg-[#d97706] hover:text-white hover:border-[#d97706] transition-colors">Add</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="p-6 border-t border-gray-100 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-10 relative">
               <div className="flex items-center justify-between mb-6">
                 <span className="text-xs font-black uppercase text-gray-500 tracking-widest">Total Amount</span>
                 <span className="text-3xl font-black text-gray-900">GH₵{publicCart.reduce((sum: number, item: any) => sum + item.totalPrice, 0).toFixed(2)}</span>

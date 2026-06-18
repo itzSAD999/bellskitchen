@@ -1,14 +1,15 @@
 // screens/AdminScreen.tsx
 import React, { useState } from 'react';
-import { LogOut, BarChart2, UtensilsCrossed, Users } from 'lucide-react';
+import { LogOut, BarChart2, UtensilsCrossed, Users, Settings } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { useAdminPIN } from '../hooks/useAdminPIN';
 import PINGate from './PINGate';
 import SalesDashboard from '../components/admin/SalesDashboard';
 import MenuManagement from '../components/admin/MenuManagement';
 import StaffManagement from '../components/admin/StaffManagement';
+import StoreSettings from '../components/admin/StoreSettings';
 
-type AdminTab = 'sales' | 'menu' | 'staff';
+type AdminTab = 'sales' | 'menu' | 'staff' | 'settings';
 
 export default function AdminScreen() {
   const { state } = useAppContext();
@@ -58,6 +59,17 @@ export default function AdminScreen() {
             <Users size={16} />
             Staff
           </button>
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`flex items-center gap-2 px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
+              activeTab === 'settings'
+                ? 'border-brand-500 text-brand-500 bg-brand-500/10 rounded-t-xl'
+                : 'border-transparent text-white/60 hover:text-white hover:bg-white/5 rounded-t-xl'
+            }`}
+          >
+            <Settings size={16} />
+            Settings
+          </button>
         </div>
         
         {/* Lock button inline */}
@@ -75,6 +87,7 @@ export default function AdminScreen() {
         {activeTab === 'sales' && <SalesDashboard />}
         {activeTab === 'menu'  && <MenuManagement />}
         {activeTab === 'staff' && <StaffManagement />}
+        {activeTab === 'settings' && <StoreSettings />}
       </div>
     </div>
   );

@@ -12,7 +12,14 @@ export default function ReceiptModal() {
   if (!order) return null;
 
   const handlePrint = () => {
+    const originalTitle = document.title;
+    const dateStr = new Date().toISOString().split('T')[0];
+    document.title = `Receipt_BellsKitchen_Order_${formatOrderNumber(order.orderNumber)}_${dateStr}`;
     window.print();
+    // Use setTimeout to ensure the print dialog reads the title before restoring
+    setTimeout(() => {
+      document.title = originalTitle;
+    }, 1000);
   };
 
   const handleCancelOrder = () => {

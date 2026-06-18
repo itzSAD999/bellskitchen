@@ -215,3 +215,9 @@ export const bgPatternSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1000
 </svg>`;
 
 export const bgPatternUrl = `url("data:image/svg+xml,${encodeURIComponent(bgPatternSvg)}")`;
+
+// A light, transparent version for dark brown backgrounds
+export const bgPatternBrownSvg = bgPatternSvg
+  .replace(/#d97706/g, 'rgba(255,255,255,0.8)')
+  .replace('opacity="0.08"', 'opacity="0.04"');
+export const bgPatternBrownUrl = `url("data:image/svg+xml,${encodeURIComponent(bgPatternBrownSvg)}")`;
