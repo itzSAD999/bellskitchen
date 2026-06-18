@@ -29,7 +29,7 @@ export default function CashierScreen() {
   return (
     <div className="flex flex-col h-full bg-transparent relative">
       {/* Menu grid + Cart */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative print:hidden">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative print:hidden">
         {/* Menu Grid - Scrollable, taking remaining space */}
         <div className="flex-1 overflow-y-auto">
           <div className="px-5 pt-5 pb-1">
@@ -39,13 +39,13 @@ export default function CashierScreen() {
           <MenuGrid onSelect={handleMenuCardTap} />
         </div>
         
-        {/* Desktop Sidebar Cart - Fixed width, always expanded, visible only on md+ screens */}
-        <div className="hidden md:block w-96 border-l border-dark-100/50 bg-white h-full overflow-hidden flex-shrink-0">
+        {/* Desktop Sidebar Cart - Fixed width, always expanded, visible only on lg+ screens */}
+        <div className="hidden lg:block w-80 xl:w-96 border-l border-dark-100/50 bg-white h-full overflow-hidden flex-shrink-0">
           <CartPanel forceExpanded={true} />
         </div>
 
-        {/* Mobile Docked Cart - Collapsible, visible only on screens smaller than md */}
-        <div className="md:hidden">
+        {/* Mobile/Tablet Docked Cart - Collapsible, visible on screens smaller than lg */}
+        <div className="lg:hidden">
           <CartPanel />
         </div>
       </div>

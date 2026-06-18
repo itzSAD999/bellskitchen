@@ -1121,7 +1121,7 @@ export default function LandingScreen() {
               </div>
 
               {/* Right Side: Options scroll area and subtotal footer */}
-              <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
+              <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white">
                 <div className="flex-1 overflow-y-auto hide-scrollbar bg-gray-50/50">
                   <div className="p-6 pb-5 border-b border-gray-100 bg-white">
                     <p className="text-xs text-gray-500 font-semibold leading-relaxed">{pendingPublicItem.description}</p>

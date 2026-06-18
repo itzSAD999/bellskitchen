@@ -125,7 +125,7 @@ export default function OrdersScreen() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-brand-50 select-none overflow-hidden print:bg-white print:p-0">
+    <div className="flex flex-col h-full bg-transparent select-none overflow-hidden print:bg-white print:p-0">
       {/* Search and Filters Bar - Hidden during printing */}
       <div className="bg-white border-b border-dark-100/60 p-4 md:p-5 flex-shrink-0 flex flex-col xl:flex-row xl:items-center justify-between gap-4 print:hidden">
         <div>
@@ -155,7 +155,7 @@ export default function OrdersScreen() {
                 onClick={() => setStatusFilter(st)}
                 className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all whitespace-nowrap border border-transparent ${
                   statusFilter === st
-                    ? 'bg-orange-500 text-white shadow-md border-orange-400/20'
+                    ? 'bg-[#d97706] text-white shadow-md border-[#ffefd4]/20'
                     : 'text-dark-600 hover:text-dark-950 hover:bg-dark-100/50'
                 }`}
               >
@@ -172,7 +172,7 @@ export default function OrdersScreen() {
                 onClick={() => setPaymentFilter(pm)}
                 className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all whitespace-nowrap border border-transparent ${
                   paymentFilter === pm
-                    ? 'bg-orange-500 text-white shadow-md border-orange-400/20'
+                    ? 'bg-[#d97706] text-white shadow-md border-[#ffefd4]/20'
                     : 'text-dark-600 hover:text-dark-950 hover:bg-dark-100/50'
                 }`}
               >
