@@ -144,6 +144,10 @@ export default function LandingScreen() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  /* ── FAQ State ── */
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [error, setError] = useState('');
 
   /* ── Branches State ── */
   const branches = ['KNUST BRANCH', 'ADUM BRANCH', 'BANTAMA BRANCH', 'AHODWO BRANCH'];
@@ -513,7 +517,7 @@ export default function LandingScreen() {
              <p className="text-white/80 font-medium leading-relaxed mb-10 text-lg">
                Our premium packaging is designed to keep your food piping hot and perfectly intact. From our kitchen to your table, we ensure every detail reflects our commitment to excellence.
              </p>
-             <button onClick={() => document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' })} className="bg-[#d97706] text-white font-black text-sm tracking-wider py-4 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-1 transition-all">
+             <button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="bg-[#d97706] text-white font-black text-sm tracking-wider py-4 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-1 transition-all">
                ORDER NOW
              </button>
           </div>
@@ -571,17 +575,19 @@ export default function LandingScreen() {
             </div>
             <div className="space-y-4">
               {faqs.map((faq) => (
-                <div key={faq.id} className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 group hover:border-[#d97706] hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden relative">
+                <div key={faq.id} onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)} className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 group hover:border-[#d97706] hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden relative">
                   {/* Decorative Background Icon */}
                   <HelpCircle size={80} className="absolute -top-4 -right-4 text-gray-50 opacity-0 group-hover:opacity-100 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500" />
                   <div className="relative z-10">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-black text-gray-900 text-lg group-hover:text-[#d97706] transition-colors">{faq.q}</h3>
-                      <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#d97706] group-hover:text-white transition-colors">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${openFaq === faq.id ? 'bg-[#d97706] text-white rotate-180' : 'bg-gray-50 text-gray-400 group-hover:bg-[#d97706] group-hover:text-white'}`}>
                         <ChevronDown size={16} />
                       </div>
                     </div>
-                    <p className="text-gray-500 font-medium leading-relaxed pr-8">{faq.a}</p>
+                    {openFaq === faq.id && (
+                       <p className="text-gray-500 font-medium leading-relaxed pr-8 mt-4 animate-fade-in">{faq.a}</p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -778,10 +784,10 @@ export default function LandingScreen() {
             <div className="md:col-span-3 md:col-start-6">
               <h4 className="text-[#d97706] font-black text-lg mb-6 uppercase tracking-wider">Quick Links</h4>
               <ul className="space-y-4">
-                <li><a href="#" className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Home</a></li>
-                <li><a href="#our-menu" className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Our Menu</a></li>
-                <li><a href="#packaging" className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Packaging</a></li>
-                <li><a href="#our-outlets" className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Branch Locations</a></li>
+                <li><button onClick={() => { setView('home'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Home</button></li>
+                <li><button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Our Menu</button></li>
+                <li><button onClick={() => { setView('home'); setTimeout(() => document.getElementById('packaging')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Packaging</button></li>
+                <li><button onClick={() => { setView('home'); setTimeout(() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Branch Locations</button></li>
               </ul>
             </div>
             
