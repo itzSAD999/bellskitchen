@@ -74,6 +74,18 @@ export default function AddonSheet() {
     });
   };
 
+  const handleSetQuantity = (addonId: string, qty: number) => {
+    setAddonQuantities(prev => {
+      const next = { ...prev };
+      if (qty > 0) {
+        next[addonId] = qty;
+      } else {
+        delete next[addonId];
+      }
+      return next;
+    });
+  };
+
   // Convert the quantity map to an array of AddOn objects containing duplicates
   const selectedAddonList: AddOn[] = state.addons.flatMap(a => {
     const qty = addonQuantities[a.id] ?? 0;
@@ -178,6 +190,7 @@ export default function AddonSheet() {
                   onIncrement={() => handleIncrement(addon.id)}
                   onDecrement={() => handleDecrement(addon.id)}
                   onDeselect={() => handleDeselect(addon.id)}
+                  onChangeQuantity={(qty) => handleSetQuantity(addon.id, qty)}
                 />
               ))}
             </div>

@@ -1024,7 +1024,20 @@ export default function LandingScreen() {
                              }} className="w-6 h-6 rounded-full bg-orange-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all text-[#d97706]">
                                <Minus size={12} strokeWidth={3} />
                              </button>
-                             <span className="w-4 text-center text-xs font-black">{count}</span>
+                             <input
+                               type="number"
+                               min="0"
+                               value={count === 0 ? '' : count}
+                               onChange={(e) => {
+                                 const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
+                                 if (!isNaN(val) && val >= 0) {
+                                   const listWithoutAddon = publicAddons.filter((a: any) => a.id !== addon.id);
+                                   const addedList = Array.from({ length: val }, () => ({ ...addon, price }));
+                                   setPublicAddons([...listWithoutAddon, ...addedList]);
+                                 }
+                               }}
+                               className="w-8 text-center text-xs font-black bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                             />
                              <button type="button" onClick={() => setPublicAddons([...publicAddons, { ...addon, price }])} className="w-6 h-6 rounded-full bg-orange-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all text-[#d97706]">
                                <Plus size={12} strokeWidth={3} />
                              </button>
@@ -1042,7 +1055,25 @@ export default function LandingScreen() {
                 </div>
                 <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-full p-1.5 shadow-sm">
                   <button type="button" onClick={() => setPublicQty(Math.max(1, publicQty - 1))} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Minus size={14} strokeWidth={2.5} /></button>
-                  <span className="font-black text-gray-900 text-sm w-6 text-center">{publicQty}</span>
+                  <input
+                    type="number"
+                    min="1"
+                    value={publicQty === 0 ? '' : publicQty}
+                    onChange={(e) => {
+                      if (e.target.value === '') {
+                        setPublicQty(0);
+                      } else {
+                        const val = parseInt(e.target.value, 10);
+                        if (!isNaN(val) && val >= 0) {
+                          setPublicQty(val);
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      if (publicQty <= 0) setPublicQty(1);
+                    }}
+                    className="font-black text-gray-900 text-sm w-8 text-center bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
                   <button type="button" onClick={() => setPublicQty(publicQty + 1)} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Plus size={14} strokeWidth={2.5} /></button>
                 </div>
               </div>
@@ -1176,8 +1207,8 @@ export default function LandingScreen() {
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
          .scroll-anim {
           opacity: 0;
-          transform: translateY(60px) scale(0.97);
-          transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+          transform: translateY(100px) scale(0.92);
+          transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
           will-change: opacity, transform;
         }
         .scroll-anim.animate-slide-up-fade {

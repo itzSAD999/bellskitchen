@@ -9,9 +9,10 @@ interface Props {
   onIncrement: () => void;
   onDecrement: () => void;
   onDeselect:  () => void;
+  onChangeQuantity: (qty: number) => void;
 }
 
-export default function AddonItem({ addon, quantity, onIncrement, onDecrement, onDeselect }: Props) {
+export default function AddonItem({ addon, quantity, onIncrement, onDecrement, onDeselect, onChangeQuantity }: Props) {
   const isSelected = quantity > 0;
   const fixedPrice = addon.prices.fixed ?? 0;
 
@@ -75,9 +76,18 @@ export default function AddonItem({ addon, quantity, onIncrement, onDecrement, o
             >
               <Minus size={10} strokeWidth={3} />
             </button>
-            <span className="font-extrabold text-brand-800 text-xs w-4 text-center select-none">
-              {quantity}
-            </span>
+            <input
+              type="number"
+              min="0"
+              value={quantity === 0 ? '' : quantity}
+              onChange={(e) => {
+                const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
+                if (!isNaN(val) && val >= 0) {
+                  onChangeQuantity(val);
+                }
+              }}
+              className="font-extrabold text-brand-800 text-xs w-7 text-center bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
             <button
               type="button"
               onClick={onIncrement}
