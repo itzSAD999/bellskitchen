@@ -162,13 +162,21 @@ export default function LandingScreen() {
   const featuredFried = friedItems[friedIndex];
   const featuredBanku = bankuItems[bankuIndex];
 
-  /* ── Scroll effect for header ── */
+  /* ── Scroll effect for header & image toggling ── */
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+      
+      // Auto-toggle images as user scrolls down
+      const scrubY = window.scrollY;
+      if (jollofItems.length > 0) setJollofIndex(Math.floor(scrubY / 400) % jollofItems.length);
+      if (friedItems.length > 0) setFriedIndex(Math.floor(scrubY / 400) % friedItems.length);
+      if (bankuItems.length > 0) setBankuIndex(Math.floor(scrubY / 400) % bankuItems.length);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [jollofItems.length, friedItems.length, bankuItems.length]);
 
   /* ── Scroll Animations Observer ── */
   useEffect(() => {
