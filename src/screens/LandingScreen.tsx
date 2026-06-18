@@ -57,7 +57,7 @@ const CategorySlider = ({ categoryName, items, onOrder }: { categoryName: string
   if (!featured) return null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center border-t border-gray-200/50 mt-8 scroll-anim">
+    <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center border-t border-gray-200/50 mt-8">
       {/* Brand Identity */}
       <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
         <div className="flex items-center gap-6">
@@ -849,10 +849,11 @@ export default function LandingScreen() {
 
       {/* PUBLIC ORDER CONFIG MODAL */}
       {pendingPublicItem && (
-        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden bg-white relative">
-            <button type="button" onClick={() => setPendingPublicItem(null)} className="absolute top-5 right-5 p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 hover:bg-gray-200 transition-all"><X size={16} /></button>
-            <div className="bg-[#431407] pt-6 pb-4 px-6 border-b-4 border-[#d97706] relative">
+        <div className="fixed inset-0 z-50 flex justify-center sm:items-center sm:p-4 bg-black/60 backdrop-blur-md">
+          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col relative animate-slide-up sm:animate-none">
+            <button type="button" onClick={() => setPendingPublicItem(null)} className="absolute top-4 right-4 p-2 rounded-full bg-black/20 text-white hover:bg-black/40 transition-all z-20 shadow-md backdrop-blur-sm"><X size={18} strokeWidth={3} /></button>
+            
+            <div className="flex-shrink-0 bg-[#431407] pt-6 pb-4 px-6 border-b-4 border-[#d97706] relative">
               <span className="text-[10px] text-white font-black uppercase tracking-widest bg-white/20 border border-white/20 px-3 py-1 rounded-full mb-3 inline-block">{pendingPublicItem.category}</span>
               <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2 pt-1">
                  {landingMenu.filter(m => m.category === pendingPublicItem.category && m.available).map(m => (
@@ -870,11 +871,12 @@ export default function LandingScreen() {
                  ))}
               </div>
             </div>
-            <div className="p-8 pb-6 border-b border-gray-100 bg-white">
-              <h2 className="text-3xl font-black text-gray-900 leading-tight italic tracking-tight">{pendingPublicItem.name}</h2>
-              <p className="text-sm text-gray-500 mt-2 font-medium leading-relaxed">{pendingPublicItem.description}</p>
-            </div>
-            <div className="p-8 space-y-6 bg-gray-50/50">
+            <div className="flex-1 overflow-y-auto hide-scrollbar bg-gray-50">
+              <div className="p-8 pb-6 border-b border-gray-100 bg-white">
+                <h2 className="text-3xl font-black text-gray-900 leading-tight italic tracking-tight">{pendingPublicItem.name}</h2>
+                <p className="text-sm text-gray-500 mt-2 font-medium leading-relaxed">{pendingPublicItem.description}</p>
+              </div>
+              <div className="p-8 space-y-6">
               {pendingPublicItem.hasSizes && (
                 <div className="space-y-3">
                   <label className="text-[11px] font-black uppercase tracking-widest block text-gray-800">Select Size</label>
@@ -936,9 +938,10 @@ export default function LandingScreen() {
                   <button type="button" onClick={() => setPublicQty(publicQty + 1)} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Plus size={14} strokeWidth={2.5} /></button>
                 </div>
               </div>
-              <button type="button" onClick={handleAddPublicCart} className="w-full flex items-center justify-center py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 active:translate-y-0 bg-[#d97706] hover:bg-[#b45309] mt-4">
-                Add to Order
-              </button>
+                <button type="button" onClick={handleAddPublicCart} className="w-full flex items-center justify-center py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 active:translate-y-0 bg-[#d97706] hover:bg-[#b45309] mt-4 mb-4">
+                  Add to Order
+                </button>
+              </div>
             </div>
           </div>
         </div>
