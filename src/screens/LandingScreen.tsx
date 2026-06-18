@@ -1105,7 +1105,7 @@ export default function LandingScreen() {
 
                 {/* Quick menu switcher tabs below image */}
                 <div className="flex-shrink-0 bg-[#431407] py-3.5 px-4 border-t border-[#d97706]/35 relative z-10">
-                  <div className="flex gap-2 overflow-x-auto hide-scrollbar">
+                  <div className="flex flex-wrap gap-2 justify-start sm:justify-center">
                      {landingMenu.filter(m => m.available).map(m => (
                         <button key={m.id} onClick={() => {
                            setPendingPublicItem(m);
@@ -1313,9 +1313,11 @@ export default function LandingScreen() {
                     className="w-48 h-48 object-contain mb-4 animate-bounce-sm hover:scale-110 transition-transform duration-500" 
                   />
                   <h3 className="font-black text-gray-800 text-lg uppercase tracking-wider mb-2">Your Cart is Empty</h3>
-                  <p className="text-gray-500 text-xs font-semibold leading-relaxed max-w-[280px] mb-6">
-                    Mmm... smells delicious out there! Tap here or browse our menu to add your favorite hot meals to your plate.
-                  </p>
+                  <div className="bg-[#fffbeb] border border-[#d97706]/20 rounded-2xl p-4 max-w-[300px] mb-6 shadow-sm select-none">
+                    <p className="text-[#431407] text-xs font-black leading-relaxed italic text-center">
+                      "Mmm... smells delicious out there! Tap here or browse our menu to add your favorite hot meals to your plate."
+                    </p>
+                  </div>
                   <button
                     type="button"
                     onClick={(e) => {
