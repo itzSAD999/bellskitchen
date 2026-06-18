@@ -171,6 +171,12 @@ export default function LandingScreen() {
   const [publicAddons, setPublicAddons] = useState<any[]>([]);
   const [addedFeedback, setAddedFeedback] = useState(false);
 
+  /* ── Checkout Details State ── */
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [deliveryLocation, setDeliveryLocation] = useState('');
+  const [specialNotes, setSpecialNotes] = useState('');
+
   /* ── Login State ── */
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [identifier, setIdentifier] = useState('');
@@ -270,15 +276,52 @@ export default function LandingScreen() {
   };
 
   const handleWhatsAppSubmit = () => {
+    if (!customerName.trim() || !deliveryLocation.trim()) {
+      setToastMessage("Please enter Name and Delivery Location!");
+      setTimeout(() => setToastMessage(''), 3000);
+      return;
+    }
+
     const total = publicCart.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+    
+    // Construct premium WhatsApp message
     let msg = `🔔 *New Web Order* 🔔\n\n`;
+    msg += `👤 *Customer:* ${customerName.trim()}\n`;
+    if (customerPhone.trim()) msg += `📞 *Phone:* ${customerPhone.trim()}\n`;
+    msg += `📍 *Delivery:* ${deliveryLocation.trim()}\n`;
+    if (specialNotes.trim()) msg += `📝 *Notes:* ${specialNotes.trim()}\n`;
+    
+    if (total >= 100) {
+      msg += `🎁 *Promo:* Free Spicy Shito Jar Unlocked! 🌶️\n`;
+    }
+    
+    msg += `\n🛒 *Items Ordered:*\n`;
+    
     publicCart.forEach((item: any) => {
       msg += `• ${item.quantity}x ${item.item.name} (${item.size})\n`;
-      if (item.addons.length > 0) msg += `  Add-ons: ${item.addons.map((a: any) => a.name).join(', ')}\n`;
+      if (item.addons.length > 0) {
+        const addonCounts: Record<string, number> = {};
+        item.addons.forEach((a: any) => {
+          addonCounts[a.name] = (addonCounts[a.name] ?? 0) + 1;
+        });
+        const addonStr = Object.entries(addonCounts)
+          .map(([name, qty]) => `${name}${qty > 1 ? ` (x${qty})` : ''}`)
+          .join(', ');
+        msg += `  Add-ons: ${addonStr}\n`;
+      }
     });
+    
     msg += `\n*Total:* GH₵ ${total.toFixed(2)}`;
+    
     window.open(`https://wa.me/233505201685?text=${encodeURIComponent(msg)}`, '_blank');
-    setPublicCart([]); setIsPublicCartOpen(false);
+    
+    // Clean up
+    setPublicCart([]);
+    setIsPublicCartOpen(false);
+    setCustomerName('');
+    setCustomerPhone('');
+    setDeliveryLocation('');
+    setSpecialNotes('');
   };
 
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -1126,15 +1169,41 @@ export default function LandingScreen() {
       {/* PUBLIC CART DRAWER */}
       {isPublicCartOpen && (
         <div className="fixed inset-0 backdrop-blur-sm z-[80] flex justify-end" style={{ background: 'rgba(0,0,0,0.5)' }}>
-          <div className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-slide-up sm:animate-none">
+          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col animate-slide-up sm:animate-none">
+            {/* Header */}
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-black text-gray-900">Your Order</h2>
-                <p className="text-xs text-gray-500 font-bold mt-1 uppercase tracking-wider">{publicCart.length} Items</p>
+                <h2 className="text-xl font-black text-gray-900">Your Order Plate</h2>
+                <p className="text-xs text-gray-500 font-bold mt-1 uppercase tracking-wider">{publicCart.length} Items Selected</p>
               </div>
               <button type="button" onClick={() => setIsPublicCartOpen(false)} className="p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all"><X size={18} /></button>
             </div>
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/50">
+            
+            {/* Scrollable Body Container */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-gray-50/50 hide-scrollbar">
+              {/* Milestone progress bar if cart is not empty */}
+              {publicCart.length > 0 && (() => {
+                const cartTotal = publicCart.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+                const progressPercent = Math.min(100, (cartTotal / 100) * 100);
+                return (
+                  <div className="bg-[#fffbeb] border border-amber-200/60 rounded-2xl p-4 flex flex-col gap-2 shadow-sm animate-scale-in">
+                    <div className="flex justify-between items-center text-[10px] font-black uppercase text-[#431407] tracking-wider">
+                      <span className="flex items-center gap-1">🌶️ Chef's Spicy Shito Bonus</span>
+                      <span>{cartTotal >= 100 ? 'UNLOCKED' : `¢${cartTotal.toFixed(0)} / ¢100`}</span>
+                    </div>
+                    <div className="w-full bg-amber-200/40 rounded-full h-2 overflow-hidden border border-amber-300/20">
+                      <div className="bg-[#d97706] h-2 rounded-full transition-all duration-700" style={{ width: `${progressPercent}%` }} />
+                    </div>
+                    <p className="text-[10px] text-gray-500 font-bold leading-normal">
+                      {cartTotal >= 100 
+                        ? '🎉 Congrats! A free signature jar of our hot Kumasi party shito has been added!' 
+                        : `Add ¢${(100 - cartTotal).toFixed(2)} more to unlock a free jar of Kumasi party shito!`
+                      }
+                    </p>
+                  </div>
+                );
+              })()}
+
               {publicCart.length === 0 ? (
                 <div className="text-center py-12 px-6 flex flex-col items-center justify-center my-auto cursor-pointer" onClick={() => {
                   setIsPublicCartOpen(false);
@@ -1166,32 +1235,107 @@ export default function LandingScreen() {
                   </button>
                 </div>
               ) : (
-                publicCart.map((item: any) => (
-                  <div key={item.cartItemId} className="bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-sm">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="text-sm font-black text-gray-900">{item.item.name}</h4>
-                        <p className="text-xs text-gray-500 font-bold mt-1">Size: {item.size}</p>
-                        {item.addons.length > 0 && <p className="text-[11px] text-gray-400 font-semibold mt-1 truncate max-w-[200px]">+ {item.addons.map((a: any) => a.name).join(', ')}</p>}
+                <div className="space-y-3.5">
+                  {publicCart.map((item: any) => (
+                    <div key={item.cartItemId} className="bg-white rounded-[1.5rem] p-4 border border-gray-150/45 shadow-sm flex gap-4 transition-all hover:shadow-md">
+                      <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-[#431407] border border-gray-100 shadow-inner">
+                        <img src={item.item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.item.name} className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-sm font-black text-[#d97706]">GH₵{item.totalPrice.toFixed(2)}</span>
+                      <div className="flex-1 flex flex-col justify-between">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-sm font-black text-gray-900 leading-tight">{item.item.name}</h4>
+                            <p className="text-[10px] text-gray-500 font-bold mt-1 uppercase tracking-wide">Size: {item.size}</p>
+                            {item.addons.length > 0 && <p className="text-[10px] text-gray-400 font-semibold mt-1 leading-normal">+ {item.addons.map((a: any) => a.name).join(', ')}</p>}
+                          </div>
+                          <span className="text-sm font-black text-[#d97706] select-none">GH₵{(item.totalPrice).toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center pt-3 mt-3 border-t border-gray-50">
+                          <button type="button" onClick={() => setPublicCart(publicCart.filter((c: any) => c.cartItemId !== item.cartItemId))} className="text-[10px] text-gray-400 hover:text-red-500 font-black uppercase tracking-wider flex items-center gap-1 transition-colors"><Trash2 size={11} /> Remove</button>
+                          <div className="flex items-center gap-2 bg-gray-50 border border-gray-150/40 rounded-full p-0.5">
+                            <button type="button" onClick={() => { const nq = Math.max(1, item.quantity - 1); setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: nq, totalPrice: c.unitPrice * nq } : c)); }} className="w-6 h-6 flex items-center justify-center bg-white rounded-full text-gray-800 font-bold shadow-sm hover:bg-gray-100 transition-colors"><Minus size={10} /></button>
+                            <input
+                              type="number"
+                              min="1"
+                              value={item.quantity === 0 ? '' : item.quantity}
+                              onChange={(e) => {
+                                const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
+                                if (!isNaN(val) && val >= 0) {
+                                  setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: val, totalPrice: c.unitPrice * val } : c));
+                                }
+                              }}
+                              onBlur={() => {
+                                if (item.quantity <= 0) {
+                                  setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: 1, totalPrice: c.unitPrice } : c));
+                                }
+                              }}
+                              className="text-gray-900 text-xs font-black w-6 text-center bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
+                            <button type="button" onClick={() => { const nq = item.quantity + 1; setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: nq, totalPrice: c.unitPrice * nq } : c)); }} className="w-6 h-6 flex items-center justify-center bg-white rounded-full text-gray-800 font-bold shadow-sm hover:bg-gray-100 transition-colors"><Plus size={10} /></button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center pt-4 mt-4 border-t border-gray-50">
-                      <button type="button" onClick={() => setPublicCart(publicCart.filter((c: any) => c.cartItemId !== item.cartItemId))} className="text-[10px] text-gray-400 hover:text-red-500 font-black uppercase tracking-wider flex items-center gap-1 transition-colors"><Trash2 size={12} /> Remove</button>
-                      <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-full p-1">
-                        <button type="button" onClick={() => { const nq = Math.max(1, item.quantity - 1); setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: nq, totalPrice: c.unitPrice * nq } : c)); }} className="w-7 h-7 flex items-center justify-center bg-white rounded-full text-gray-800 font-bold shadow-sm"><Minus size={12} /></button>
-                        <span className="text-gray-900 text-xs font-black w-4 text-center">{item.quantity}</span>
-                        <button type="button" onClick={() => { const nq = item.quantity + 1; setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: nq, totalPrice: c.unitPrice * nq } : c)); }} className="w-7 h-7 flex items-center justify-center bg-white rounded-full text-gray-800 font-bold shadow-sm"><Plus size={12} /></button>
-                      </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Delivery Details Form */}
+              {publicCart.length > 0 && (
+                <div className="bg-white rounded-[2rem] p-5 border border-gray-150/45 shadow-sm space-y-4 animate-scale-in">
+                  <h3 className="text-[10px] font-black uppercase text-gray-500 tracking-widest leading-none border-b border-gray-100 pb-3">Delivery Details</h3>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-[9px] font-black text-gray-500 uppercase tracking-wider">Your Name</label>
+                      <input
+                        type="text"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        placeholder="e.g. Ama K."
+                        className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] rounded-xl px-3 py-2 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[9px] font-black text-gray-500 uppercase tracking-wider">Phone Number</label>
+                      <input
+                        type="text"
+                        value={customerPhone}
+                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        placeholder="e.g. 0501234567"
+                        className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] rounded-xl px-3 py-2 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all"
+                      />
                     </div>
                   </div>
-                ))
+
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-black text-gray-500 uppercase tracking-wider">Hostel / Delivery Location</label>
+                    <input
+                      type="text"
+                      value={deliveryLocation}
+                      onChange={(e) => setDeliveryLocation(e.target.value)}
+                      placeholder="e.g. No Weapon Hostel Annex, Room 24"
+                      className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] rounded-xl px-3 py-2 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-black text-gray-500 uppercase tracking-wider">Special Requests / Notes</label>
+                    <input
+                      type="text"
+                      value={specialNotes}
+                      onChange={(e) => setSpecialNotes(e.target.value)}
+                      placeholder="e.g. Extra hot shito, make chicken well done"
+                      className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] rounded-xl px-3 py-2 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all"
+                    />
+                  </div>
+                </div>
               )}
             </div>
             
             {/* Cross-Sell / Add-ons Section */}
             {publicCart.length > 0 && (
-              <div className="bg-white border-t border-gray-100 p-4 pb-2">
+              <div className="bg-white border-t border-gray-100 p-4 pb-2 flex-shrink-0">
                 <h3 className="text-[10px] font-black uppercase text-gray-500 tracking-widest mb-3">Frequently Bought Together</h3>
                 <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
                   {landingMenu.filter(m => m.available && m.category !== 'main' && !publicCart.some(c => c.item.id === m.id)).slice(0, 4).map(m => (
@@ -1206,12 +1350,13 @@ export default function LandingScreen() {
               </div>
             )}
 
-            <div className="p-6 border-t border-gray-100 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-10 relative">
-              <div className="flex items-center justify-between mb-6">
+            {/* Footer Summary & Checkout */}
+            <div className="p-6 border-t border-gray-100 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-10 relative flex-shrink-0">
+              <div className="flex items-center justify-between mb-5">
                 <span className="text-xs font-black uppercase text-gray-500 tracking-widest">Total Amount</span>
                 <span className="text-3xl font-black text-gray-900">GH₵{publicCart.reduce((sum: number, item: any) => sum + item.totalPrice, 0).toFixed(2)}</span>
               </div>
-              <button disabled={publicCart.length === 0} type="button" onClick={handleWhatsAppSubmit} className="w-full flex items-center justify-center gap-2 py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none bg-[#25D366] hover:bg-[#1ebd57]">
+              <button disabled={publicCart.length === 0} type="button" onClick={handleWhatsAppSubmit} className="w-full flex items-center justify-center gap-2 py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none bg-[#25D366] hover:bg-[#1ebd57] select-none">
                 <Send size={16} /> Complete via WhatsApp
               </button>
             </div>
