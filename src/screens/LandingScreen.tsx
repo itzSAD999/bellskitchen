@@ -236,7 +236,7 @@ export default function LandingScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] font-sans text-gray-800" style={{ backgroundImage: bgPattern, backgroundAttachment: 'fixed' }}>
+    <div className="min-h-screen bg-[#f8f9fa] font-sans text-gray-800 pb-24 lg:pb-0" style={{ backgroundImage: bgPattern, backgroundAttachment: 'fixed' }}>
       
       {/* ── TOP NAV ── */}
       <div className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled || view === 'menu' ? 'bg-[#431407]/95 border-b-4 border-[#d97706] backdrop-blur-md pb-4 pt-4 shadow-2xl' : 'bg-gradient-to-b from-black/60 to-transparent pb-10 pt-4'}`}>
@@ -280,7 +280,7 @@ export default function LandingScreen() {
       </div>
 
       {/* ── MOBILE BOTTOM NAV ── */}
-      <div className="lg:hidden fixed bottom-0 left-0 w-full bg-[#431407]/95 backdrop-blur-md border-t border-white/10 z-40 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+      <div className="lg:hidden fixed bottom-0 left-0 w-full bg-[#431407]/95 backdrop-blur-md border-t border-white/10 z-40 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <div className="flex items-center justify-around px-2 py-3">
           <button onClick={() => { setView('home'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className={`flex flex-col items-center gap-1 w-16 transition-colors ${view === 'home' ? 'text-[#d97706]' : 'text-white/60 hover:text-white'}`}>
             <Home size={22} />
