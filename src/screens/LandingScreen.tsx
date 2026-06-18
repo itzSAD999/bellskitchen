@@ -533,84 +533,6 @@ export default function LandingScreen() {
         </div>
       </div>
 
-      {/* ── REVIEWS & FAQ SECTION ── */}
-      <div className="max-w-7xl mx-auto px-4 py-20 mt-12 border-t border-gray-200/50 scroll-anim" id="reviews-faq">
-        <div className="flex flex-col lg:flex-row gap-16">
-          {/* Customer Reviews */}
-          <div className="w-full lg:w-1/2">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 rounded-full bg-[#d97706]/10 flex items-center justify-center text-[#d97706]">
-                <MessageCircle size={20} />
-              </div>
-              <h2 className="text-3xl font-black italic text-gray-900 tracking-tight">Customer Reviews</h2>
-            </div>
-            <div className="space-y-6">
-              {reviews.map((review) => (
-                <div key={review.id} className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-                  {/* Decorative Background Icon */}
-                  <Quote size={120} className="absolute -bottom-6 -right-6 text-gray-50 opacity-50 group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-500" />
-                  <div className="relative z-10">
-                    <div className="flex items-center gap-1 mb-4">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={16} className={i < review.rating ? "text-[#d97706] fill-[#d97706]" : "text-gray-300 fill-gray-300"} />
-                      ))}
-                    </div>
-                    <p className="text-gray-600 font-medium leading-relaxed italic text-lg mb-6">"{review.text}"</p>
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center font-black text-[#d97706] text-lg">
-                        {review.name.charAt(0)}
-                      </div>
-                      <div>
-                        <h4 className="font-black text-gray-900">{review.name}</h4>
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{review.role}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* FAQs */}
-          <div className="w-full lg:w-1/2">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 rounded-full bg-[#d97706]/10 flex items-center justify-center text-[#d97706]">
-                <HelpCircle size={20} />
-              </div>
-              <h2 className="text-3xl font-black italic text-gray-900 tracking-tight">Frequently Asked</h2>
-            </div>
-            <div className="space-y-4">
-              {faqs.map((faq) => (
-                <div key={faq.id} onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)} className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 group hover:border-[#d97706] hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden relative">
-                  {/* Decorative Background Icon */}
-                  <HelpCircle size={80} className="absolute -top-4 -right-4 text-gray-50 opacity-0 group-hover:opacity-100 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500" />
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-black text-gray-900 text-lg group-hover:text-[#d97706] transition-colors">{faq.q}</h3>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${openFaq === faq.id ? 'bg-[#d97706] text-white rotate-180' : 'bg-gray-50 text-gray-400 group-hover:bg-[#d97706] group-hover:text-white'}`}>
-                        <ChevronDown size={16} />
-                      </div>
-                    </div>
-                    {openFaq === faq.id && (
-                       <p className="text-gray-500 font-medium leading-relaxed pr-8 mt-4 animate-fade-in">{faq.a}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            {/* Ask Question Card */}
-            <div className="mt-8 bg-[#431407] rounded-3xl p-8 relative overflow-hidden group hover:shadow-[0_20px_40px_rgba(67,20,7,0.3)] transition-all duration-500">
-               <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-[#d97706] rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-               <h3 className="text-white font-black text-xl mb-2">Still have questions?</h3>
-               <p className="text-white/70 font-medium text-sm mb-6">Can't find the answer you're looking for? Please chat with our friendly team.</p>
-               <button className="bg-[#d97706] text-white font-black text-xs uppercase tracking-widest py-3 px-6 rounded-full hover:bg-white hover:text-[#d97706] transition-colors flex items-center gap-2">
-                 Get in touch <ArrowRight size={14} />
-               </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* ── OUR OUTLETS SECTION ── */}
       <div className="max-w-7xl mx-auto px-4 py-20 mt-12 border-t border-gray-200/50 scroll-anim" id="our-outlets">
@@ -708,6 +630,45 @@ export default function LandingScreen() {
                </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ── FAQ SECTION ── */}
+      <div className="max-w-4xl mx-auto px-4 py-20 mt-12 scroll-anim" id="faq">
+        <div className="flex items-center justify-center gap-3 mb-12">
+          <div className="w-12 h-12 rounded-full bg-[#d97706]/10 flex items-center justify-center text-[#d97706]">
+            <HelpCircle size={24} />
+          </div>
+          <h2 className="text-4xl font-black italic text-gray-900 tracking-tight">Frequently Asked</h2>
+        </div>
+        <div className="space-y-4">
+          {faqs.map((faq) => (
+            <div key={faq.id} onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)} className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 group hover:border-[#d97706] hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden relative">
+              <HelpCircle size={80} className="absolute -top-4 -right-4 text-gray-50 opacity-0 group-hover:opacity-100 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-black text-gray-900 text-lg group-hover:text-[#d97706] transition-colors">{faq.q}</h3>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${openFaq === faq.id ? 'bg-[#d97706] text-white rotate-180' : 'bg-gray-50 text-gray-400 group-hover:bg-[#d97706] group-hover:text-white'}`}>
+                    <ChevronDown size={16} />
+                  </div>
+                </div>
+                {openFaq === faq.id && (
+                   <p className="text-gray-500 font-medium leading-relaxed pr-8 mt-4 animate-fade-in">{faq.a}</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Ask Question Card */}
+        <div className="mt-12 bg-[#431407] rounded-3xl p-10 relative overflow-hidden group hover:shadow-[0_20px_40px_rgba(67,20,7,0.3)] transition-all duration-500 max-w-2xl mx-auto text-center">
+           <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-[#d97706] rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
+           <div className="absolute -left-10 -top-10 w-40 h-40 bg-[#ffefd4] rounded-full blur-3xl opacity-10" />
+           <h3 className="text-white font-black text-2xl mb-3 relative z-10">Still have questions?</h3>
+           <p className="text-white/70 font-medium text-base mb-8 relative z-10">Can't find the answer you're looking for? Please chat with our friendly team.</p>
+           <button className="bg-[#d97706] text-white font-black text-sm uppercase tracking-widest py-4 px-8 rounded-full hover:bg-white hover:text-[#d97706] transition-colors inline-flex items-center justify-center gap-2 relative z-10">
+             Get in touch <ArrowRight size={16} />
+           </button>
         </div>
       </div>
       </>
