@@ -181,9 +181,15 @@ export default function LandingScreen() {
       });
     }, { threshold: 0.15 });
 
-    document.querySelectorAll('.scroll-anim').forEach(el => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
+    const timeoutId = setTimeout(() => {
+      document.querySelectorAll('.scroll-anim').forEach(el => observer.observe(el));
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      observer.disconnect();
+    }
+  }, [view]);
 
   /* ── Cart Helpers ── */
   const getPublicItemPrice = (item: any, size: 'S' | 'M' | 'L', selectedAddons: any[]) => {
@@ -280,35 +286,37 @@ export default function LandingScreen() {
         {/* Background Image & Overlay */}
         <div className="absolute inset-0 w-full h-full">
            <img src="https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&q=80&w=2000" alt="Delicious Food Background" className="w-full h-full object-cover scale-105 animate-[slow-zoom_20s_ease-in-out_infinite_alternate]" />
-           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-[#f8f9fa]"/>
+           <div className="absolute inset-0 bg-gradient-to-b from-[#431407]/90 via-black/60 to-[#f8f9fa] mix-blend-multiply"/>
+           <div className="absolute inset-0 bg-gradient-to-tr from-[#d97706]/20 to-transparent"/>
         </div>
+        
+        {/* Floating Decorative Elements */}
+        <div className="absolute top-1/4 left-10 w-24 h-24 bg-[#d97706]/20 rounded-full blur-2xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-10 w-32 h-32 bg-[#ffefd4]/10 rounded-full blur-3xl animate-pulse delay-1000" />
         
         {/* Hero Content */}
         <div className="relative z-10 text-center max-w-5xl mx-auto px-4 mt-20 scroll-anim">
-           <div className="inline-block bg-[#d97706] text-white font-black px-5 py-2 rounded-full text-[10px] sm:text-xs tracking-[0.3em] mb-8 shadow-2xl border border-white/20 uppercase">
+           <div className="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-[#ffefd4] font-black px-6 py-2.5 rounded-full text-xs tracking-[0.3em] mb-8 shadow-xl uppercase relative overflow-hidden group">
+             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"/>
              Welcome to Bells Kitchen
            </div>
-           <h1 className="text-white text-5xl md:text-7xl lg:text-[6.5rem] font-black mb-8 tracking-tighter leading-[1.05] drop-shadow-2xl">
-              Redefining <br/> <span className="text-[#d97706] italic">Everyday</span> Meals.
-           </h1>
-           <p className="text-white/90 text-lg md:text-2xl font-bold leading-relaxed mb-12 max-w-3xl mx-auto drop-shadow-md">
-              Experience the finest Jollof and Fried Rice, delivered hot in our premium signature packaging. True flavors of Kumasi.
-           </p>
-           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <button onClick={() => document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-[#d97706] text-white font-black text-sm tracking-wider py-4 px-12 rounded-full shadow-[0_10px_30px_rgba(217,119,6,0.4)] hover:bg-[#b45309] hover:-translate-y-1 transition-all">
-                EXPLORE MENU
-              </button>
-              <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-sm tracking-wider py-4 px-12 rounded-full hover:bg-white hover:text-[#431407] transition-all">
-                FIND US
-              </button>
-           </div>
-        </div>
-        
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 animate-bounce cursor-pointer" onClick={() => document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' })}>
-           <span className="text-[10px] font-black uppercase tracking-widest">Scroll Down</span>
-           <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
-              <div className="w-1.5 h-1.5 bg-white/50 rounded-full"/>
+           
+           <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-[3rem] p-10 md:p-16 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative">
+             <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#d97706]/30 blur-3xl rounded-full"/>
+             <h1 className="text-white text-5xl md:text-7xl lg:text-[6.5rem] font-black mb-8 tracking-tighter leading-[1.05] relative z-10">
+                Redefining <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffefd4] to-[#d97706] italic">Everyday</span> Meals.
+             </h1>
+             <p className="text-white/80 text-lg md:text-2xl font-semibold leading-relaxed mb-12 max-w-2xl mx-auto relative z-10">
+                Experience the finest Jollof and Fried Rice, delivered hot in our signature premium packaging. <span className="text-[#ffefd4]">True flavors of Kumasi.</span>
+             </p>
+             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10">
+                <button onClick={() => setView('menu')} className="w-full sm:w-auto bg-gradient-to-r from-[#d97706] to-[#b45309] text-white font-black text-sm tracking-wider py-4 px-12 rounded-full shadow-[0_10px_30px_rgba(217,119,6,0.5)] hover:shadow-[0_15px_40px_rgba(217,119,6,0.7)] hover:-translate-y-1 transition-all">
+                  EXPLORE MENU
+                </button>
+                <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/5 backdrop-blur-md border-2 border-white/20 text-white font-black text-sm tracking-wider py-4 px-12 rounded-full hover:bg-white hover:text-[#431407] hover:border-white transition-all shadow-lg hover:-translate-y-1">
+                  FIND US
+                </button>
+             </div>
            </div>
         </div>
       </div>
