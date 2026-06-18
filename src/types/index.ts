@@ -13,6 +13,8 @@ export interface MenuItem {
   };
   available:   boolean;
   sortOrder:   number;
+  description?: string;
+  imageUrl?:    string;
 }
 
 export interface AddOn {

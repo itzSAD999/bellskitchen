@@ -22,6 +22,8 @@ function mapRow(row: Record<string, unknown>): MenuItem {
     },
     available: row.available as boolean,
     sortOrder: row.sort_order as number,
+    description: row.description as string | undefined,
+    imageUrl:  row.image_url as string | undefined,
   };
 }
 
