@@ -363,7 +363,7 @@ export default function LandingScreen() {
           {/* Left: Logos & Brand Pill */}
           <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('home')}>
             <div className="w-12 h-12 rounded-full overflow-hidden border-[3px] border-white shadow-[0_5px_15px_rgba(217,119,6,0.3)] bg-white transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
-               <img src="/packaging_logo.jpg" alt="Bells Kitchen" className="w-full h-full object-cover" style={{ objectPosition: '20% 50%', transform: 'scale(1.3)' }} />
+               <img src="/logo_square.png" alt="Bells Kitchen" className="w-full h-full object-cover" />
             </div>
             <div className="hidden sm:flex flex-col items-start leading-none group-hover:translate-x-1 transition-transform">
               <span className="font-black text-white text-xl tracking-tight drop-shadow-md">BELLS</span>
@@ -912,7 +912,7 @@ export default function LandingScreen() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 text-sm font-semibold text-white/70 mb-16">
             <div className="md:col-span-4">
                <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-[#d97706] mb-6 bg-white shadow-xl relative group cursor-pointer">
-                  <img src="/packaging_logo.jpg" alt="Bells Kitchen" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" style={{ objectPosition: '20% 50%', transform: 'scale(1.3)' }} />
+                  <img src="/logo_square.png" alt="Bells Kitchen" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                </div>
                <p className="leading-relaxed text-base max-w-xs text-white/80">
                  Crafted to redefine everyday meals. Fresh, bold, and unforgettable. Join the fast food revolution today.
@@ -1001,165 +1001,173 @@ export default function LandingScreen() {
       {/* PUBLIC ORDER CONFIG MODAL */}
       {pendingPublicItem && (
         <div className="fixed inset-0 z-[80] flex justify-center sm:items-center sm:p-4 bg-black/60 backdrop-blur-md" onClick={() => setPendingPublicItem(null)}>
-          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col relative animate-slide-up sm:animate-none" onClick={(e) => e.stopPropagation()}>
-            <button type="button" onClick={() => setPendingPublicItem(null)} className="absolute top-4 right-4 p-2 rounded-full bg-black/25 text-white hover:bg-black/45 transition-all z-20 shadow-md backdrop-blur-sm"><X size={18} strokeWidth={3} /></button>
+          <div className="w-full h-full sm:h-auto sm:max-h-[85vh] sm:max-w-3xl sm:w-[90vw] lg:max-w-4xl bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col relative animate-slide-up sm:animate-none overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <button type="button" onClick={() => setPendingPublicItem(null)} className="absolute top-4 right-4 p-2 rounded-full bg-black/25 text-white hover:bg-black/45 transition-all z-30 shadow-md backdrop-blur-sm"><X size={18} strokeWidth={3} /></button>
             
-            {/* Hero Image Header with absolute overlay */}
-            <div className="h-52 relative overflow-hidden flex-shrink-0 bg-[#431407]">
-              <img src={pendingPublicItem.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={pendingPublicItem.name} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6">
-                <span className="text-[9px] text-[#ffefd4] font-black uppercase tracking-widest bg-amber-600/60 border border-amber-400/30 px-3 py-1 rounded-full mb-2 self-start backdrop-blur-xs select-none">Bells Signature</span>
-                <h2 className="text-2xl font-black text-white italic tracking-tight drop-shadow-md leading-tight">{pendingPublicItem.name}</h2>
-              </div>
-            </div>
-
-            {/* Quick menu switcher tabs below image */}
-            <div className="flex-shrink-0 bg-[#431407] py-3 px-4 border-b border-[#d97706]/30 relative z-10">
-              <div className="flex gap-2 overflow-x-auto hide-scrollbar">
-                 {landingMenu.filter(m => m.available).map(m => (
-                    <button key={m.id} onClick={() => {
-                       setPendingPublicItem(m);
-                       setPublicSize(m.hasSizes ? (m.prices.M ? 'M' : 'S') : 'M');
-                       setPublicQty(1);
-                       setPublicAddons([]);
-                    }} className={`flex-shrink-0 px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all relative border ${m.id === pendingPublicItem.id ? 'bg-[#d97706] text-white border-[#d97706] shadow-sm' : 'bg-white/5 text-white/50 border-white/10 hover:text-white hover:bg-white/10'}`}>
-                       {m.name}
-                    </button>
-                 ))}
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto hide-scrollbar bg-gray-50/50">
-              <div className="p-6 pb-5 border-b border-gray-100 bg-white">
-                <p className="text-xs text-gray-500 font-semibold leading-relaxed">{pendingPublicItem.description}</p>
-              </div>
-              <div className="p-6 space-y-6">
-              {pendingPublicItem.hasSizes && (
-                <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase tracking-widest block text-gray-800">Select Size</label>
-                  <div className="flex gap-3">
-                    {(['S', 'M', 'L'] as const).filter(sz => pendingPublicItem.prices?.[sz] !== undefined).map(sz => (
-                      <button key={sz} type="button" onClick={() => setPublicSize(sz)}
-                        className={`flex-1 py-3 px-4 rounded-[1.5rem] text-sm font-black uppercase tracking-wider transition-all border-2 flex flex-col items-center justify-center leading-none bg-white ${
-                          publicSize === sz
-                            ? 'bg-[#431407] text-[#ffefd4] border-[#d97706] shadow-xl scale-[1.03] ring-4 ring-[#d97706]/10'
-                            : 'border-gray-200 text-gray-700 hover:border-[#d97706]/40'
-                        }`}>
-                        <span className="text-xs font-black">{sz === 'S' ? 'Small' : sz === 'M' ? 'Medium' : 'Large'}</span>
-                        <span className={`text-[10px] font-bold mt-1.5 ${publicSize === sz ? 'text-[#ffefd4]' : 'text-gray-400'}`}>¢{pendingPublicItem.prices?.[sz]}</span>
-                      </button>
-                    ))}
+            <div className="flex flex-col sm:flex-row h-full sm:h-[75vh] md:h-[80vh] overflow-hidden">
+              {/* Left Side: Image Hero & Category switcher */}
+              <div className="w-full sm:w-[40%] flex flex-col bg-[#431407] border-b sm:border-b-0 sm:border-r border-[#d97706]/20 flex-shrink-0 h-52 sm:h-full overflow-hidden">
+                <div className="h-full relative overflow-hidden flex-1 bg-[#431407]">
+                  <img src={pendingPublicItem.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={pendingPublicItem.name} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6">
+                    <span className="text-[9px] text-[#ffefd4] font-black uppercase tracking-widest bg-amber-600/60 border border-amber-400/30 px-3 py-1 rounded-full mb-2 self-start backdrop-blur-xs select-none">Bells Signature</span>
+                    <h2 className="text-2xl font-black text-white italic tracking-tight drop-shadow-md leading-tight">{pendingPublicItem.name}</h2>
                   </div>
                 </div>
-              )}
-              <div className="space-y-3">
-                <label className="text-[11px] font-black uppercase tracking-widest block text-gray-800">Add-ons</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {state.addons.filter(a => a.available).map(addon => {
-                    const price = addon.prices.fixed || 0;
-                    const count = publicAddons.filter((a: any) => a.id === addon.id).length;
-                    return (
-                      <div key={addon.id} className={`p-3.5 rounded-2xl border-2 transition-all flex items-center justify-between text-xs font-bold ${
-                        count > 0
-                          ? 'border-[#d97706] bg-[#fffaf2] shadow-sm'
-                          : 'border-gray-200 bg-white hover:border-[#d97706]/20 text-gray-600'
-                      }`}>
-                        <div className="flex flex-col gap-0.5">
-                          <span className={`text-xs ${count > 0 ? 'text-[#431407] font-black' : 'text-gray-700'}`}>{addon.name}</span>
-                          <span className="text-[10px] text-gray-400 font-medium">+¢{price}</span>
-                        </div>
-                        {count === 0 ? (
-                          <button type="button" onClick={() => setPublicAddons([...publicAddons, { ...addon, price }])} className="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all">
-                             <Plus size={14} strokeWidth={3} />
-                          </button>
-                        ) : (
-                          <div className="flex items-center gap-2 bg-white border border-[#d97706]/30 rounded-full p-1">
-                             <button type="button" onClick={() => {
-                               const idx = publicAddons.findIndex((a: any) => a.id === addon.id);
-                               const newAddons = [...publicAddons];
-                               newAddons.splice(idx, 1);
-                               setPublicAddons(newAddons);
-                             }} className="w-6 h-6 rounded-full bg-orange-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all text-[#d97706]">
-                               <Minus size={12} strokeWidth={3} />
-                             </button>
-                             <input
-                               type="number"
-                               min="0"
-                               value={count === 0 ? '' : count}
-                               onChange={(e) => {
-                                 const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
-                                 if (!isNaN(val) && val >= 0) {
-                                   const listWithoutAddon = publicAddons.filter((a: any) => a.id !== addon.id);
-                                   const addedList = Array.from({ length: val }, () => ({ ...addon, price }));
-                                   setPublicAddons([...listWithoutAddon, ...addedList]);
-                                 }
-                               }}
-                               className="w-8 text-center text-xs font-black bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                             />
-                             <button type="button" onClick={() => setPublicAddons([...publicAddons, { ...addon, price }])} className="w-6 h-6 rounded-full bg-orange-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all text-[#d97706]">
-                               <Plus size={12} strokeWidth={3} />
-                             </button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              </div>
-            </div>
 
-            <div className="p-6 border-t border-gray-100 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-10 relative">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Subtotal</p>
-                  <p className="text-2xl font-black text-gray-900 mt-0.5">GH₵{(getPublicItemPrice(pendingPublicItem, publicSize, publicAddons) * publicQty).toFixed(2)}</p>
-                </div>
-                <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-full p-1.5 shadow-sm">
-                  <button type="button" onClick={() => setPublicQty(Math.max(1, publicQty - 1))} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Minus size={14} strokeWidth={2.5} /></button>
-                  <input
-                    type="number"
-                    min="1"
-                    value={publicQty === 0 ? '' : publicQty}
-                    onChange={(e) => {
-                      if (e.target.value === '') {
-                        setPublicQty(0);
-                      } else {
-                        const val = parseInt(e.target.value, 10);
-                        if (!isNaN(val) && val >= 0) {
-                          setPublicQty(val);
-                        }
-                      }
-                    }}
-                    onBlur={() => {
-                      if (publicQty <= 0) setPublicQty(1);
-                    }}
-                    className="font-black text-gray-900 text-sm w-8 text-center bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  />
-                  <button type="button" onClick={() => setPublicQty(publicQty + 1)} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Plus size={14} strokeWidth={2.5} /></button>
+                {/* Quick menu switcher tabs below image */}
+                <div className="flex-shrink-0 bg-[#431407] py-3.5 px-4 border-t border-[#d97706]/35 relative z-10">
+                  <div className="flex gap-2 overflow-x-auto hide-scrollbar">
+                     {landingMenu.filter(m => m.available).map(m => (
+                        <button key={m.id} onClick={() => {
+                           setPendingPublicItem(m);
+                           setPublicSize(m.hasSizes ? (m.prices.M ? 'M' : 'S') : 'M');
+                           setPublicQty(1);
+                           setPublicAddons([]);
+                        }} className={`flex-shrink-0 px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all relative border ${m.id === pendingPublicItem.id ? 'bg-[#d97706] text-white border-[#d97706] shadow-sm' : 'bg-white/5 text-white/50 border-white/10 hover:text-white hover:bg-white/10'}`}>
+                           {m.name}
+                        </button>
+                     ))}
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-3">
-                <button 
-                  type="button" 
-                  onClick={handleAddPublicCart} 
-                  className={`flex-grow flex items-center justify-center py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg active:translate-y-0 ${
-                    addedFeedback 
-                      ? 'bg-emerald-600 shadow-[0_5px_15px_rgba(16,185,129,0.4)]' 
-                      : 'bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#d97706] hover:-translate-y-0.5'
-                  }`}
-                >
-                  {addedFeedback ? '✓ Added to Order!' : 'Add to Order'}
-                </button>
-                {publicCart.length > 0 && (
-                  <button 
-                    type="button" 
-                    onClick={() => { setPendingPublicItem(null); setIsPublicCartOpen(true); }} 
-                    className="px-6 py-4 bg-[#431407] hover:bg-[#5c1d0a] text-[#ffefd4] font-black text-xs uppercase tracking-wider rounded-full shadow-lg transition-all hover:-translate-y-0.5 flex-shrink-0 font-extrabold"
-                  >
-                    Cart ({publicCart.length})
-                  </button>
-                )}
+
+              {/* Right Side: Options scroll area and subtotal footer */}
+              <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
+                <div className="flex-1 overflow-y-auto hide-scrollbar bg-gray-50/50">
+                  <div className="p-6 pb-5 border-b border-gray-100 bg-white">
+                    <p className="text-xs text-gray-500 font-semibold leading-relaxed">{pendingPublicItem.description}</p>
+                  </div>
+                  <div className="p-6 space-y-6">
+                    {pendingPublicItem.hasSizes && (
+                      <div className="space-y-3">
+                        <label className="text-[11px] font-black uppercase tracking-widest block text-gray-800">Select Size</label>
+                        <div className="flex gap-3">
+                          {(['S', 'M', 'L'] as const).filter(sz => pendingPublicItem.prices?.[sz] !== undefined).map(sz => (
+                            <button key={sz} type="button" onClick={() => setPublicSize(sz)}
+                              className={`flex-1 py-3 px-4 rounded-[1.5rem] text-sm font-black uppercase tracking-wider transition-all border-2 flex flex-col items-center justify-center leading-none bg-white ${
+                                publicSize === sz
+                                  ? 'bg-[#431407] text-[#ffefd4] border-[#d97706] shadow-xl scale-[1.03] ring-4 ring-[#d97706]/10'
+                                  : 'border-gray-200 text-gray-700 hover:border-[#d97706]/40'
+                              }`}>
+                              <span className="text-xs font-black">{sz === 'S' ? 'Small' : sz === 'M' ? 'Medium' : 'Large'}</span>
+                              <span className={`text-[10px] font-bold mt-1.5 ${publicSize === sz ? 'text-[#ffefd4]' : 'text-gray-400'}`}>¢{pendingPublicItem.prices?.[sz]}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-black uppercase tracking-widest block text-gray-800">Add-ons</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {state.addons.filter(a => a.available).map(addon => {
+                          const price = addon.prices.fixed || 0;
+                          const count = publicAddons.filter((a: any) => a.id === addon.id).length;
+                          return (
+                            <div key={addon.id} className={`p-3.5 rounded-2xl border-2 transition-all flex items-center justify-between text-xs font-bold ${
+                              count > 0
+                                ? 'border-[#d97706] bg-[#fffaf2] shadow-sm'
+                                : 'border-gray-200 bg-white hover:border-[#d97706]/20 text-gray-600'
+                            }`}>
+                              <div className="flex flex-col gap-0.5">
+                                <span className={`text-xs ${count > 0 ? 'text-[#431407] font-black' : 'text-gray-700'}`}>{addon.name}</span>
+                                <span className="text-[10px] text-gray-400 font-medium">+¢{price}</span>
+                              </div>
+                              {count === 0 ? (
+                                <button type="button" onClick={() => setPublicAddons([...publicAddons, { ...addon, price }])} className="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all">
+                                   <Plus size={14} strokeWidth={3} />
+                                </button>
+                              ) : (
+                                <div className="flex items-center gap-2 bg-white border border-[#d97706]/30 rounded-full p-1">
+                                   <button type="button" onClick={() => {
+                                     const idx = publicAddons.findIndex((a: any) => a.id === addon.id);
+                                     const newAddons = [...publicAddons];
+                                     newAddons.splice(idx, 1);
+                                     setPublicAddons(newAddons);
+                                   }} className="w-6 h-6 rounded-full bg-orange-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all text-[#d97706]">
+                                     <Minus size={12} strokeWidth={3} />
+                                   </button>
+                                   <input
+                                     type="number"
+                                     min="0"
+                                     value={count === 0 ? '' : count}
+                                     onChange={(e) => {
+                                       const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
+                                       if (!isNaN(val) && val >= 0) {
+                                         const listWithoutAddon = publicAddons.filter((a: any) => a.id !== addon.id);
+                                         const addedList = Array.from({ length: val }, () => ({ ...addon, price }));
+                                         setPublicAddons([...listWithoutAddon, ...addedList]);
+                                       }
+                                     }}
+                                     className="w-8 text-center text-xs font-black bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                   />
+                                   <button type="button" onClick={() => setPublicAddons([...publicAddons, { ...addon, price }])} className="w-6 h-6 rounded-full bg-orange-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all text-[#d97706]">
+                                     <Plus size={12} strokeWidth={3} />
+                                   </button>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Subtotal & Action buttons inside right side */}
+                <div className="p-6 border-t border-gray-100 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-10 relative flex-shrink-0">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Subtotal</p>
+                      <p className="text-2xl font-black text-gray-900 mt-0.5">GH₵{(getPublicItemPrice(pendingPublicItem, publicSize, publicAddons) * publicQty).toFixed(2)}</p>
+                    </div>
+                    <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-full p-1.5 shadow-sm">
+                      <button type="button" onClick={() => setPublicQty(Math.max(1, publicQty - 1))} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Minus size={14} strokeWidth={2.5} /></button>
+                      <input
+                        type="number"
+                        min="1"
+                        value={publicQty === 0 ? '' : publicQty}
+                        onChange={(e) => {
+                          if (e.target.value === '') {
+                            setPublicQty(0);
+                          } else {
+                            const val = parseInt(e.target.value, 10);
+                            if (!isNaN(val) && val >= 0) {
+                              setPublicQty(val);
+                            }
+                          }
+                        }}
+                        onBlur={() => {
+                          if (publicQty <= 0) setPublicQty(1);
+                        }}
+                        className="font-black text-gray-900 text-sm w-8 text-center bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                      <button type="button" onClick={() => setPublicQty(publicQty + 1)} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Plus size={14} strokeWidth={2.5} /></button>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <button 
+                      type="button" 
+                      onClick={handleAddPublicCart} 
+                      className={`flex-grow flex items-center justify-center py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg active:translate-y-0 ${
+                        addedFeedback 
+                          ? 'bg-emerald-600 shadow-[0_5px_15px_rgba(16,185,129,0.4)]' 
+                          : 'bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#d97706] hover:-translate-y-0.5'
+                      }`}
+                    >
+                      {addedFeedback ? '✓ Added to Order!' : 'Add to Order'}
+                    </button>
+                    {publicCart.length > 0 && (
+                      <button 
+                        type="button" 
+                        onClick={() => { setPendingPublicItem(null); setIsPublicCartOpen(true); }} 
+                        className="px-6 py-4 bg-[#431407] hover:bg-[#5c1d0a] text-[#ffefd4] font-black text-xs uppercase tracking-wider rounded-full shadow-lg transition-all hover:-translate-y-0.5 flex-shrink-0 font-extrabold"
+                      >
+                        Cart ({publicCart.length})
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
