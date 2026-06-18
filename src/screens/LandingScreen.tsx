@@ -279,6 +279,24 @@ export default function LandingScreen() {
         </div>
       </div>
 
+      {/* ── MOBILE BOTTOM NAV ── */}
+      <div className="lg:hidden fixed bottom-0 left-0 w-full bg-[#431407]/95 backdrop-blur-md border-t border-white/10 z-40 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+        <div className="flex items-center justify-around px-2 py-3">
+          <button onClick={() => { setView('home'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className={`flex flex-col items-center gap-1 w-16 transition-colors ${view === 'home' ? 'text-[#d97706]' : 'text-white/60 hover:text-white'}`}>
+            <Home size={22} />
+            <span className="text-[10px] font-black tracking-widest uppercase">Home</span>
+          </button>
+          <button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className={`flex flex-col items-center gap-1 w-16 transition-colors ${view === 'menu' ? 'text-[#d97706]' : 'text-white/60 hover:text-white'}`}>
+            <MenuIcon size={22} />
+            <span className="text-[10px] font-black tracking-widest uppercase">Menu</span>
+          </button>
+          <button onClick={() => { setView('home'); setTimeout(() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="flex flex-col items-center gap-1 w-16 text-white/60 hover:text-white transition-colors">
+            <Store size={22} />
+            <span className="text-[10px] font-black tracking-widest uppercase">Outlets</span>
+          </button>
+        </div>
+      </div>
+
       {view === 'home' && (
       <>
         {/* ── MASSIVE HERO SECTION ── */}
@@ -364,9 +382,15 @@ export default function LandingScreen() {
             <p className="text-[#6c757d] mt-4 leading-relaxed font-semibold text-[15px]">
               {featuredJollof.description}
             </p>
-            <button onClick={() => setPendingPublicItem(featuredJollof)} className="bg-[#d97706] text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full mt-6 shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
-              ORDER NOW
-            </button>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
+              <button disabled={!featuredJollof.available} onClick={() => setPendingPublicItem(featuredJollof)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                ORDER NOW
+              </button>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
+                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredJollof.hasSizes ? (featuredJollof.prices.S || featuredJollof.prices.M) : featuredJollof.prices.fixed}</span>
+              </div>
+            </div>
           </div>
 
           {/* Sub Items */}
@@ -429,9 +453,15 @@ export default function LandingScreen() {
             <p className="text-[#6c757d] mt-4 leading-relaxed font-semibold text-[15px]">
               {featuredBanku.description}
             </p>
-            <button onClick={() => setPendingPublicItem(featuredBanku)} className="bg-[#d97706] text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full mt-6 shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
-              ORDER NOW
-            </button>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
+              <button disabled={!featuredBanku.available} onClick={() => setPendingPublicItem(featuredBanku)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                ORDER NOW
+              </button>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
+                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredBanku.hasSizes ? (featuredBanku.prices.S || featuredBanku.prices.M) : featuredBanku.prices.fixed}</span>
+              </div>
+            </div>
           </div>
 
           {/* Sub Items */}
@@ -491,9 +521,15 @@ export default function LandingScreen() {
             <p className="text-[#6c757d] mt-4 leading-relaxed font-semibold text-[15px]">
               {featuredFried.description}
             </p>
-            <button onClick={() => setPendingPublicItem(featuredFried)} className="bg-[#d97706] text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full mt-6 shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
-              ORDER NOW
-            </button>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
+              <button disabled={!featuredFried.available} onClick={() => setPendingPublicItem(featuredFried)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                ORDER NOW
+              </button>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
+                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredFried.hasSizes ? (featuredFried.prices.S || featuredFried.prices.M) : featuredFried.prices.fixed}</span>
+              </div>
+            </div>
           </div>
 
           {/* Sub Items */}
