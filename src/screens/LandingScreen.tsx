@@ -103,7 +103,7 @@ const CategorySlider = ({ categoryName, items, isOpen, onOrder }: { categoryName
       {/* Slider */}
       <div className="w-full lg:w-[65%]">
         <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9]">
-          <img src={featured.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={featured.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <img src={featured.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={featured.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer" onClick={() => { if(isOpen && featured.available) onOrder(featured); }} />
           {!featured.available && (
              <div className="absolute inset-0 bg-black/60 z-20 flex items-center justify-center">
                 <span className="bg-red-500 text-white font-black px-6 py-2 rounded-full uppercase tracking-widest text-sm shadow-xl">Sold Out</span>
@@ -136,7 +136,13 @@ const CategorySlider = ({ categoryName, items, isOpen, onOrder }: { categoryName
         <div className="mt-16 pt-4 border-t border-gray-200/60">
           <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
             {items.map((item, i) => (
-              <div key={item.id} onClick={() => setIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
+              <div key={item.id} onClick={() => {
+                if (i === index) {
+                  if (isOpen && item.available) onOrder(item);
+                } else {
+                  setIndex(i);
+                }
+              }} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
                 <img src={item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === index ? 'border-[#d97706]' : 'border-white'} ${!item.available ? 'opacity-50 grayscale' : ''}`} />
                 <div className={`text-white text-[10px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === index ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                    {item.name}
@@ -190,14 +196,26 @@ export default function LandingScreen() {
   const featuredBanku = bankuItems[bankuIndex] || bankuItems[0];
   const [toastMessage, setToastMessage] = useState('');
 
-  /* ── Scroll effect for header & image toggling ── */
+  /* ── Scroll effect for header, nav bar hiding & image toggling ── */
   const [scrolled, setScrolled] = useState(false);
+  const [showNav, setShowNav] = useState(true);
+  const lastScrollY = useRef(0);
+
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 20);
+      
+      // Hide nav bar when scrolling down past 100px, show when scrolling up
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        setShowNav(false);
+      } else if (currentScrollY < lastScrollY.current) {
+        setShowNav(true);
+      }
+      lastScrollY.current = currentScrollY;
       
       // Auto-toggle images as user scrolls down, ensuring scroll position index is non-negative
-      const scrubY = Math.max(0, window.scrollY);
+      const scrubY = Math.max(0, currentScrollY);
       if (jollofItems.length > 0) setJollofIndex(Math.floor(scrubY / 400) % jollofItems.length);
       if (friedItems.length > 0) setFriedIndex(Math.floor(scrubY / 400) % friedItems.length);
       if (bankuItems.length > 0) setBankuIndex(Math.floor(scrubY / 400) % bankuItems.length);
@@ -296,7 +314,7 @@ export default function LandingScreen() {
       )}
 
       {/* ── TOP NAV ── */}
-      <div className={`fixed ${!state.storeSettings.isOpen ? 'top-8' : 'top-0'} w-full z-50 transition-all duration-300 ${scrolled || view === 'menu' ? 'bg-[#431407]/95 border-b-4 border-[#d97706] backdrop-blur-md pb-4 pt-4 shadow-2xl' : 'bg-gradient-to-b from-black/60 to-transparent pb-10 pt-4'}`}>
+      <div className={`fixed ${!state.storeSettings.isOpen ? 'top-8' : 'top-0'} w-full z-50 transition-all duration-300 ${!showNav && scrolled ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'} ${scrolled || view === 'menu' ? 'bg-[#431407]/95 border-b-4 border-[#d97706] backdrop-blur-md pb-4 pt-4 shadow-2xl' : 'bg-gradient-to-b from-black/60 to-transparent pb-10 pt-4'}`}>
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           
           {/* Left: Logos & Brand Pill */}
@@ -340,7 +358,7 @@ export default function LandingScreen() {
       </div>
 
       {/* ── MOBILE BOTTOM NAV ── */}
-      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[320px] bg-[#431407]/80 backdrop-blur-xl border border-[#d97706]/30 z-[60] shadow-[0_15px_40px_rgba(0,0,0,0.6)] rounded-full py-1.5 px-2">
+      <div className={`lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[320px] bg-[#431407]/80 backdrop-blur-xl border border-[#d97706]/30 z-[60] shadow-[0_15px_40px_rgba(0,0,0,0.6)] rounded-full py-1.5 px-2 transition-all duration-300 ${showNav ? 'translate-y-0 opacity-100' : 'translate-y-24 opacity-0 pointer-events-none'}`}>
         <div className="flex items-center justify-between">
           <button onClick={() => { setView('home'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className={`flex flex-col items-center justify-center gap-1 w-[30%] py-2 rounded-full transition-all ${view === 'home' ? 'bg-[#d97706] text-white shadow-lg scale-105' : 'text-white/60 hover:text-white'}`}>
             <Home size={18} />
@@ -1107,7 +1125,7 @@ export default function LandingScreen() {
                        <img src={m.imageUrl} alt={m.name} className="w-12 h-12 rounded-full object-cover mb-2 shadow-sm border-2 border-white"/>
                        <h4 className="text-[10px] font-black text-gray-900 leading-tight mb-1 truncate w-full">{m.name}</h4>
                        <span className="text-[10px] font-bold text-[#d97706] mb-2">¢{m.hasSizes ? (m.prices.S || m.prices.M) : (m.prices as any).fixed}</span>
-                       <button onClick={() => setPendingPublicItem(m)} className="w-full py-1.5 bg-white border border-gray-200 rounded-lg text-[9px] font-black uppercase tracking-wider text-gray-700 hover:bg-[#d97706] hover:text-white hover:border-[#d97706] transition-colors">Add</button>
+                       <button onClick={() => { setIsPublicCartOpen(false); setPendingPublicItem(m); }} className="w-full py-1.5 bg-white border border-gray-200 rounded-lg text-[9px] font-black uppercase tracking-wider text-gray-700 hover:bg-[#d97706] hover:text-white hover:border-[#d97706] transition-colors">Add</button>
                     </div>
                   ))}
                 </div>
