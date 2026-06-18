@@ -1195,7 +1195,7 @@ export default function LandingScreen() {
             </div>
             
             {/* Scrollable Body Container */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-gray-50/50 hide-scrollbar">
+            <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-gray-50/50">
               {/* Milestone progress bar if cart is not empty */}
               {publicCart.length > 0 && (() => {
                 const cartTotal = publicCart.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
@@ -1252,69 +1252,69 @@ export default function LandingScreen() {
                   </button>
                 </div>
               ) : (
-                <div className="space-y-3.5">
-                  {publicCart.map((item: any) => (
-                    <div key={item.cartItemId} className="bg-white rounded-[1.5rem] p-4 border border-gray-150/45 shadow-sm flex gap-4 transition-all hover:shadow-md">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-[#431407] border border-gray-100 shadow-inner">
-                        <img src={item.item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.item.name} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex-1 flex flex-col justify-between">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="text-sm font-black text-gray-900 leading-tight">{item.item.name}</h4>
-                            <p className="text-[10px] text-gray-500 font-bold mt-1 uppercase tracking-wide">Size: {item.size}</p>
-                            {item.addons.length > 0 && <p className="text-[10px] text-gray-400 font-semibold mt-1 leading-normal">+ {item.addons.map((a: any) => a.name).join(', ')}</p>}
-                          </div>
-                          <span className="text-sm font-black text-[#d97706] select-none">GH₵{(item.totalPrice).toFixed(2)}</span>
+                <div className="space-y-4">
+                  <div className="space-y-3.5">
+                    {publicCart.map((item: any) => (
+                      <div key={item.cartItemId} className="bg-white rounded-[1.5rem] p-4 border border-gray-150/45 shadow-sm flex gap-4 transition-all hover:shadow-md animate-scale-in">
+                        <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-[#431407] border border-gray-100 shadow-inner">
+                          <img src={item.item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.item.name} className="w-full h-full object-cover" />
                         </div>
-                        <div className="flex justify-between items-center pt-3 mt-3 border-t border-gray-50">
-                          <button type="button" onClick={() => setPublicCart(publicCart.filter((c: any) => c.cartItemId !== item.cartItemId))} className="text-[10px] text-gray-400 hover:text-red-500 font-black uppercase tracking-wider flex items-center gap-1 transition-colors"><Trash2 size={11} /> Remove</button>
-                          <div className="flex items-center gap-2 bg-gray-50 border border-gray-150/40 rounded-full p-0.5">
-                            <button type="button" onClick={() => { const nq = Math.max(1, item.quantity - 1); setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: nq, totalPrice: c.unitPrice * nq } : c)); }} className="w-6 h-6 flex items-center justify-center bg-white rounded-full text-gray-800 font-bold shadow-sm hover:bg-gray-100 transition-colors"><Minus size={10} /></button>
-                            <input
-                              type="number"
-                              min="1"
-                              value={item.quantity === 0 ? '' : item.quantity}
-                              onChange={(e) => {
-                                const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
-                                if (!isNaN(val) && val >= 0) {
-                                  setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: val, totalPrice: c.unitPrice * val } : c));
-                                }
-                              }}
-                              onBlur={() => {
-                                if (item.quantity <= 0) {
-                                  setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: 1, totalPrice: c.unitPrice } : c));
-                                }
-                              }}
-                              className="text-gray-900 text-xs font-black w-6 text-center bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            />
-                            <button type="button" onClick={() => { const nq = item.quantity + 1; setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: nq, totalPrice: c.unitPrice * nq } : c)); }} className="w-6 h-6 flex items-center justify-center bg-white rounded-full text-gray-800 font-bold shadow-sm hover:bg-gray-100 transition-colors"><Plus size={10} /></button>
+                        <div className="flex-1 flex flex-col justify-between">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="text-sm font-black text-gray-900 leading-tight">{item.item.name}</h4>
+                              <p className="text-[10px] text-gray-500 font-bold mt-1 uppercase tracking-wide">Size: {item.size}</p>
+                              {item.addons.length > 0 && <p className="text-[10px] text-gray-400 font-semibold mt-1 leading-normal">+ {item.addons.map((a: any) => a.name).join(', ')}</p>}
+                            </div>
+                            <span className="text-sm font-black text-[#d97706] select-none">GH₵{(item.totalPrice).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between items-center pt-3 mt-3 border-t border-gray-50">
+                            <button type="button" onClick={() => setPublicCart(publicCart.filter((c: any) => c.cartItemId !== item.cartItemId))} className="text-[10px] text-gray-400 hover:text-red-500 font-black uppercase tracking-wider flex items-center gap-1 transition-colors"><Trash2 size={11} /> Remove</button>
+                            <div className="flex items-center gap-2 bg-gray-50 border border-gray-150/40 rounded-full p-0.5">
+                              <button type="button" onClick={() => { const nq = Math.max(1, item.quantity - 1); setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: nq, totalPrice: c.unitPrice * nq } : c)); }} className="w-6 h-6 flex items-center justify-center bg-white rounded-full text-gray-800 font-bold shadow-sm hover:bg-gray-100 transition-colors"><Minus size={10} /></button>
+                              <input
+                                type="number"
+                                min="1"
+                                value={item.quantity === 0 ? '' : item.quantity}
+                                onChange={(e) => {
+                                  const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
+                                  if (!isNaN(val) && val >= 0) {
+                                    setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: val, totalPrice: c.unitPrice * val } : c));
+                                  }
+                                }}
+                                onBlur={() => {
+                                  if (item.quantity <= 0) {
+                                    setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: 1, totalPrice: c.unitPrice } : c));
+                                  }
+                                }}
+                                className="text-gray-900 text-xs font-black w-6 text-center bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              />
+                              <button type="button" onClick={() => { const nq = item.quantity + 1; setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: nq, totalPrice: c.unitPrice * nq } : c)); }} className="w-6 h-6 flex items-center justify-center bg-white rounded-full text-gray-800 font-bold shadow-sm hover:bg-gray-100 transition-colors"><Plus size={10} /></button>
+                            </div>
                           </div>
                         </div>
                       </div>
+                    ))}
+                  </div>
+
+                  {/* Frequently Bought Together inside scroll view */}
+                  <div className="bg-white border border-gray-150/45 p-4 rounded-[1.5rem] shadow-sm space-y-3">
+                    <h3 className="text-[10px] font-black uppercase text-gray-500 tracking-widest leading-none border-b border-gray-100 pb-2">Frequently Bought Together</h3>
+                    <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
+                      {landingMenu.filter(m => m.available && m.category !== 'main' && !publicCart.some(c => c.item.id === m.id)).slice(0, 4).map(m => (
+                        <div key={m.id} className="flex-shrink-0 w-28 bg-gray-50 rounded-xl p-2 border border-gray-100 shadow-sm flex flex-col items-center text-center">
+                           <img src={m.imageUrl} alt={m.name} className="w-10 h-10 rounded-full object-cover mb-1.5 shadow-sm border-2 border-white"/>
+                           <h4 className="text-[9px] font-black text-gray-900 leading-tight mb-0.5 truncate w-full">{m.name}</h4>
+                           <span className="text-[9px] font-bold text-[#d97706] mb-1.5">¢{m.hasSizes ? (m.prices.S || m.prices.M) : (m.prices as any).fixed}</span>
+                           <button onClick={() => { setIsPublicCartOpen(false); setPendingPublicItem(m); }} className="w-full py-1 bg-white border border-gray-200 rounded-lg text-[8px] font-black uppercase tracking-wider text-gray-750 hover:bg-[#d97706] hover:text-white hover:border-[#d97706] transition-colors">Add</button>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
                 </div>
               )}
             </div>
             
-            {/* Cross-Sell / Add-ons Section */}
-            {publicCart.length > 0 && (
-              <div className="bg-white border-t border-gray-100 p-4 pb-2 flex-shrink-0">
-                <h3 className="text-[10px] font-black uppercase text-gray-500 tracking-widest mb-3">Frequently Bought Together</h3>
-                <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
-                  {landingMenu.filter(m => m.available && m.category !== 'main' && !publicCart.some(c => c.item.id === m.id)).slice(0, 4).map(m => (
-                    <div key={m.id} className="flex-shrink-0 w-32 bg-gray-50 rounded-2xl p-2.5 border border-gray-100 shadow-sm flex flex-col items-center text-center">
-                       <img src={m.imageUrl} alt={m.name} className="w-12 h-12 rounded-full object-cover mb-2 shadow-sm border-2 border-white"/>
-                       <h4 className="text-[10px] font-black text-gray-900 leading-tight mb-1 truncate w-full">{m.name}</h4>
-                       <span className="text-[10px] font-bold text-[#d97706] mb-2">¢{m.hasSizes ? (m.prices.S || m.prices.M) : (m.prices as any).fixed}</span>
-                       <button onClick={() => { setIsPublicCartOpen(false); setPendingPublicItem(m); }} className="w-full py-1.5 bg-white border border-gray-200 rounded-lg text-[9px] font-black uppercase tracking-wider text-gray-700 hover:bg-[#d97706] hover:text-white hover:border-[#d97706] transition-colors">Add</button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Footer Summary & Checkout */}
             <div className="p-6 border-t border-gray-100 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-10 relative flex-shrink-0">
               <div className="flex items-center justify-between mb-5">
