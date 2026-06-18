@@ -161,6 +161,7 @@ export default function LandingScreen() {
   const featuredJollof = jollofItems[jollofIndex];
   const featuredFried = friedItems[friedIndex];
   const featuredBanku = bankuItems[bankuIndex];
+  const [toastMessage, setToastMessage] = useState('');
 
   /* ── Scroll effect for header & image toggling ── */
   const [scrolled, setScrolled] = useState(false);
@@ -214,6 +215,10 @@ export default function LandingScreen() {
       cartItemId: crypto.randomUUID(), item: pendingPublicItem, size: publicSize, quantity: publicQty, addons: [...publicAddons], unitPrice, totalPrice: unitPrice * publicQty
     }]);
     setPendingPublicItem(null); setPublicQty(1); setPublicAddons([]); setPublicSize('M');
+    
+    // Show toast
+    setToastMessage(`Added ${pendingPublicItem.name} to cart!`);
+    setTimeout(() => setToastMessage(''), 3000);
   };
 
   const handleWhatsAppSubmit = () => {
@@ -246,6 +251,13 @@ export default function LandingScreen() {
   return (
     <div className="min-h-screen bg-[#f8f9fa] font-sans text-gray-800 pb-24 lg:pb-0" style={{ backgroundImage: bgPattern, backgroundAttachment: 'fixed' }}>
       
+      {/* ── TOAST NOTIFICATION ── */}
+      <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 pointer-events-none flex items-center justify-center ${toastMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+         <div className="bg-[#431407] text-white px-6 py-3 rounded-full shadow-[0_15px_30px_rgba(0,0,0,0.5)] font-black text-xs tracking-wider flex items-center gap-2 border border-[#d97706]/30">
+            <Sparkles size={14} className="text-[#d97706]" /> {toastMessage}
+         </div>
+      </div>
+
       {/* ── STORE CLOSED BANNER ── */}
       {!state.storeSettings.isOpen && (
         <div className="bg-red-600 text-white text-center text-xs font-black uppercase tracking-widest py-2 z-[60] relative">
@@ -379,15 +391,15 @@ export default function LandingScreen() {
         {/* Right Side: Slider & Details */}
         <div className="w-full lg:w-[65%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9]">
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if(state.storeSettings.isOpen && featuredJollof.available) setPendingPublicItem(featuredJollof); }}>
             <img src={featuredJollof.imageUrl} alt={featuredJollof.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             {/* Arrows */}
-            <button onClick={() => setJollofIndex((p) => (p > 0 ? p - 1 : jollofItems.length - 1))} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
-            <button onClick={() => setJollofIndex((p) => (p < jollofItems.length - 1 ? p + 1 : 0))} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p > 0 ? p - 1 : jollofItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p < jollofItems.length - 1 ? p + 1 : 0)); }} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
             {/* Dots */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
               {jollofItems.map((_, i) => (
-                <button key={i} onClick={() => setJollofIndex(i)} className={`h-2 rounded-full transition-all ${i === jollofIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
+                <button key={i} onClick={(e) => { e.stopPropagation(); setJollofIndex(i); }} className={`h-2 rounded-full transition-all ${i === jollofIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
               ))}
             </div>
           </div>
@@ -416,7 +428,7 @@ export default function LandingScreen() {
             <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Jollofs</h4>
             <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
               {jollofItems.map((item, i) => (
-                <div key={item.id} onClick={() => setJollofIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                <div key={item.id} onClick={() => { setJollofIndex(i); if(state.storeSettings.isOpen && item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
                   <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
                   <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
@@ -450,15 +462,15 @@ export default function LandingScreen() {
         {/* Right Side: Slider & Details */}
         <div className="w-full lg:w-[65%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9]">
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if(state.storeSettings.isOpen && featuredBanku.available) setPendingPublicItem(featuredBanku); }}>
             <img src={featuredBanku.imageUrl} alt={featuredBanku.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             {/* Arrows */}
-            <button onClick={() => setBankuIndex((p) => (p > 0 ? p - 1 : bankuItems.length - 1))} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
-            <button onClick={() => setBankuIndex((p) => (p < bankuItems.length - 1 ? p + 1 : 0))} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p > 0 ? p - 1 : bankuItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p < bankuItems.length - 1 ? p + 1 : 0)); }} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
             {/* Dots */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
               {bankuItems.map((_, i) => (
-                <button key={i} onClick={() => setBankuIndex(i)} className={`h-2 rounded-full transition-all ${i === bankuIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
+                <button key={i} onClick={(e) => { e.stopPropagation(); setBankuIndex(i); }} className={`h-2 rounded-full transition-all ${i === bankuIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
               ))}
             </div>
           </div>
@@ -487,7 +499,7 @@ export default function LandingScreen() {
             <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Banku</h4>
             <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
               {bankuItems.map((item, i) => (
-                <div key={item.id} onClick={() => setBankuIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                <div key={item.id} onClick={() => { setBankuIndex(i); if(state.storeSettings.isOpen && item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
                   <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
                   <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
@@ -520,13 +532,13 @@ export default function LandingScreen() {
         {/* Right Side: Slider & Details */}
         <div className="w-full lg:w-[65%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9]">
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if(state.storeSettings.isOpen && featuredFried.available) setPendingPublicItem(featuredFried); }}>
             <img src={featuredFried.imageUrl} alt={featuredFried.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            <button onClick={() => setFriedIndex((p) => (p > 0 ? p - 1 : friedItems.length - 1))} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
-            <button onClick={() => setFriedIndex((p) => (p < friedItems.length - 1 ? p + 1 : 0))} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setFriedIndex((p) => (p > 0 ? p - 1 : friedItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setFriedIndex((p) => (p < friedItems.length - 1 ? p + 1 : 0)); }} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
               {friedItems.map((_, i) => (
-                <button key={i} onClick={() => setFriedIndex(i)} className={`h-2 rounded-full transition-all ${i === friedIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
+                <button key={i} onClick={(e) => { e.stopPropagation(); setFriedIndex(i); }} className={`h-2 rounded-full transition-all ${i === friedIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
               ))}
             </div>
           </div>
@@ -555,7 +567,7 @@ export default function LandingScreen() {
             <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Fried Rice</h4>
             <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
               {friedItems.map((item, i) => (
-                <div key={item.id} onClick={() => setFriedIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                <div key={item.id} onClick={() => { setFriedIndex(i); if(state.storeSettings.isOpen && item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
                   <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === friedIndex ? 'border-[#d97706]' : 'border-white'}`} />
                   <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
@@ -897,8 +909,8 @@ export default function LandingScreen() {
 
       {/* PUBLIC ORDER CONFIG MODAL */}
       {pendingPublicItem && (
-        <div className="fixed inset-0 z-50 flex justify-center sm:items-center sm:p-4 bg-black/60 backdrop-blur-md">
-          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col relative animate-slide-up sm:animate-none">
+        <div className="fixed inset-0 z-50 flex justify-center sm:items-center sm:p-4 bg-black/60 backdrop-blur-md" onClick={() => setPendingPublicItem(null)}>
+          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col relative animate-slide-up sm:animate-none" onClick={(e) => e.stopPropagation()}>
             <button type="button" onClick={() => setPendingPublicItem(null)} className="absolute top-4 right-4 p-2 rounded-full bg-black/20 text-white hover:bg-black/40 transition-all z-20 shadow-md backdrop-blur-sm"><X size={18} strokeWidth={3} /></button>
             
             <div className="flex-shrink-0 bg-[#431407] pt-6 pb-4 px-6 border-b-4 border-[#d97706] relative">
