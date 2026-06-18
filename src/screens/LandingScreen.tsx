@@ -147,8 +147,6 @@ export default function LandingScreen() {
   
   /* ── FAQ State ── */
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [error, setError] = useState('');
-
   /* ── Branches State ── */
   const branches = ['KNUST BRANCH', 'ADUM BRANCH', 'BANTAMA BRANCH', 'AHODWO BRANCH'];
   const [selectedBranch, setSelectedBranch] = useState(branches[0]);
