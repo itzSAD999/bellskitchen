@@ -163,6 +163,7 @@ export default function LandingScreen() {
   const [publicSize, setPublicSize] = useState<'S' | 'M' | 'L'>('M');
   const [publicQty, setPublicQty] = useState<number>(1);
   const [publicAddons, setPublicAddons] = useState<any[]>([]);
+  const [addedFeedback, setAddedFeedback] = useState(false);
 
   /* ── Login State ── */
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -240,11 +241,14 @@ export default function LandingScreen() {
     setPublicCart([...publicCart, {
       cartItemId: crypto.randomUUID(), item: pendingPublicItem, size: publicSize, quantity: publicQty, addons: [...publicAddons], unitPrice, totalPrice: unitPrice * publicQty
     }]);
-    setPendingPublicItem(null); setPublicQty(1); setPublicAddons([]); setPublicSize('M');
+    setPublicQty(1);
+    setPublicAddons([]);
     
-    // Show toast
+    // Show feedback and toast
+    setAddedFeedback(true);
     setToastMessage(`Added ${pendingPublicItem.name} to cart!`);
     setTimeout(() => setToastMessage(''), 3000);
+    setTimeout(() => setAddedFeedback(false), 1200);
   };
 
   const handleWhatsAppSubmit = () => {
@@ -903,7 +907,7 @@ export default function LandingScreen() {
       
       {/* STAFF LOGIN MODAL */}
       {isLoginOpen && (
-        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in" style={{ background: 'rgba(0,0,0,0.6)' }}>
+        <div className="fixed inset-0 backdrop-blur-md z-[80] flex items-center justify-center p-4 animate-fade-in" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div className="w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden bg-white relative">
             <button type="button" onClick={() => { setIsLoginOpen(false); setError(''); }} className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all"><X size={16} /></button>
             <div className="p-8 text-center border-b border-gray-100">
@@ -935,7 +939,7 @@ export default function LandingScreen() {
 
       {/* PUBLIC ORDER CONFIG MODAL */}
       {pendingPublicItem && (
-        <div className="fixed inset-0 z-50 flex justify-center sm:items-center sm:p-4 bg-black/60 backdrop-blur-md" onClick={() => setPendingPublicItem(null)}>
+        <div className="fixed inset-0 z-[80] flex justify-center sm:items-center sm:p-4 bg-black/60 backdrop-blur-md" onClick={() => setPendingPublicItem(null)}>
           <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col relative animate-slide-up sm:animate-none" onClick={(e) => e.stopPropagation()}>
             <button type="button" onClick={() => setPendingPublicItem(null)} className="absolute top-4 right-4 p-2 rounded-full bg-black/20 text-white hover:bg-black/40 transition-all z-20 shadow-md backdrop-blur-sm"><X size={18} strokeWidth={3} /></button>
             
@@ -1024,9 +1028,28 @@ export default function LandingScreen() {
                   <button type="button" onClick={() => setPublicQty(publicQty + 1)} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Plus size={14} strokeWidth={2.5} /></button>
                 </div>
               </div>
-                <button type="button" onClick={handleAddPublicCart} className="w-full flex items-center justify-center py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 active:translate-y-0 bg-[#d97706] hover:bg-[#b45309] mt-4 mb-4">
-                  Add to Order
+              <div className="flex gap-3 mt-6 mb-4">
+                <button 
+                  type="button" 
+                  onClick={handleAddPublicCart} 
+                  className={`flex-1 flex items-center justify-center py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg active:translate-y-0 ${
+                    addedFeedback 
+                      ? 'bg-emerald-600 shadow-[0_5px_15px_rgba(16,185,129,0.4)]' 
+                      : 'bg-[#d97706] hover:bg-[#b45309] hover:-translate-y-0.5'
+                  }`}
+                >
+                  {addedFeedback ? '✓ Added to Order!' : 'Add to Order'}
                 </button>
+                {publicCart.length > 0 && (
+                  <button 
+                    type="button" 
+                    onClick={() => { setPendingPublicItem(null); setIsPublicCartOpen(true); }} 
+                    className="px-6 py-4 bg-[#431407] hover:bg-[#5c1d0a] text-[#ffefd4] font-black text-xs uppercase tracking-wider rounded-full shadow-lg transition-all hover:-translate-y-0.5"
+                  >
+                    Cart ({publicCart.length})
+                  </button>
+                )}
+              </div>
               </div>
             </div>
           </div>
@@ -1035,7 +1058,7 @@ export default function LandingScreen() {
 
       {/* PUBLIC CART DRAWER */}
       {isPublicCartOpen && (
-        <div className="fixed inset-0 backdrop-blur-sm z-50 flex justify-end" style={{ background: 'rgba(0,0,0,0.5)' }}>
+        <div className="fixed inset-0 backdrop-blur-sm z-[80] flex justify-end" style={{ background: 'rgba(0,0,0,0.5)' }}>
           <div className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-slide-up sm:animate-none">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
               <div>
