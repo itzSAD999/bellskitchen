@@ -166,6 +166,7 @@ export default function LandingScreen() {
   /* ── Order/Cart State ── */
   const [publicCart, setPublicCart] = useState<any[]>([]);
   const [isPublicCartOpen, setIsPublicCartOpen] = useState(false);
+  const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
   const [pendingPublicItem, setPendingPublicItem] = useState<any | null>(null);
   const [publicSize, setPublicSize] = useState<'S' | 'M' | 'L'>('M');
   const [publicQty, setPublicQty] = useState<number>(1);
@@ -319,6 +320,7 @@ export default function LandingScreen() {
     // Clean up
     setPublicCart([]);
     setIsPublicCartOpen(false);
+    setIsDeliveryModalOpen(false);
     setCustomerName('');
     setCustomerPhone('');
     setDeliveryLocation('');
@@ -1181,8 +1183,8 @@ export default function LandingScreen() {
 
       {/* PUBLIC CART DRAWER */}
       {isPublicCartOpen && (
-        <div className="fixed inset-0 backdrop-blur-sm z-[80] flex justify-end" style={{ background: 'rgba(0,0,0,0.5)' }}>
-          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col animate-slide-up sm:animate-none">
+        <div className="fixed inset-0 backdrop-blur-sm z-[80] flex justify-end animate-fade-in" style={{ background: 'rgba(0,0,0,0.5)' }}>
+          <div className="w-full h-[100dvh] sm:h-[85vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-slide-up sm:animate-none">
             {/* Header */}
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
               <div>
@@ -1294,58 +1296,6 @@ export default function LandingScreen() {
                   ))}
                 </div>
               )}
-
-              {/* Delivery Details Form */}
-              {publicCart.length > 0 && (
-                <div className="bg-white rounded-[2rem] p-5 border border-gray-150/45 shadow-sm space-y-4 animate-scale-in">
-                  <h3 className="text-[10px] font-black uppercase text-gray-500 tracking-widest leading-none border-b border-gray-100 pb-3">Delivery Details</h3>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <label className="text-[9px] font-black text-gray-500 uppercase tracking-wider">Your Name</label>
-                      <input
-                        type="text"
-                        value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
-                        placeholder="e.g. Ama K."
-                        className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] rounded-xl px-3 py-2 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[9px] font-black text-gray-500 uppercase tracking-wider">Phone Number</label>
-                      <input
-                        type="text"
-                        value={customerPhone}
-                        onChange={(e) => setCustomerPhone(e.target.value)}
-                        placeholder="e.g. 0501234567"
-                        className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] rounded-xl px-3 py-2 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[9px] font-black text-gray-500 uppercase tracking-wider">Hostel / Delivery Location</label>
-                    <input
-                      type="text"
-                      value={deliveryLocation}
-                      onChange={(e) => setDeliveryLocation(e.target.value)}
-                      placeholder="e.g. No Weapon Hostel Annex, Room 24"
-                      className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] rounded-xl px-3 py-2 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[9px] font-black text-gray-500 uppercase tracking-wider">Special Requests / Notes</label>
-                    <input
-                      type="text"
-                      value={specialNotes}
-                      onChange={(e) => setSpecialNotes(e.target.value)}
-                      placeholder="e.g. Extra hot shito, make chicken well done"
-                      className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] rounded-xl px-3 py-2 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-              )}
             </div>
             
             {/* Cross-Sell / Add-ons Section */}
@@ -1371,10 +1321,81 @@ export default function LandingScreen() {
                 <span className="text-xs font-black uppercase text-gray-500 tracking-widest">Total Amount</span>
                 <span className="text-3xl font-black text-gray-900">GH₵{publicCart.reduce((sum: number, item: any) => sum + item.totalPrice, 0).toFixed(2)}</span>
               </div>
-              <button disabled={publicCart.length === 0} type="button" onClick={handleWhatsAppSubmit} className="w-full flex items-center justify-center gap-2 py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none bg-[#25D366] hover:bg-[#1ebd57] select-none">
+              <button disabled={publicCart.length === 0} type="button" onClick={() => setIsDeliveryModalOpen(true)} className="w-full flex items-center justify-center gap-2 py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none bg-[#25D366] hover:bg-[#1ebd57] select-none">
                 <Send size={16} /> Complete via WhatsApp
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* DELIVERY DETAILS MODAL */}
+      {isDeliveryModalOpen && (
+        <div className="fixed inset-0 backdrop-blur-md z-[85] flex items-center justify-center p-4 bg-black/60 animate-fade-in" onClick={() => setIsDeliveryModalOpen(false)}>
+          <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl p-6 sm:p-8 relative overflow-hidden animate-scale-in flex flex-col gap-5" onClick={(e) => e.stopPropagation()}>
+            <button type="button" onClick={() => setIsDeliveryModalOpen(false)} className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all cursor-pointer"><X size={16} /></button>
+            <div className="text-center pb-2 border-b border-gray-100">
+              <div className="w-12 h-12 bg-[#fff8ed] rounded-full flex items-center justify-center mx-auto mb-3 text-[#d97706] shadow-sm"><MapPin size={22}/></div>
+              <h2 className="text-xl font-black text-gray-900 tracking-tight">Delivery Details</h2>
+              <p className="text-xs text-gray-500 mt-1 font-semibold">Where should we deliver your hot food?</p>
+            </div>
+            
+            <form onSubmit={(e) => { e.preventDefault(); handleWhatsAppSubmit(); }} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Your Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="e.g. Ama K."
+                    className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:bg-white focus:ring-4 focus:ring-[#d97706]/10 rounded-xl px-3.5 py-2.5 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all shadow-inner"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Phone Number</label>
+                  <input
+                    type="text"
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    placeholder="e.g. 0501234567"
+                    className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:bg-white focus:ring-4 focus:ring-[#d97706]/10 rounded-xl px-3.5 py-2.5 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all shadow-inner"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Hostel / Delivery Location *</label>
+                <input
+                  type="text"
+                  required
+                  value={deliveryLocation}
+                  onChange={(e) => setDeliveryLocation(e.target.value)}
+                  placeholder="e.g. No Weapon Hostel Annex, Room 24"
+                  className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:bg-white focus:ring-4 focus:ring-[#d97706]/10 rounded-xl px-3.5 py-2.5 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all shadow-inner"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Special Requests / Notes</label>
+                <input
+                  type="text"
+                  value={specialNotes}
+                  onChange={(e) => setSpecialNotes(e.target.value)}
+                  placeholder="e.g. Extra hot shito, make chicken well done"
+                  className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:bg-white focus:ring-4 focus:ring-[#d97706]/10 rounded-xl px-3.5 py-2.5 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all shadow-inner"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={!customerName.trim() || !deliveryLocation.trim()}
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none bg-[#25D366] hover:bg-[#1ebd57] select-none mt-2"
+              >
+                <Send size={16} /> Send Order via WhatsApp
+              </button>
+            </form>
           </div>
         </div>
       )}
