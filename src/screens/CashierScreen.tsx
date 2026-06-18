@@ -27,14 +27,14 @@ export default function CashierScreen() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-brand-50 relative">
+    <div className="flex flex-col h-full bg-transparent relative">
       {/* Menu grid + Cart */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative print:hidden">
         {/* Menu Grid - Scrollable, taking remaining space */}
         <div className="flex-1 overflow-y-auto">
-          <div className="px-5 pt-4">
-            <h2 className="text-[10px] font-black text-brand-600 uppercase tracking-widest leading-none">Main Menu</h2>
-            <p className="text-dark-500 text-xs mt-1 font-semibold">Tap a dish to configure size and add-ons</p>
+          <div className="px-5 pt-5 pb-1">
+            <h2 className="text-xl font-black text-[#431407] tracking-tight leading-none uppercase">Main Menu</h2>
+            <p className="text-dark-500 text-xs mt-1.5 font-bold">Tap a dish to configure size and add-ons</p>
           </div>
           <MenuGrid onSelect={handleMenuCardTap} />
         </div>

@@ -22,9 +22,9 @@ export default function AdminScreen() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#f8f9fa]">
+    <div className="flex flex-col h-full bg-transparent">
       {/* Tab selection and Lock button row */}
-      <div className="flex items-center justify-between bg-[#431407] border-b-4 border-brand-500 px-3 sm:px-5 flex-shrink-0 shadow-lg relative z-10">
+      <div className="flex items-center justify-between bg-[#431407] border-b-4 border-[#d97706] px-3 sm:px-5 flex-shrink-0 shadow-lg relative z-10">
         <div className="flex gap-0.5 sm:gap-1 pt-2">
           <button
             onClick={() => setActiveTab('sales')}

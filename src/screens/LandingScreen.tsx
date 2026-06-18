@@ -51,12 +51,13 @@ const NavItem = ({ icon, label, active = false, onClick }: { icon: React.ReactNo
   </button>
 );
 
-const CategorySlider = ({ categoryName, items, isOpen, onOrder }: { categoryName: string, items: any[], isOpen: boolean, onOrder: (item: any) => void }) => {
+const CategorySlider = ({ categoryName, items, isOpen, onOrder, disableScrollSpy = false }: { categoryName: string, items: any[], isOpen: boolean, onOrder: (item: any) => void, disableScrollSpy?: boolean }) => {
   const [index, setIndex] = useState(0);
   const featured = items[index];
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (disableScrollSpy) return;
     const handleScroll = () => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
@@ -78,7 +79,7 @@ const CategorySlider = ({ categoryName, items, isOpen, onOrder }: { categoryName
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Initial run
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [items.length]);
+  }, [items.length, disableScrollSpy]);
 
   if (!featured) return null;
 
@@ -856,33 +857,120 @@ export default function LandingScreen() {
       )}
 
       {view === 'menu' && (
-        <div className="pt-32 pb-24 min-h-screen animate-fade-in">
-          <div className="text-center mb-16 px-4">
-            <h2 className="text-5xl md:text-6xl font-black italic text-gray-900 tracking-tighter mb-4">The <span className="text-[#d97706]">Full</span> Menu</h2>
-            <p className="text-gray-500 font-bold text-lg">Swipe through our entire catalog, section by section.</p>
+        <div className="pt-24 pb-24 min-h-screen bg-[#f8f9fa] relative" style={{ backgroundImage: bgPattern, backgroundAttachment: 'fixed' }}>
+          {/* Sub Header / Sticky Category Navigation */}
+          <div className="sticky top-20 w-full bg-white/80 backdrop-blur-md border-b-4 border-[#d97706]/40 z-40 py-4 shadow-md transition-all">
+            <div className="max-w-7xl mx-auto px-4 flex justify-center gap-3 md:gap-6">
+              {['jollof', 'fried', 'banku'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    const el = document.getElementById(`${cat}-section`);
+                    if (el) {
+                      const yOffset = -150; // offset for sticky nav
+                      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                      window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                  }}
+                  className="px-5 md:px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all bg-[#431407] text-[#ffefd4] hover:bg-[#d97706] hover:text-white border border-[#d97706]/20 shadow-sm hover:shadow-md active:scale-95"
+                >
+                  {cat === 'jollof' ? '🌶️ Jollof Rice' : cat === 'fried' ? '🔥 Fried Rice' : '🐟 Local Specials'}
+                </button>
+              ))}
+            </div>
           </div>
-          
-          {Object.entries(
-             landingMenu.reduce((acc, item) => {
-               const cat = item.category;
-               if (!acc[cat]) acc[cat] = [];
-               acc[cat].push(item);
-               return acc;
-             }, {} as Record<string, any[]>)
-          ).map(([categoryName, items]) => (
-            <CategorySlider 
-               key={categoryName} 
-               categoryName={categoryName} 
-               items={items} 
-               isOpen={state.storeSettings.isOpen}
-               onOrder={(item) => {
-                 setPendingPublicItem(item);
-                 setPublicSize(item.hasSizes ? (item.prices.M ? 'M' : 'S') : 'M');
-                 setPublicQty(1);
-                 setPublicAddons([]);
-               }} 
-            />
-          ))}
+
+          <div className="text-center mt-12 mb-16 px-4">
+            <h2 className="text-5xl md:text-7xl font-black italic text-gray-900 tracking-tighter mb-4">
+              The <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d97706] to-[#b45309]">Bells</span> Menu
+            </h2>
+            <p className="text-gray-500 font-bold text-lg max-w-md mx-auto">Explore our hot, wok-fired rice meals and local specialties. Fresh and hot.</p>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 space-y-20">
+            {Object.entries(
+              landingMenu.reduce((acc, item) => {
+                const cat = item.category;
+                if (!acc[cat]) acc[cat] = [];
+                acc[cat].push(item);
+                return acc;
+              }, {} as Record<string, any[]>)
+            ).map(([categoryName, items]) => (
+              <div
+                id={`${categoryName}-section`}
+                key={categoryName}
+                className="scroll-mt-32 border-b border-gray-200/50 pb-16 last:border-0"
+              >
+                {/* Category Header */}
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="bg-[#431407] text-[#ffefd4] rounded-[1.5rem] px-5 py-2 font-black text-xs uppercase tracking-widest border-2 border-[#d97706] shadow-md">
+                    {categoryName === 'jollof' ? 'Proper Jollof' : categoryName === 'fried' ? 'Wok Fired' : 'Traditional'}
+                  </div>
+                  <h3 className="text-3xl md:text-4xl font-black italic text-gray-900 tracking-tight capitalize">
+                    {categoryName === 'jollof' ? 'Signature Jollof Rice' : categoryName === 'fried' ? 'Classic Fried Rice' : 'Banku & Tilapia'}
+                  </h3>
+                </div>
+
+                {/* Items Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {items.map((item) => {
+                    const priceDisplay = item.hasSizes
+                      ? `¢${Math.min(...Object.values(item.prices as Record<string, number>))} - ¢${Math.max(...Object.values(item.prices as Record<string, number>))}`
+                      : `¢${item.price}`;
+                    
+                    return (
+                      <div
+                        key={item.id}
+                        className="bg-white rounded-[2.5rem] overflow-hidden border border-gray-200/60 shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgba(217,119,6,0.15)] hover:border-[#d97706]/40 transition-all duration-500 group flex flex-col h-full relative"
+                      >
+                        {/* Image banner */}
+                        <div className="relative aspect-[16/10] overflow-hidden bg-amber-50">
+                          <img
+                            src={item.imageUrl}
+                            alt={item.name}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                          {!item.available && (
+                            <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center">
+                              <span className="bg-red-500 text-white font-black px-4 py-1.5 rounded-full uppercase tracking-widest text-sm shadow-xl">Sold Out</span>
+                            </div>
+                          )}
+                          {item.available && (
+                            <span className="absolute top-4 right-4 bg-[#431407]/90 text-[#ffefd4] border border-[#d97706]/30 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-md z-10">
+                              {categoryName === 'jollof' ? '🌶️ Spicy' : '🔥 Wok Hot'}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Card details */}
+                        <div className="p-6 flex flex-col flex-1">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="text-xl font-black text-gray-900 leading-tight tracking-tight group-hover:text-[#d97706] transition-colors">{item.name}</h4>
+                            <span className="text-lg font-black text-[#d97706]">{priceDisplay}</span>
+                          </div>
+                          <p className="text-gray-500 font-semibold text-xs leading-relaxed mb-6 flex-1">{item.description}</p>
+                          
+                          <button
+                            disabled={!item.available || !state.storeSettings.isOpen}
+                            onClick={() => {
+                              setPendingPublicItem(item);
+                              setPublicSize(item.hasSizes ? 'M' : 'S');
+                              setPublicQty(1);
+                              setPublicAddons([]);
+                            }}
+                            className="w-full py-3.5 rounded-full font-black text-xs uppercase tracking-widest text-white shadow-md transition-all active:scale-95 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5 hover-sweep"
+                          >
+                            {state.storeSettings.isOpen ? 'Add to Order' : 'Store Closed'}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
