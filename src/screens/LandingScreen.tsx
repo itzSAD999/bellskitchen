@@ -1,1705 +1,1006 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { 
-  Lock, 
-  Mail, 
-  Eye, 
-  EyeOff, 
-  ChefHat, 
-  Clock, 
-  MapPin, 
-  ArrowRight, 
-  Utensils, 
-  Sparkles,
-  X,
-  AlertCircle,
-  Star,
-  Search,
-  CheckCircle,
-  ThumbsUp,
-  Heart,
-  Flame,
-  Award,
-  Truck,
-  Leaf,
-  Phone,
-  Send,
-  ChevronRight,
-  ShieldCheck,
-  Plus,
-  Minus,
-  Trash2
+import {
+  Home, Menu as MenuIcon, Store, Users, FileText, User, ChevronLeft, ChevronRight,
+  MapPin, Search, ArrowUpRight, Flame, Plus, Minus, Trash2, X, ShoppingBag, Send,
+  Mail, ArrowRight, Star, Quote, MessageCircle, HelpCircle, ChevronDown
 } from 'lucide-react';
 
-const BelsLogo = ({ className = "w-10 h-10" }: { className?: string }) => (
-  <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Outer circle */}
-    <circle cx="50" cy="50" r="46" stroke="#e58e26" strokeWidth="2.5" />
-    {/* Inner brown circle */}
-    <circle cx="50" cy="50" r="42" fill="#431407" />
-    <circle cx="50" cy="50" r="38" stroke="#e58e26" strokeWidth="1.5" strokeDasharray="3 2" />
-    
-    {/* Stylized chef lid arch dome overlay */}
-    <path d="M 36 32 C 40 24, 60 24, 64 32" stroke="#e58e26" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-    <circle cx="50" cy="22" r="2.5" fill="#e58e26" /> {/* Lid handle/dot */}
-    
-    {/* "Bel's" text */}
-    <text x="50" y="44" fill="white" fontSize="17" fontFamily="Georgia, serif" fontStyle="italic" fontWeight="bold" textAnchor="middle">Bel's</text>
-    
-    {/* Horizontal divider line under Bels */}
-    <line x1="22" y1="50" x2="78" y2="50" stroke="#e58e26" strokeWidth="2" />
-    
-    {/* "KITCHEN" text */}
-    <text x="50" y="64" fill="#e58e26" fontSize="10" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" textAnchor="middle" letterSpacing="1.2">KITCHEN</text>
-    
-    {/* "CATERICE" text */}
-    <text x="50" y="76" fill="white" fontSize="7" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="bold" textAnchor="middle" letterSpacing="1.8">CATERICE</text>
-  </svg>
+import { bgPatternUrl } from '../utils/bgPattern';
+
+/* ─── Faint Background Pattern ─── */
+const bgPattern = bgPatternUrl;
+
+/* ─── Mock Data ─── */
+const landingMenu = [
+  { id: 'item_002', name: 'Jollof Rice', category: 'jollof', description: 'Rich, traditional party-style Jollof rice cooked in a seasoned, aromatic tomato and pepper broth. Forget the mediocre versions. This is Proper Jollof that is perfectly seasoned.', price: 'GH₵ 40.00', prices: { S: 35, M: 40, L: 45 }, imageUrl: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
+  { id: 'item_006', name: 'Asorted Jollof', category: 'jollof', description: 'Famous party Jollof tossed with sliced beef, diced chicken, and sausages for a loaded Ghanaian classic.', price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, imageUrl: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
+  
+  { id: 'item_001', name: 'Fried Rice', category: 'fried', description: 'Savory wok-fired Fried Rice tossed with fresh carrots, green peas, spring onions, and local spices. We reject mediocrity.', price: 'GH₵ 40.00', prices: { S: 35, M: 40, L: 45 }, imageUrl: 'https://images.unsplash.com/photo-1603133872878-685f5888a3e1?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
+  { id: 'item_005', name: 'Asorted Fried Rice', category: 'fried', description: 'Rich and hearty wok-fired Fried Rice loaded with tender beef, chicken, sausages, and fresh vegetables.', price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, imageUrl: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
+  { id: 'item_003', name: 'Mixture', category: 'fried', description: 'The perfect half-and-half combination! Equal parts signature Jollof Rice and savory Fried Rice.', price: 'GH₵ 40.00', prices: { S: 35, M: 40, L: 45 }, imageUrl: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
+
+  { id: 'item_004', name: 'Banku & Tilapia', category: 'banku', description: 'Freshly grilled whole Tilapia seasoned with local herbs, served with hot fermented banku and our signature pepper sauce.', price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, imageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
+];
+
+const publicAddonOptions = [
+  { id: 'item_010', name: 'Extra Chicken', price: 15 },
+  { id: 'item_011', name: 'Egg', price: 3 },
+  { id: 'item_008', name: 'Big Sausage', price: 7 },
+  { id: 'item_007', name: 'Ripe Plantain (Kokoo)', price: 1 },
+];
+
+const reviews = [
+  { id: 1, name: 'Kofi Mensah', role: 'Local Foodie', text: 'Best Jollof in Kumasi. The chicken is always tender and the packaging is top notch!', rating: 5 },
+  { id: 2, name: 'Ama Serwaa', role: 'Event Planner', text: 'Their Banku and Tilapia is authentic. Highly recommended for weekend cravings.', rating: 5 },
+  { id: 3, name: 'Yaw Osei', role: 'Regular Customer', text: 'Always on time and the food is piping hot. The assorted fried rice is my go-to.', rating: 4 },
+];
+
+const faqs = [
+  { id: 1, q: 'Do you offer delivery?', a: 'Yes! We deliver across Kumasi. Delivery fees vary by location and distance from our branches.' },
+  { id: 2, q: 'Can I order for a large party?', a: 'Absolutely. We handle bulk orders and catering for all kinds of events. Please contact us 24 hours prior.' },
+  { id: 3, q: 'What payment methods do you accept?', a: 'We accept Mobile Money (MTN, Vodafone, AT) and Cash on Delivery.' },
+];
+
+/* ─── Components ─── */
+
+const NavItem = ({ icon, label, active = false, onClick }: { icon: React.ReactNode, label: string, active?: boolean, onClick?: () => void }) => (
+  <button onClick={onClick} className={`flex items-center gap-2 text-sm font-bold transition-all px-4 py-2 rounded-full ${active ? 'bg-[#d97706] text-white shadow-lg scale-105' : 'text-white/80 hover:text-white hover:bg-white/10 hover:scale-105'}`}>
+    {React.cloneElement(icon as React.ReactElement, { size: 18 })}
+    {label}
+  </button>
 );
+
+const CategorySlider = ({ categoryName, items, onOrder }: { categoryName: string, items: any[], onOrder: (item: any) => void }) => {
+  const [index, setIndex] = useState(0);
+  const featured = items[index];
+  if (!featured) return null;
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center border-t border-gray-200/50 mt-8 scroll-anim">
+      {/* Brand Identity */}
+      <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
+        <div className="flex items-center gap-6">
+          <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center -rotate-[10deg] shadow-[0_15px_30px_rgba(67,20,7,0.3)] border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
+             <div className="w-12 h-6 bg-white/20 rounded-md mb-2 flex items-center justify-center"><Flame size={16} className="text-white"/></div>
+             <span className="font-black text-xs text-center leading-tight">BELLS<br/>{categoryName.split(' ')[0]}</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-1">CATEGORY</span>
+            <h2 className="text-2xl font-black text-gray-800 leading-none tracking-tight">{categoryName.toUpperCase()}</h2>
+            <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[15px] border-t-[#431407] mt-1" />
+          </div>
+        </div>
+        <h2 className="text-[2.75rem] font-black mt-12 italic text-[#343a40] tracking-tighter leading-none">Bells {categoryName}</h2>
+      </div>
+
+      {/* Slider */}
+      <div className="w-full lg:w-[65%]">
+        <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9]">
+          <img src={featured.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={featured.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          {!featured.available && (
+             <div className="absolute inset-0 bg-black/60 z-20 flex items-center justify-center">
+                <span className="bg-red-500 text-white font-black px-6 py-2 rounded-full uppercase tracking-widest text-sm shadow-xl">Sold Out</span>
+             </div>
+          )}
+          <button onClick={() => setIndex((p) => (p > 0 ? p - 1 : items.length - 1))} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-30"><ChevronLeft size={24}/></button>
+          <button onClick={() => setIndex((p) => (p < items.length - 1 ? p + 1 : 0))} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-30"><ChevronRight size={24}/></button>
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+            {items.map((_, i) => (
+              <button key={i} onClick={() => setIndex(i)} className={`h-2 rounded-full transition-all ${i === index ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-8 flex flex-col items-start max-w-2xl">
+          <h3 className="text-3xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
+            {featured.name} <ArrowUpRight size={20} strokeWidth={3} />
+          </h3>
+          <p className="text-[#6c757d] mt-4 leading-relaxed font-semibold text-[15px]">
+            {featured.hasSizes ? 'Available in multiple sizes. Customize your order to perfection.' : 'Standard portion size. Perfect for a hearty meal.'}
+          </p>
+          <div className="flex items-center gap-6 mt-6">
+             <button disabled={!featured.available} onClick={() => onOrder(featured)} className="bg-[#d97706] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+               ORDER NOW
+             </button>
+             <span className="text-2xl font-black text-gray-900">¢{featured.hasSizes ? (featured.prices.M || featured.prices.S) : featured.prices.fixed}</span>
+          </div>
+        </div>
+
+        <div className="mt-16 pt-4 border-t border-gray-200/60">
+          <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
+            {items.map((item, i) => (
+              <div key={item.id} onClick={() => setIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group">
+                <img src={item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:-translate-y-2 ${i === index ? 'border-[#d97706]' : 'border-white'} ${!item.available ? 'opacity-50 grayscale' : ''}`} />
+                <div className={`text-white text-[10px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === index ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                   {item.name}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function LandingScreen() {
   const { state, dispatch } = useApp();
-  
-  // Login Form States
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  // Landing Page Interactive Menu State
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'mains'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
+  /* ── View State ── */
+  const [view, setView] = useState<'home' | 'menu'>('home');
 
-  // Reviews & Rating Filters State
-  const [ratingFilter, setRatingFilter] = useState<'all' | '5' | '4' | '3' | '2' | '1'>('all');
-  const [dishFilter, setDishFilter] = useState<string>('all');
-
-  // Write a Review modal form states
-  const [isWriteReviewOpen, setIsWriteReviewOpen] = useState(false);
-  const [reviewName, setReviewName] = useState('');
-  const [reviewRole, setReviewRole] = useState('Local Foodie');
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewTitle, setReviewTitle] = useState('');
-  const [reviewText, setReviewText] = useState('');
-  const [reviewDish, setReviewDish] = useState('🍳 Signature Smokey Jollof Rice');
-  const [reviewSuccess, setReviewSuccess] = useState(false);
-
-  // Helpful votes state
-  const [helpfulVotes, setHelpfulVotes] = useState<Record<string, number>>({
-    'rev-1': 24,
-    'rev-2': 18,
-    'rev-3': 15,
-    'rev-4': 8,
-    'rev-5': 12
-  });
-  const [upvotedReviews, setUpvotedReviews] = useState<string[]>([]);
-
-  // Public Cart State
+  /* ── Order/Cart State ── */
   const [publicCart, setPublicCart] = useState<any[]>([]);
   const [isPublicCartOpen, setIsPublicCartOpen] = useState(false);
   const [pendingPublicItem, setPendingPublicItem] = useState<any | null>(null);
-
-  // Configuration states for pending public item
   const [publicSize, setPublicSize] = useState<'S' | 'M' | 'L'>('M');
   const [publicQty, setPublicQty] = useState<number>(1);
   const [publicAddons, setPublicAddons] = useState<any[]>([]);
 
-  // Checkout states for public order
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [serviceMethod, setServiceMethod] = useState<'takeaway' | 'delivery'>('takeaway');
-  const [deliveryAddress, setDeliveryAddress] = useState('');
+  /* ── Login State ── */
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const publicAddonOptions = [
-    { id: 'item_010', name: 'Extra Chicken', price: 15 },
-    { id: 'item_011', name: 'Egg', price: 3 },
-    { id: 'item_008', name: 'Big Sausage', price: 7 },
-    { id: 'item_009', name: 'Small Sausage', price: 3 },
-    { id: 'item_007', name: 'Ripe Plantain (Kokoo)', price: 1 },
-  ];
+  /* ── Branches State ── */
+  const branches = ['KNUST BRANCH', 'ADUM BRANCH', 'BANTAMA BRANCH', 'AHODWO BRANCH'];
+  const [selectedBranch, setSelectedBranch] = useState(branches[0]);
 
+  /* ── Sliders State ── */
+  const [jollofIndex, setJollofIndex] = useState(0);
+  const [friedIndex, setFriedIndex] = useState(0);
+  const [bankuIndex, setBankuIndex] = useState(0);
+  const jollofItems = landingMenu.filter(m => m.category === 'jollof');
+  const friedItems = landingMenu.filter(m => m.category === 'fried');
+  const bankuItems = landingMenu.filter(m => m.category === 'banku');
+  const featuredJollof = jollofItems[jollofIndex];
+  const featuredFried = friedItems[friedIndex];
+  const featuredBanku = bankuItems[bankuIndex];
+
+  /* ── Scroll effect for header ── */
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  /* ── Scroll Animations Observer ── */
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-slide-up-fade');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.scroll-anim').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  /* ── Cart Helpers ── */
   const getPublicItemPrice = (item: any, size: 'S' | 'M' | 'L', selectedAddons: any[]) => {
     if (!item) return 0;
-    const basePrice = item.prices ? item.prices[size] : parseFloat(item.price.replace(/[^\d.]/g, ''));
-    const addonsTotal = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
+    const basePrice = item.hasSizes ? (item.prices?.[size] || 0) : (item.prices?.fixed || 0);
+    const addonsTotal = selectedAddons.reduce((sum: number, addon: any) => sum + addon.price, 0);
     return basePrice + addonsTotal;
   };
 
   const handleAddPublicCart = () => {
     if (!pendingPublicItem) return;
     const unitPrice = getPublicItemPrice(pendingPublicItem, publicSize, publicAddons);
-    const cartItem = {
-      cartItemId: crypto.randomUUID(),
-      item: pendingPublicItem,
-      size: publicSize,
-      quantity: publicQty,
-      addons: [...publicAddons],
-      unitPrice: unitPrice,
-      totalPrice: unitPrice * publicQty
-    };
-    setPublicCart([...publicCart, cartItem]);
-    setPendingPublicItem(null);
-    setPublicQty(1);
-    setPublicAddons([]);
-    setPublicSize('M');
+    setPublicCart([...publicCart, {
+      cartItemId: crypto.randomUUID(), item: pendingPublicItem, size: publicSize, quantity: publicQty, addons: [...publicAddons], unitPrice, totalPrice: unitPrice * publicQty
+    }]);
+    setPendingPublicItem(null); setPublicQty(1); setPublicAddons([]); setPublicSize('M');
   };
 
   const handleWhatsAppSubmit = () => {
-    if (!customerName.trim() || !customerPhone.trim()) {
-      alert('Please fill out your Name and Phone Number to complete the order.');
-      return;
-    }
-    if (serviceMethod === 'delivery' && !deliveryAddress.trim()) {
-      alert('Please enter your Delivery Address/Hostel Name.');
-      return;
-    }
-
-    const total = publicCart.reduce((sum, item) => sum + item.totalPrice, 0);
-    let messageText = `🔔 *Bells Kitchen - New Online Order* 🔔\n`;
-    messageText += `----------------------------------\n`;
-    messageText += `*Customer Details:*\n`;
-    messageText += `• Name: ${customerName.trim()}\n`;
-    messageText += `• Phone: ${customerPhone.trim()}\n`;
-    messageText += `• Method: ${serviceMethod === 'takeaway' ? '🚶 Takeaway (KNUST Counter)' : '🛵 Delivery'}\n`;
-    if (serviceMethod === 'delivery') {
-      messageText += `• Address: ${deliveryAddress.trim()}\n`;
-    }
-    messageText += `\n*Order Details:*\n`;
-
-    publicCart.forEach(item => {
-      messageText += `• ${item.quantity}x ${item.item.name} (${item.size})\n`;
-      if (item.addons.length > 0) {
-        messageText += `  Add-ons: ${item.addons.map((a: any) => a.name).join(', ')}\n`;
-      }
+    const total = publicCart.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+    let msg = `🔔 *New Web Order* 🔔\n\n`;
+    publicCart.forEach((item: any) => {
+      msg += `• ${item.quantity}x ${item.item.name} (${item.size})\n`;
+      if (item.addons.length > 0) msg += `  Add-ons: ${item.addons.map((a: any) => a.name).join(', ')}\n`;
     });
-
-    messageText += `\n*Estimated Total:* GH₵ ${total.toFixed(2)}\n`;
-    messageText += `----------------------------------\n`;
-    messageText += `Thank you for ordering from Bells Kitchen!`;
-
-    const whatsappNum = '233505201685';
-    const url = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(messageText)}`;
-
-    window.open(url, '_blank');
-
-    setPublicCart([]);
-    setIsPublicCartOpen(false);
-    setCustomerName('');
-    setCustomerPhone('');
-    setDeliveryAddress('');
+    msg += `\n*Total:* GH₵ ${total.toFixed(2)}`;
+    window.open(`https://wa.me/233505201685?text=${encodeURIComponent(msg)}`, '_blank');
+    setPublicCart([]); setIsPublicCartOpen(false);
   };
-
-  // Dynamic reviews list
-  const [reviewsList, setReviewsList] = useState([
-    {
-      id: 'rev-1', name: 'Kwame Asante', role: 'Food Blogger', rating: 5,
-      avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150',
-      title: 'Best Jollof in Kumasi!',
-      text: 'Bells Kitchen Jollof Rice has become my absolute favorite. The rice is perfectly cooked, smoky, and full of rich aromatic spices. Highly recommended!',
-      dish: 'Jollof Rice', date: '2 days ago', verified: true
-    },
-    {
-      id: 'rev-2', name: 'Sarah Osei', role: 'Hospitality Critic', rating: 5,
-      avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150',
-      title: 'Perfect Tilapia & Banku',
-      text: 'The grilled tilapia is seasoned inside-out and grilled to tender perfection. Pairing it with fresh hot banku and the shito is unmatched.',
-      dish: 'Banku & Tilapia', date: '1 week ago', verified: true
-    },
-    {
-      id: 'rev-3', name: 'Emmanuel Mensah', role: 'KNUST Student', rating: 5,
-      avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150',
-      title: 'Incredible Fried Rice!',
-      text: 'Their Fried Rice is so flavorful and fresh. Never oily, with lots of fresh veggies. It is my go-to lunch on campus!',
-      dish: 'Fried Rice', date: '2 weeks ago', verified: true
-    },
-    {
-      id: 'rev-4', name: 'Abena Boateng', role: 'Local Foodie', rating: 5,
-      avatarUrl: '',
-      title: 'Mixture is the best combo',
-      text: 'Can\'t decide between Jollof and Fried Rice? Get the Mixture! You get both on one plate. Truly the best of both worlds.',
-      dish: 'Mixture', date: '3 weeks ago', verified: true
-    },
-    {
-      id: 'rev-5', name: 'Michael Ofori', role: 'Regular Diner', rating: 5,
-      avatarUrl: '',
-      title: 'Deluxe Asorted Jollof',
-      text: 'The Asorted Jollof Rice is loaded with beef, chicken, and sausages. Every bite is packed with protein and smoky goodness.',
-      dish: 'Asorted Jollof Rice', date: '1 month ago', verified: true
-    },
-    {
-      id: 'rev-6', name: 'Anita Mensah', role: 'Tech Manager', rating: 4,
-      avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150',
-      title: 'Hearty Asorted Fried Rice',
-      text: 'Ordered the Asorted Fried Rice for our team lunch. Extremely generous portions, fully loaded with meat and veggies. Super satisfying!',
-      dish: 'Asorted Fried Rice', date: '1 month ago', verified: true
-    }
-  ]);
-
-  const ratingCounts = useMemo(() => {
-    const counts = { all: reviewsList.length, 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    reviewsList.forEach(rev => {
-      const r = rev.rating as 5 | 4 | 3 | 2 | 1;
-      if (counts[r] !== undefined) {
-        counts[r]++;
-      }
-    });
-    return counts;
-  }, [reviewsList]);
-
-  const ratingPercentages = useMemo(() => {
-    const total = reviewsList.length || 1;
-    const star5 = reviewsList.filter(r => r.rating === 5).length;
-    const star4 = reviewsList.filter(r => r.rating === 4).length;
-    const star3 = reviewsList.filter(r => r.rating === 3).length;
-    const star2 = reviewsList.filter(r => r.rating === 2).length;
-    const star1 = reviewsList.filter(r => r.rating === 1).length;
-    return {
-      5: Math.round((star5 / total) * 100),
-      4: Math.round((star4 / total) * 100),
-      3: Math.round((star3 / total) * 100),
-      2: Math.round((star2 / total) * 100),
-      1: Math.round((star1 / total) * 100),
-    };
-  }, [reviewsList]);
-
-  const getAvatarGradient = (name: string) => {
-    const gradients = [
-      'from-red-600 to-orange-500',
-      'from-orange-600 to-amber-500',
-      'from-amber-600 to-yellow-500',
-      'from-rose-600 to-pink-500',
-      'from-red-800 to-orange-600',
-      'from-orange-700 to-red-500',
-    ];
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-      hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const index = Math.abs(hash) % gradients.length;
-    return gradients[index];
-  };
-
-  const filteredReviews = useMemo(() => {
-    return reviewsList.filter(rev => {
-      const matchesRating = ratingFilter === 'all' || rev.rating.toString() === ratingFilter;
-      const matchesDish = dishFilter === 'all' || rev.dish === dishFilter;
-      return matchesRating && matchesDish;
-    });
-  }, [reviewsList, ratingFilter, dishFilter]);
-
-  const handleHelpfulClick = (reviewId: string) => {
-    if (upvotedReviews.includes(reviewId)) {
-      setUpvotedReviews(prev => prev.filter(id => id !== reviewId));
-      setHelpfulVotes(prev => ({
-        ...prev,
-        [reviewId]: Math.max(0, (prev[reviewId] || 0) - 1)
-      }));
-    } else {
-      setUpvotedReviews(prev => [...prev, reviewId]);
-      setHelpfulVotes(prev => ({
-        ...prev,
-        [reviewId]: (prev[reviewId] || 0) + 1
-      }));
-    }
-  };
-
-  const handleReviewSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!reviewName.trim() || !reviewTitle.trim() || !reviewText.trim()) return;
-    const newId = `rev-${Date.now()}`;
-    // Strip emoji if present in the dish value
-    const cleanedDish = reviewDish.replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD00-\uDFFF]/g, '').trim();
-    const newReview = {
-      id: newId, name: reviewName.trim(), role: reviewRole.trim() || 'Diner',
-      rating: reviewRating,
-      avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150',
-      title: reviewTitle.trim(), text: reviewText.trim(), dish: cleanedDish,
-      date: 'Just now', verified: false
-    };
-    setReviewsList([newReview, ...reviewsList]);
-    setHelpfulVotes(prev => ({ ...prev, [newId]: 0 }));
-    setReviewSuccess(true);
-    setReviewName(''); setReviewTitle(''); setReviewText('');
-    setReviewRating(5); setReviewRole('Local Foodie');
-    setTimeout(() => { setReviewSuccess(false); setIsWriteReviewOpen(false); }, 2000);
-  };
-
-  const landingMenu = [
-    {
-      id: 'item_002', name: 'Jollof Rice', category: 'mains',
-      description: 'Rich, traditional party-style Jollof rice cooked in a seasoned, aromatic tomato and pepper broth. Best served with your choice of protein and sides.',
-      price: 'GH₵ 40.00', prices: { S: 35, M: 40, L: 45 }, rating: 4.9, reviews: 142, badge: 'Bestseller', tag: 'Chef Special',
-      imageUrl: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&q=80&w=800',
-      accentColor: 'from-red-600 to-orange-500', badgeBg: 'bg-red-600'
-    },
-    {
-      id: 'item_001', name: 'Fried Rice', category: 'mains',
-      description: 'Savory wok-fired Fried Rice tossed with fresh carrots, green peas, spring onions, and local spices.',
-      price: 'GH₵ 40.00', prices: { S: 35, M: 40, L: 45 }, rating: 4.8, reviews: 115, badge: 'Popular', tag: 'Wok Fired',
-      imageUrl: 'https://images.unsplash.com/photo-1603133872878-685f5888a3e1?auto=format&fit=crop&q=80&w=800',
-      accentColor: 'from-amber-600 to-yellow-500', badgeBg: 'bg-amber-600'
-    },
-    {
-      id: 'item_003', name: 'Mixture', category: 'mains',
-      description: 'The perfect half-and-half combination! Enjoy equal parts of our signature Jollof Rice and savory Fried Rice in a single plate.',
-      price: 'GH₵ 40.00', prices: { S: 35, M: 40, L: 45 }, rating: 4.7, reviews: 94, badge: 'Combo', tag: 'Best of Both',
-      imageUrl: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&q=80&w=800',
-      accentColor: 'from-orange-700 to-red-500', badgeBg: 'bg-orange-700'
-    },
-    {
-      id: 'item_004', name: 'Banku & Tilapia', category: 'mains',
-      description: 'Freshly grilled whole Tilapia fish seasoned in local herbs, served alongside hot fermented corn & cassava dumplings (Banku), fresh pepper sauce, and black shito.',
-      price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, rating: 5.0, reviews: 198, badge: 'Premium', tag: 'Charcoal Grilled',
-      imageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=800',
-      accentColor: 'from-yellow-600 to-amber-500', badgeBg: 'bg-yellow-600'
-    },
-    {
-      id: 'item_005', name: 'Asorted Fried Rice', category: 'mains',
-      description: 'Rich and hearty wok-fired Fried Rice loaded with a combination of tender beef chunks, chicken pieces, sausages, and fresh vegetables.',
-      price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, rating: 4.9, reviews: 160, badge: 'Deluxe', tag: 'Meat Lover',
-      imageUrl: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&q=80&w=800',
-      accentColor: 'from-rose-700 to-pink-500', badgeBg: 'bg-rose-700'
-    },
-    {
-      id: 'item_006', name: 'Asorted Jollof Rice', category: 'mains',
-      description: 'Our famous party Jollof rice tossed with sliced beef, diced chicken, and sausages for a loaded, savory, and protein-packed Ghanaian classic.',
-      price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, rating: 4.9, reviews: 182, badge: 'Bestseller', tag: 'Crowd Favorite',
-      imageUrl: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800',
-      accentColor: 'from-red-800 to-orange-600', badgeBg: 'bg-red-800'
-    }
-  ];
-
-  const filteredMenu = useMemo(() => {
-    return landingMenu.filter(item => {
-      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            item.tag.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [selectedCategory, searchQuery]);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!identifier.trim()) { setError('Please enter your email or phone number.'); return; }
-    if (!password) { setError('Please enter your password.'); return; }
+    if (!identifier.trim() || !password) { setError('Please enter both identifier and password.'); return; }
     setLoading(true);
     setTimeout(() => {
       const user = state.staff.find(
         (member) => member.emailOrPhone.toLowerCase() === identifier.trim().toLowerCase() && member.passwordHash === password
       );
-      if (user) {
-        dispatch({ type: 'LOGIN_USER', payload: user });
-        setIsLoginOpen(false);
-      } else {
-        setError('Incorrect email, phone number, or password. Access is restricted to authorized cashiers.');
-      }
+      if (user) { dispatch({ type: 'LOGIN_USER', payload: user }); setIsLoginOpen(false); }
+      else { setError('Incorrect credentials. Unauthorized access.'); }
       setLoading(false);
-    }, 850);
-  };
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newsletterEmail.trim()) {
-      setNewsletterSubscribed(true);
-      setNewsletterEmail('');
-      setTimeout(() => setNewsletterSubscribed(false), 4000);
-    }
+    }, 800);
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#fffdf9] text-[#431407] font-sans overflow-y-auto select-none relative pb-0">
-
-      {/* ── HEADER ─────────────────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#431407]/95 backdrop-blur-md py-4 border-b border-[#5c1f0e]/40 shadow-lg">
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <BelsLogo className="w-12 h-12 hover:scale-105 transition-all duration-300" />
-            <div className="flex flex-col">
-              <span className="text-base font-black tracking-tight text-white leading-none">Bells Kitchen</span>
-              <span className="text-[9px] text-[#fed7aa] font-bold uppercase tracking-wider mt-1">Total Food Care</span>
+    <div className="min-h-screen bg-[#f8f9fa] font-sans text-gray-800" style={{ backgroundImage: bgPattern, backgroundAttachment: 'fixed' }}>
+      
+      {/* ── TOP NAV ── */}
+      <div className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled || view === 'menu' ? 'bg-[#431407]/95 border-b-4 border-[#d97706] backdrop-blur-md pb-4 pt-4 shadow-2xl' : 'bg-gradient-to-b from-black/60 to-transparent pb-10 pt-4'}`}>
+        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+          
+          {/* Left: Logos & Brand Pill */}
+          <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setView('home')}>
+            <div className="w-12 h-12 rounded-full overflow-hidden border-[3px] border-white shadow-md bg-white transition-transform group-hover:scale-110">
+               <img src="/packaging_logo.jpg" alt="Bells Kitchen" className="w-full h-full object-cover" style={{ objectPosition: '20% 50%', transform: 'scale(1.3)' }} />
+            </div>
+            <div className="bg-white/30 backdrop-blur-md text-white font-black px-6 py-2.5 rounded-full text-xs tracking-widest hidden sm:block shadow-inner border border-white/20 transition-all group-hover:bg-white/40">
+              BELLSKITCHEN
             </div>
           </div>
 
-          <nav className="hidden lg:flex items-center gap-7">
-            {['Home', 'Menu', 'About', 'Branches', 'Reviews'].map((item, i) => (
-              <a key={item} href={['#', '#explore-menu', '#why-choose', '#branches', '#testimonials'][i]}
-                className={`font-bold text-xs uppercase transition-colors ${i === 0 ? 'text-[#e58e26]' : 'text-white/90 hover:text-[#e58e26]'}`}>
-                {item}
-              </a>
-            ))}
-          </nav>
+          {/* Center: Nav Links */}
+          <div className="hidden lg:flex items-center gap-8 bg-white/10 backdrop-blur-md border border-white/10 shadow-inner rounded-full px-8 py-2.5">
+            <NavItem icon={<Home/>} label="Home" active={view === 'home'} onClick={() => { setView('home'); window.scrollTo({top: 0, behavior: 'smooth'}); }} />
+            <NavItem icon={<MenuIcon/>} label="OUR MENU" active={view === 'menu'} onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} />
+            <NavItem icon={<Store/>} label="Outlets" onClick={() => { setView('home'); setTimeout(() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' }), 100); }} />
+          </div>
 
+          {/* Right: Order Now Button & Login */}
           <div className="flex items-center gap-3">
-            <a href="tel:+233302810990" className="hidden sm:flex items-center gap-1.5 font-black text-xs text-white">
-              <Phone size={13} className="text-[#e58e26]" />
-              <span>+233 302 810 990</span>
-            </a>
-            <button onClick={() => setIsLoginOpen(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#e58e26] hover:bg-[#d97706] text-white transition-all text-xs font-black shadow-md hover:scale-105">
-              <Lock size={12} />
-              Terminal Portal
+            <button onClick={() => setView('menu')} className="bg-white rounded-full flex items-center p-1.5 pr-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 group relative border-2 border-transparent hover:border-[#d97706]">
+              <div className="bg-[#ffefd4] rounded-full w-9 h-9 flex items-center justify-center relative overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-cover" alt="User" />
+              </div>
+              <span className="font-black px-3 text-sm text-gray-900 group-hover:text-[#d97706] transition-colors">Order Now</span>
+            </button>
+            <button onClick={() => setIsPublicCartOpen(true)} className="relative w-10 h-10 bg-white hover:bg-gray-50 rounded-full flex items-center justify-center text-gray-900 shadow-lg transition-all hover:scale-110 group">
+               <ShoppingBag size={18} className="group-hover:text-[#d97706] transition-colors" />
+               {publicCart.length > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#d97706] text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm">{publicCart.length}</span>}
+            </button>
+            <button onClick={() => setIsLoginOpen(true)} className="w-10 h-10 bg-[#431407] hover:bg-[#d97706] rounded-full flex items-center justify-center text-white shadow-lg transition-all hover:scale-110 ml-2 border border-white/20">
+               <User size={18}/>
             </button>
           </div>
-        </div>
-      </header>
 
-      {/* ── HERO — cream/peach gradient + warm orange glow ─────────────────────────── */}
-      <section className="relative min-h-[92vh] flex items-center overflow-hidden pt-24 pb-16"
-        style={{ background: 'linear-gradient(135deg, #fffdf9 0%, #fff7ed 40%, #ffedd5 80%, #fed7aa 100%)' }}>
-        {/* Warm glow orbs */}
-        <div className="absolute top-20 right-0 w-[500px] h-[500px] rounded-full opacity-25 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #fed7aa, transparent 70%)' }} />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-20 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #ffe3c4, transparent 70%)' }} />
-
-        {/* Floating emojis */}
-        <div className="absolute top-32 left-12 text-5xl opacity-25 animate-bounce hidden md:block" style={{ animationDuration: '3s' }}>🍗</div>
-        <div className="absolute bottom-32 right-16 text-4xl opacity-20 animate-bounce hidden md:block" style={{ animationDuration: '4s', animationDelay: '1s' }}>🔥</div>
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10 w-full">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            {/* Left */}
-            <div className="lg:col-span-7 text-[#431407] text-center lg:text-left space-y-6">
-              <span className="inline-block bg-[#431407] text-[#fffbeb] px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-wider shadow-lg">
-                🔥 Ghana's #1 Fast Food Experience
-              </span>
-              <h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.02] tracking-tight text-[#431407]">
-                Taste The<br />
-                <span className="text-[#e58e26]">Authentic</span><br />
-                Ghanaian Flavor
-              </h1>
-              <p className="text-base md:text-lg text-[#5c1f0e] max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
-                From golden broasted crispy chicken to the famous smokey party Jollof rice — crafted with passion, served piping hot near KNUST.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
-                <a href="#explore-menu"
-                  className="inline-flex items-center justify-center gap-2 font-black text-sm uppercase bg-[#e58e26] hover:bg-[#d97706] text-white shadow-xl hover:shadow-2xl hover:scale-105 h-14 rounded-2xl px-10 transition-all group">
-                  Explore Menu
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </a>
-                <button onClick={() => setIsLoginOpen(true)}
-                  className="inline-flex items-center justify-center gap-2 font-black text-sm uppercase border-2 border-[#431407]/40 bg-white/20 backdrop-blur-sm text-[#431407] hover:bg-[#431407] hover:text-white h-14 rounded-2xl px-10 transition-all">
-                  Staff Terminal
-                </button>
-              </div>
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-[#431407]/15 max-w-md mx-auto lg:mx-0">
-                <div><div className="text-3xl font-black text-[#e58e26]">35+</div><div className="text-[#431407]/60 text-[10px] font-bold uppercase tracking-wider mt-1">Yrs Recipe</div></div>
-                <div><div className="text-3xl font-black text-[#e58e26]">50+</div><div className="text-[#431407]/60 text-[10px] font-bold uppercase tracking-wider mt-1">Staff Members</div></div>
-                <div><div className="text-3xl font-black text-[#e58e26]">1k+</div><div className="text-[#431407]/60 text-[10px] font-bold uppercase tracking-wider mt-1">Happy Diners</div></div>
-              </div>
-            </div>
-
-            {/* Right — food image circle */}
-            <div className="lg:col-span-5 relative flex justify-center items-center">
-              <div className="relative w-full aspect-square max-w-[380px] sm:max-w-[420px] mx-auto">
-                <div className="absolute inset-0 bg-[#e58e26]/10 rounded-full filter blur-3xl animate-pulse" />
-                <div className="absolute inset-4 bg-white rounded-full shadow-2xl overflow-hidden border-8 border-[#e58e26]/20 group">
-                  <img alt="Signature Crispy Chicken Jollof"
-                    className="w-full h-full object-cover transform scale-105 group-hover:scale-110 transition-transform duration-500"
-                    src="https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&q=80&w=800" />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#431407]/95 via-[#431407]/40 to-transparent pt-12 pb-6 px-5 text-center z-10">
-                    <h3 className="text-white font-black text-base md:text-lg tracking-tight">Crispy Jollof Chicken</h3>
-                    <p className="text-[#fed7aa] text-xs font-bold mt-0.5">Our Signature Dish</p>
-                    <div className="flex items-center justify-center gap-1 mt-2">
-                      {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={11} className="fill-[#e58e26] text-[#e58e26]" />)}
-                      <span className="font-bold text-xs text-white ml-1.5">4.9</span>
-                    </div>
-                  </div>
-                </div>
-                {/* Pricing badge */}
-                <div className="absolute right-0 top-1/4 bg-[#e58e26] text-white px-4 py-2.5 rounded-2xl shadow-xl z-20 hover:scale-105 transition-transform">
-                  <div className="text-[8px] font-bold uppercase tracking-wider text-[#fff7ed]">Combo Deals</div>
-                  <div className="text-lg font-black mt-0.5">GH₵ 45</div>
-                </div>
-                {/* Speed badge */}
-                <div className="absolute left-[-10px] bottom-1/4 bg-white px-4 py-3 rounded-2xl shadow-xl z-20 hover:scale-105 transition-transform flex items-center gap-2 border border-[#fff7ed]">
-                  <Clock size={16} className="text-[#e58e26]" />
-                  <div className="text-left leading-none">
-                    <span className="text-[10px] font-black text-[#431407] block">Quick Pick</span>
-                    <span className="text-[8px] text-[#431407]/60 font-bold mt-1 block">15 Min Serve</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── MENU SECTION — elegant cream background with chocolate/orange card accents ── */}
-      <section id="explore-menu" className="py-24 scroll-mt-20 relative bg-[#fffdf9]">
-        <div className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{ backgroundImage: 'linear-gradient(to right,#43140708 1px,transparent 1px),linear-gradient(to bottom,#43140708 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="mb-14 text-center">
-            <span className="text-[10px] text-[#e58e26] font-black uppercase tracking-wider flex items-center justify-center gap-1">
-              <Flame size={12} className="text-[#e58e26] animate-pulse" /> ON THE COUNTER
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black text-[#431407] mt-1">Our Popular Menu</h2>
-            <p className="text-sm text-[#5c1f0e]/70 max-w-lg mx-auto mt-2">Discover our most loved dishes, crafted with passion and served piping hot near KNUST.</p>
-            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-gradient-to-r from-[#431407] to-[#e58e26]" />
-          </div>
-
-          {/* Toolbar */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-10 gap-4 border-b border-[#431407]/10">
-            <div className="relative w-full md:w-64">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#431407]/40" />
-              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search jollof, tilapia, sides…"
-                className="w-full border focus:outline-none rounded-xl pl-9 pr-4 py-2.5 text-xs text-[#431407] placeholder-[#431407]/30 transition-all"
-                style={{ background: '#fff7ed', borderColor: '#fed7aa' }} />
-            </div>
-            <div className="flex p-1 rounded-xl border overflow-x-auto" style={{ background: '#fff7ed', borderColor: '#fed7aa' }}>
-              {(['all', 'mains'] as const).map((cat) => (
-                <button key={cat} onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                    selectedCategory === cat ? 'bg-[#431407] text-white shadow-sm' : 'text-[#431407]/40 hover:text-[#431407]'
-                  }`}>
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Menu Cards */}
-          {filteredMenu.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredMenu.map((item) => (
-                <div key={item.id}
-                  className="rounded-3xl overflow-hidden flex flex-col group transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(67,20,7,0.1)] bg-white border border-[#431407]/10 hover:border-[#e58e26]/30">
-                  {/* Photo */}
-                  <div className="aspect-video w-full overflow-hidden relative">
-                    <img src={item.imageUrl} alt={item.name}
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
-                    {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-[#431407]/20 to-[#e58e26]/20 opacity-20 group-hover:opacity-35 transition-opacity duration-300" />
-                    <span className="absolute top-4 right-4 text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-xl text-white shadow-lg backdrop-blur-md border border-white/10 bg-[#431407]">
-                      {item.badge}
-                    </span>
-                  </div>
-                  {/* Body */}
-                  <div className="p-6 flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-2.5">
-                        <span className="text-[10px] text-[#e58e26] font-extrabold uppercase tracking-widest">{item.tag}</span>
-                        <div className="flex items-center gap-1 text-[10px] text-[#e58e26] font-extrabold bg-[#fff7ed] border border-[#fed7aa] px-2 py-0.5 rounded-lg">
-                          <Star size={10} className="fill-[#e58e26] text-[#e58e26]" />
-                          <span>{item.rating}</span>
-                        </div>
-                      </div>
-                      <h3 className="text-base font-black text-[#431407] group-hover:text-[#e58e26] transition-colors duration-200">{item.name}</h3>
-                      <p className="text-xs leading-relaxed mt-2 text-[#5c1f0e]/80">{item.description}</p>
-                    </div>
-                    
-                    <div className="mt-6 pt-4 flex items-center justify-between border-t border-[#431407]/10">
-                      <div className="flex flex-col">
-                        <span className="text-[8px] uppercase tracking-wider font-extrabold text-[#431407]/45 leading-none mb-1">Price</span>
-                        <span className="text-base font-black text-[#e58e26] leading-none">{item.price}</span>
-                      </div>
-                      <button onClick={() => setPendingPublicItem(item)}
-                        className="inline-flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider text-white bg-[#e58e26] hover:bg-[#d97706] hover:scale-105 active:scale-95 transition-all shadow-md">
-                        Order Now <ArrowRight size={11} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16 rounded-3xl border border-dashed border-[#431407]/20 bg-[#fff7ed]">
-              <Utensils size={28} className="mx-auto text-[#431407]/20 mb-3" />
-              <p className="text-xs text-[#431407]/40">No items match your filters.</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ── WHY CHOOSE — cream + chocolate packaging branding ──────── */}
-      <section id="why-choose" className="py-24 relative overflow-hidden text-[#431407] border-t border-[#431407]/5"
-        style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #fffdf9 100%)' }}>
-        <div className="absolute top-0 right-0 w-96 h-96 opacity-30 pointer-events-none rounded-full"
-          style={{ background: 'radial-gradient(circle, #fed7aa, transparent 70%)' }} />
-        <div className="absolute bottom-0 left-0 w-80 h-80 opacity-20 pointer-events-none rounded-full"
-          style={{ background: 'radial-gradient(circle, #ffe3c4, transparent 70%)' }} />
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="mb-16 text-center">
-            <span className="text-[10px] text-[#e58e26] font-black uppercase tracking-wider flex items-center justify-center gap-1">
-              <Sparkles size={10} className="text-[#e58e26] fill-[#e58e26]" /> THE BELLS PROMISE
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black text-[#431407] mt-1">Why Choose Bells Kitchen?</h2>
-            <p className="text-sm text-[#5c1f0e]/70 max-w-lg mx-auto mt-2">Experience the difference that has made our kitchen Ghana's beloved dining concept near KNUST.</p>
-            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-[#e58e26]" />
-          </div>
-
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            {/* Left — photo */}
-            <div className="lg:col-span-5 relative flex justify-center items-center">
-              <div className="relative rounded-[32px] p-1 shadow-2xl overflow-hidden group border border-[#431407]/10 bg-white">
-                <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800"
-                  alt="Happy friends dining at Bells Kitchen" className="w-full h-auto object-cover rounded-[28px]" />
-                <div className="absolute top-4 right-4 bg-[#431407] text-white font-black text-[8px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-md">
-                  Vibrant Vibe & Taste
-                </div>
-              </div>
-            </div>
-            {/* Right — value cards */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { icon: ChefHat, label: 'Expert Chefs', text: 'Our skilled chefs bring years of culinary expertise to authentic local recipes.', color: 'text-[#e58e26]', border: 'hover:border-[#e58e26]/40' },
-                  { icon: Leaf, label: 'Fresh Ingredients', text: 'We source clean, premium local farm products and freshly caught tilapia daily.', color: 'text-emerald-600', border: 'hover:border-emerald-600/40' },
-                  { icon: Clock, label: 'Express Service', text: 'Fast-casual counter collection workflows without compromising on taste.', color: 'text-orange-600', border: 'hover:border-orange-600/40' },
-                  { icon: Award, label: 'Quality Assured', text: 'Strict sanitary standards, deep seasoning, and pristine presentation guides.', color: 'text-sky-600', border: 'hover:border-sky-600/40' },
-                  { icon: Truck, label: 'Warm Packaging', text: 'Delivered inside heat-insulated biodegradable packs keeping meals piping hot.', color: 'text-blue-600', border: 'hover:border-blue-600/40' },
-                  { icon: Heart, label: 'Made with Love', text: 'Every single box prepared with immense care, joy, and deep culinary passion.', color: 'text-rose-600', border: 'hover:border-rose-600/40' },
-                ].map(({ icon: Icon, label, text, color, border }) => (
-                  <div key={label} className={`p-5 rounded-2xl transition-all duration-300 group bg-white border border-[#431407]/10 hover:shadow-lg ${border}`}>
-                    <div className="flex items-center gap-3 mb-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-[#fff7ed] flex items-center justify-center group-hover:scale-110 transition-transform border border-[#fed7aa]/35">
-                        <Icon size={18} className={color} />
-                      </div>
-                      <h3 className={`text-xs font-black uppercase tracking-wider text-[#431407]`}>{label}</h3>
-                    </div>
-                    <p className="text-[11px] text-[#5c1f0e]/80 leading-relaxed">{text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── PACKAGING SHOWCASE GALLERY — cream background, custom cropped mockups ── */}
-      <section id="packaging-showcase" className="py-24 relative bg-[#fffdf9] border-t border-[#431407]/5">
-        <div className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{ backgroundImage: 'linear-gradient(to right,#43140708 1px,transparent 1px),linear-gradient(to bottom,#43140708 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="mb-16 text-center">
-            <span className="text-[10px] text-[#e58e26] font-black uppercase tracking-wider flex items-center justify-center gap-1">
-              <Sparkles size={11} className="text-[#e58e26] fill-[#e58e26]" /> SIGNATURE PACKAGING
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black text-[#431407] mt-1">Designed For Pure Freshness</h2>
-            <p className="text-sm text-[#5c1f0e]/70 max-w-xl mx-auto mt-2">
-              Every meal is packed in our premium, heat-insulated custom bags to lock in flavor and ensure it arrives piping hot.
-            </p>
-            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-gradient-to-r from-[#431407] to-[#e58e26]" />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                img: '/packaging_trio.jpg',
-                title: 'The Showcase Lineup',
-                desc: 'Insulated custom paper bags on display, designed to hold assorted boxes securely.'
-              },
-              {
-                img: '/packaging_front.jpg',
-                title: 'Flat Bag Design',
-                desc: 'Showcases our official numbers, hostel location, and custom QR scan menu label.'
-              },
-              {
-                img: '/packaging_iso.jpg',
-                title: '3D Isometric View',
-                desc: 'A folded premium perspective displaying rigid sides that prevent spills during transit.'
-              },
-              {
-                img: '/packaging_logo.jpg',
-                title: 'Official Brand Seal',
-                desc: 'Close-up of the circular Bel\'s Kitchen logo and scanning code for online portal access.'
-              }
-            ].map((pack) => (
-              <div key={pack.title}
-                className="bg-white rounded-3xl overflow-hidden border border-[#431407]/10 shadow-sm group hover:-translate-y-1.5 hover:shadow-[0_15px_30px_rgba(67,20,7,0.08)] hover:border-[#e58e26]/30 transition-all duration-300 flex flex-col">
-                <div className="aspect-square w-full overflow-hidden bg-[#fff7ed] border-b border-[#431407]/5 relative">
-                  <img src={pack.img} alt={pack.title}
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
-                </div>
-                <div className="p-5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-xs font-black text-[#431407] tracking-tight group-hover:text-[#e58e26] transition-colors duration-200">{pack.title}</h3>
-                    <p className="text-[10px] text-[#5c1f0e]/70 leading-normal mt-2">{pack.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── COMMUNITY BANNER — full bleed image ───────────────────────── */}
-      <div className="relative h-[420px] flex items-center justify-center overflow-hidden select-none">
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=1200')" }} />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(67,20,7,0.95) 0%, rgba(229,142,38,0.7) 60%, transparent 100%)' }} />
-        <div className="max-w-6xl mx-auto px-6 relative z-10 w-full text-white text-left space-y-5">
-          <span className="inline-block bg-[#e58e26] text-white font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md">
-            🔥 Join The Bells Community
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black max-w-lg leading-tight tracking-tight">
-            Good Food, Good Vibes, Great Company
-          </h2>
-          <p className="text-xs md:text-sm text-white/90 max-w-md leading-relaxed font-medium">
-            Serving students, families, and food lovers opposite No Weapon Hostel Annex. Stop by Kumasi's favorite counter today!
-          </p>
         </div>
       </div>
 
-      {/* ── TESTIMONIALS — High-End KFC / E-commerce Style Social Proof Board ── */}
-      <section id="testimonials" className="py-24 scroll-mt-20 relative overflow-hidden bg-gradient-to-b from-[#fffdf9] via-[#fff7ed] to-[#fffdf9]">
-        {/* Ambient Orbs */}
-        <div className="absolute top-1/6 left-[-10%] w-[500px] h-[500px] opacity-15 pointer-events-none rounded-full filter blur-[120px] mix-blend-multiply animate-pulse"
-          style={{ background: 'radial-gradient(circle, #fed7aa 0%, transparent 70%)', animationDuration: '8s' }} />
-        <div className="absolute bottom-1/6 right-[-10%] w-[600px] h-[600px] opacity-10 pointer-events-none rounded-full filter blur-[150px] mix-blend-multiply animate-pulse"
-          style={{ background: 'radial-gradient(circle, #ffe3c4 0%, transparent 70%)', animationDuration: '10s', animationDelay: '2s' }} />
+      {view === 'home' && (
+      <>
+        {/* ── MASSIVE HERO SECTION ── */}
+      <div className="relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden mt-0" id="home">
+        {/* Background Image & Overlay */}
+        <div className="absolute inset-0 w-full h-full">
+           <img src="https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&q=80&w=2000" alt="Delicious Food Background" className="w-full h-full object-cover scale-105 animate-[slow-zoom_20s_ease-in-out_infinite_alternate]" />
+           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-[#f8f9fa]"/>
+        </div>
         
-        {/* Subtle Overlay Grid */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{ backgroundImage: 'linear-gradient(to right, #431407 1px, transparent 1px), linear-gradient(to bottom, #431407 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        {/* Hero Content */}
+        <div className="relative z-10 text-center max-w-5xl mx-auto px-4 mt-20 scroll-anim">
+           <div className="inline-block bg-[#d97706] text-white font-black px-5 py-2 rounded-full text-[10px] sm:text-xs tracking-[0.3em] mb-8 shadow-2xl border border-white/20 uppercase">
+             Welcome to Bells Kitchen
+           </div>
+           <h1 className="text-white text-5xl md:text-7xl lg:text-[6.5rem] font-black mb-8 tracking-tighter leading-[1.05] drop-shadow-2xl">
+              Redefining <br/> <span className="text-[#d97706] italic">Everyday</span> Meals.
+           </h1>
+           <p className="text-white/90 text-lg md:text-2xl font-bold leading-relaxed mb-12 max-w-3xl mx-auto drop-shadow-md">
+              Experience the finest Jollof and Fried Rice, delivered hot in our premium signature packaging. True flavors of Kumasi.
+           </p>
+           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <button onClick={() => document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-[#d97706] text-white font-black text-sm tracking-wider py-4 px-12 rounded-full shadow-[0_10px_30px_rgba(217,119,6,0.4)] hover:bg-[#b45309] hover:-translate-y-1 transition-all">
+                EXPLORE MENU
+              </button>
+              <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/30 text-white font-black text-sm tracking-wider py-4 px-12 rounded-full hover:bg-white hover:text-[#431407] transition-all">
+                FIND US
+              </button>
+           </div>
+        </div>
+        
+        {/* Scroll indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 animate-bounce cursor-pointer" onClick={() => document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' })}>
+           <span className="text-[10px] font-black uppercase tracking-widest">Scroll Down</span>
+           <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
+              <div className="w-1.5 h-1.5 bg-white/50 rounded-full"/>
+           </div>
+        </div>
+      </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          {/* Header */}
-          <div className="mb-16 text-center space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#e58e26]/10 text-[#e58e26] border border-[#e58e26]/20 text-[10px] font-black uppercase tracking-widest shadow-inner animate-pulse">
-              <Sparkles size={11} className="fill-[#e58e26]" /> Diner Feedback
-            </span>
-            <h2 className="text-4xl md:text-5xl font-black text-[#431407] tracking-tight">
-              What Our <span className="text-[#e58e26]">Guests Experience</span>
-            </h2>
-            <p className="text-sm max-w-xl mx-auto font-medium text-[#5c1f0e]/80 leading-relaxed">
-              Explore authentic reviews from local food bloggers, KNUST students, and regulars about Bells Kitchen.
-            </p>
-            <div className="w-24 h-1.5 rounded-full mx-auto bg-gradient-to-r from-[#431407] via-[#e58e26] to-[#fed7aa] shadow-md" />
+      {/* ── JOLLOF MENU SECTION ── */}
+      <div className="max-w-7xl mx-auto px-4 py-24 flex flex-col lg:flex-row gap-12 items-center scroll-anim" id="our-menu">
+        {/* Left Side: Brand Identity */}
+        <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
+          <div className="flex items-center gap-6">
+            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center -rotate-[10deg] shadow-[0_15px_30px_rgba(67,20,7,0.3)] border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
+               <div className="w-12 h-6 bg-white/20 rounded-md mb-2 flex items-center justify-center"><Flame size={16} className="text-white"/></div>
+               <span className="font-black text-xs">BELLS BOX</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-1">ESTD 2018</span>
+              <h2 className="text-3xl font-black text-gray-800 leading-none">BELLS</h2>
+              <div className="text-[#431407] text-3xl font-black">RICE</div>
+              <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[15px] border-t-[#431407] mt-1" />
+            </div>
+          </div>
+          <h2 className="text-[2.75rem] font-black mt-12 italic text-[#343a40] tracking-tighter">Bells Jollof Menu</h2>
+        </div>
+
+        {/* Right Side: Slider & Details */}
+        <div className="w-full lg:w-[65%]">
+          {/* Main Image Slider */}
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9]">
+            <img src={featuredJollof.imageUrl} alt={featuredJollof.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            {/* Arrows */}
+            <button onClick={() => setJollofIndex((p) => (p > 0 ? p - 1 : jollofItems.length - 1))} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
+            <button onClick={() => setJollofIndex((p) => (p < jollofItems.length - 1 ? p + 1 : 0))} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
+            {/* Dots */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+              {jollofItems.map((_, i) => (
+                <button key={i} onClick={() => setJollofIndex(i)} className={`h-2 rounded-full transition-all ${i === jollofIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
+              ))}
+            </div>
           </div>
 
-          {/* 12-Column Dashboard Grid Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {/* LEFT SIDE PANEL (Span 4): Amazon/KFC style aggregates card */}
-            <div className="lg:col-span-4 space-y-6">
-              <div className="bg-white border border-[#431407]/10 rounded-[2.5rem] p-8 shadow-md relative overflow-hidden group hover:border-[#e58e26]/25 transition-all duration-300">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-[#e58e26]/5 rounded-full filter blur-xl pointer-events-none"></div>
-                
-                <h3 className="text-[#431407]/80 font-black text-xs tracking-wider uppercase mb-5 leading-none">Rating Summary</h3>
-                
-                <div className="text-center pb-6 border-b border-[#431407]/5">
-                  <div className="text-6xl md:text-7xl font-black text-[#431407] tracking-tight flex items-baseline justify-center gap-1.5 drop-shadow-sm">
-                    4.9
-                    <span className="text-xl text-[#431407]/40 font-bold">/5</span>
-                  </div>
-                  <div className="flex justify-center gap-1 text-[#e58e26] my-3.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} size={16} className="fill-[#e58e26] text-[#e58e26]" />
-                    ))}
-                  </div>
-                  <p className="text-xs text-[#5c1f0e]/60 font-semibold">Based on 1.2k+ guest ratings</p>
-                </div>
+          {/* Details */}
+          <div className="mt-8 flex flex-col items-start max-w-2xl">
+            <h3 className="text-3xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
+              {featuredJollof.name} <ArrowUpRight size={20} strokeWidth={3} />
+            </h3>
+            <p className="text-[#6c757d] mt-4 leading-relaxed font-semibold text-[15px]">
+              {featuredJollof.description}
+            </p>
+            <button onClick={() => setPendingPublicItem(featuredJollof)} className="bg-[#d97706] text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full mt-6 shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+              ORDER NOW
+            </button>
+          </div>
 
-                {/* Rating Distribution Bars */}
-                <div className="space-y-3.5 py-6 border-b border-[#431407]/5">
-                  {([5, 4, 3, 2, 1] as const).map((star) => (
-                    <div key={star} className="flex items-center justify-between text-[11px] text-[#5c1f0e]/70 font-black gap-3 select-none">
-                      <button 
-                        onClick={() => setRatingFilter((ratingFilter === String(star) ? 'all' : String(star)) as any)}
-                        className={`w-12 text-left shrink-0 hover:text-[#e58e26] transition-colors duration-150 flex items-center gap-1 ${ratingFilter === String(star) ? 'text-[#e58e26]' : ''}`}
-                      >
-                        {star} Star{star > 1 ? 's' : ''}
-                      </button>
-                      <div className="flex-1 h-2.5 rounded-full bg-[#fff7ed] overflow-hidden border border-[#fed7aa]/30 relative">
-                        <div 
-                          className="h-full rounded-full bg-gradient-to-r from-[#431407] to-[#e58e26] shadow-sm transition-all duration-500" 
-                          style={{ width: `${ratingPercentages[star]}%` }}
-                        ></div>
-                      </div>
-                      <span className="w-8 text-right shrink-0 font-bold">{ratingPercentages[star]}%</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Local Stats */}
-                <div className="pt-6 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-[#e58e26]/10 flex items-center justify-center text-[#e58e26] shrink-0 border border-[#e58e26]/15">
-                      <Heart size={14} className="fill-[#e58e26]" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black text-[#431407]">98% Recommendation</h4>
-                      <p className="text-[10px] text-[#5c1f0e]/60 mt-0.5 font-medium">Diners loved their customized chicken toppings.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-[#e58e26]/10 flex items-center justify-center text-[#e58e26] shrink-0 border border-[#e58e26]/15">
-                      <Award size={14} />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black text-[#431407]">Top Culinary Award</h4>
-                      <p className="text-[10px] text-[#5c1f0e]/60 mt-0.5 font-medium">Voted best Smokey Jollof opposite No Weapon Annex.</p>
-                    </div>
+          {/* Sub Items */}
+          <div className="mt-16 pt-4 border-t border-gray-200/60">
+            <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Jollofs</h4>
+            <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
+              {jollofItems.map((item, i) => (
+                <div key={item.id} onClick={() => setJollofIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group">
+                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:-translate-y-2 ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                  <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                     {item.name}
                   </div>
                 </div>
-
-                <button 
-                  onClick={() => setIsWriteReviewOpen(true)}
-                  className="w-full mt-8 flex items-center justify-center gap-2 py-4 rounded-2xl text-white font-black text-xs shadow-md transition-all active:scale-[0.98] hover:scale-[1.01] bg-[#e58e26] hover:bg-[#d97706] duration-200"
-                >
-                  <Sparkles size={13} className="fill-white animate-pulse" />
-                  Leave a Dining Review
-                </button>
-              </div>
+              ))}
             </div>
+          </div>
+        </div>
+      </div>
 
-            {/* RIGHT SIDE PANEL (Span 8): Review list with modern filters */}
-            <div className="lg:col-span-8 space-y-6">
-              
-              {/* Filter Controls Row */}
-              <div className="flex flex-col gap-4 bg-white border border-[#431407]/10 rounded-3xl p-5 shadow-sm">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black uppercase tracking-wider text-[#431407]/60">Rating filter:</span>
-                    <div className="flex bg-[#fff7ed] p-0.5 rounded-xl border border-[#fed7aa] gap-0.5">
-                      {(['all', '5', '4'] as const).map((star) => (
-                        <button 
-                          key={star} 
-                          onClick={() => setRatingFilter(star)}
-                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                            ratingFilter === star 
-                              ? 'bg-[#431407] text-white shadow-sm' 
-                              : 'text-[#431407]/60 hover:text-[#431407]'
-                          }`}
-                        >
-                          {star === 'all' ? 'All Reviews' : `${star} Stars`}
-                        </button>
+      {/* ── BANKU MENU SECTION ── */}
+      <div className="max-w-7xl mx-auto px-4 py-24 flex flex-col lg:flex-row gap-12 items-center scroll-anim" id="banku-menu">
+        {/* Left Side: Brand Identity */}
+        <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
+          <div className="flex items-center gap-6">
+            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center -rotate-[10deg] shadow-[0_15px_30px_rgba(67,20,7,0.3)] border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
+               <div className="w-12 h-6 bg-white/20 rounded-md mb-2 flex items-center justify-center"><Flame size={16} className="text-white"/></div>
+               <span className="font-black text-xs text-center">BELLS<br/>LOCAL</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-1">ESTD 2018</span>
+              <h2 className="text-3xl font-black text-gray-800 leading-none tracking-tight">BELLS</h2>
+              <div className="text-[#431407] text-3xl font-black tracking-tight">BANKU</div>
+              <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[15px] border-t-[#431407] mt-1" />
+            </div>
+          </div>
+          <h2 className="text-[2.75rem] font-black mt-12 italic text-[#343a40] tracking-tighter leading-none">Bells Banku &amp; Tilapia</h2>
+        </div>
+
+        {/* Right Side: Slider & Details */}
+        <div className="w-full lg:w-[65%]">
+          {/* Main Image Slider */}
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9]">
+            <img src={featuredBanku.imageUrl} alt={featuredBanku.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            {/* Arrows */}
+            <button onClick={() => setBankuIndex((p) => (p > 0 ? p - 1 : bankuItems.length - 1))} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
+            <button onClick={() => setBankuIndex((p) => (p < bankuItems.length - 1 ? p + 1 : 0))} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
+            {/* Dots */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+              {bankuItems.map((_, i) => (
+                <button key={i} onClick={() => setBankuIndex(i)} className={`h-2 rounded-full transition-all ${i === bankuIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
+              ))}
+            </div>
+          </div>
+
+          {/* Details */}
+          <div className="mt-8 flex flex-col items-start max-w-2xl">
+            <h3 className="text-3xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
+              {featuredBanku.name} <ArrowUpRight size={20} strokeWidth={3} />
+            </h3>
+            <p className="text-[#6c757d] mt-4 leading-relaxed font-semibold text-[15px]">
+              {featuredBanku.description}
+            </p>
+            <button onClick={() => setPendingPublicItem(featuredBanku)} className="bg-[#d97706] text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full mt-6 shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+              ORDER NOW
+            </button>
+          </div>
+
+          {/* Sub Items */}
+          <div className="mt-16 pt-4 border-t border-gray-200/60">
+            <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Banku</h4>
+            <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
+              {bankuItems.map((item, i) => (
+                <div key={item.id} onClick={() => setBankuIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group">
+                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:-translate-y-2 ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                  <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                     {item.name}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── FRIED RICE MENU SECTION ── */}
+      <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center border-t border-gray-200/50 mt-8 scroll-anim">
+        {/* Left Side: Brand Identity */}
+        <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
+          <div className="flex items-center gap-6">
+            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center rotate-[10deg] shadow-[0_15px_30px_rgba(67,20,7,0.3)] border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
+               <div className="w-10 h-12 bg-[#ffefd4] rounded-t-lg rounded-b-sm mb-1 opacity-90 flex items-center justify-center font-black text-[#d97706] text-xs shadow-inner">B</div>
+               <span className="font-black text-xs">RICE BAG</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="text-[#d97706] pb-1"><Flame size={32} strokeWidth={2.5} className="fill-[#d97706]"/></div>
+              <h2 className="text-2xl font-black text-[#431407] leading-none tracking-tight">FRIED RICE</h2>
+              <span className="text-[10px] font-bold text-[#d97706] tracking-widest italic mt-1">it's flaming hot</span>
+            </div>
+          </div>
+          <h2 className="text-[2.75rem] font-black mt-12 italic text-[#343a40] tracking-tighter">Bells Fried Menu</h2>
+        </div>
+
+        {/* Right Side: Slider & Details */}
+        <div className="w-full lg:w-[65%]">
+          {/* Main Image Slider */}
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9]">
+            <img src={featuredFried.imageUrl} alt={featuredFried.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <button onClick={() => setFriedIndex((p) => (p > 0 ? p - 1 : friedItems.length - 1))} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
+            <button onClick={() => setFriedIndex((p) => (p < friedItems.length - 1 ? p + 1 : 0))} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+              {friedItems.map((_, i) => (
+                <button key={i} onClick={() => setFriedIndex(i)} className={`h-2 rounded-full transition-all ${i === friedIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
+              ))}
+            </div>
+          </div>
+
+          {/* Details */}
+          <div className="mt-8 flex flex-col items-start max-w-2xl">
+            <h3 className="text-3xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
+              {featuredFried.name} <ArrowUpRight size={20} strokeWidth={3} />
+            </h3>
+            <p className="text-[#6c757d] mt-4 leading-relaxed font-semibold text-[15px]">
+              {featuredFried.description}
+            </p>
+            <button onClick={() => setPendingPublicItem(featuredFried)} className="bg-[#d97706] text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full mt-6 shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+              ORDER NOW
+            </button>
+          </div>
+
+          {/* Sub Items */}
+          <div className="mt-16 pt-4 border-t border-gray-200/60">
+            <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Fried Rice</h4>
+            <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
+              {friedItems.map((item, i) => (
+                <div key={item.id} onClick={() => setFriedIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group">
+                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:-translate-y-2 ${i === friedIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                  <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                     {item.name}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── PACKAGING EXPERIENCE SECTION ── */}
+      <div className="max-w-7xl mx-auto px-4 py-16 scroll-anim" id="packaging">
+        <div className="bg-[#431407] rounded-[3rem] overflow-hidden shadow-2xl relative flex flex-col md:flex-row items-center border-4 border-[#d97706]/20">
+          <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center"/>
+          <div className="w-full md:w-1/2 p-12 lg:p-20 relative z-10">
+             <h2 className="text-[#d97706] text-xs font-black uppercase tracking-[0.2em] mb-4">The Bells Experience</h2>
+             <h3 className="text-4xl md:text-[3rem] font-black italic mb-8 leading-tight text-white">Unbox <br/>Unforgettable <br/>Flavors.</h3>
+             <p className="text-white/80 font-medium leading-relaxed mb-10 text-lg">
+               Our premium packaging is designed to keep your food piping hot and perfectly intact. From our kitchen to your table, we ensure every detail reflects our commitment to excellence.
+             </p>
+             <button onClick={() => document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' })} className="bg-[#d97706] text-white font-black text-sm tracking-wider py-4 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:bg-[#b45309] hover:-translate-y-1 transition-all">
+               ORDER NOW
+             </button>
+          </div>
+          <div className="w-full md:w-1/2 p-8 relative z-10 flex justify-center">
+             <img src="/packaging_trio.jpg" alt="Bells Packaging" className="w-[85%] rounded-[2rem] shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 border-[8px] border-white/10" />
+          </div>
+        </div>
+      </div>
+
+      {/* ── REVIEWS & FAQ SECTION ── */}
+      <div className="max-w-7xl mx-auto px-4 py-20 mt-12 border-t border-gray-200/50 scroll-anim" id="reviews-faq">
+        <div className="flex flex-col lg:flex-row gap-16">
+          {/* Customer Reviews */}
+          <div className="w-full lg:w-1/2">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 rounded-full bg-[#d97706]/10 flex items-center justify-center text-[#d97706]">
+                <MessageCircle size={20} />
+              </div>
+              <h2 className="text-3xl font-black italic text-gray-900 tracking-tight">Customer Reviews</h2>
+            </div>
+            <div className="space-y-6">
+              {reviews.map((review) => (
+                <div key={review.id} className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                  {/* Decorative Background Icon */}
+                  <Quote size={120} className="absolute -bottom-6 -right-6 text-gray-50 opacity-50 group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-500" />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-1 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={16} className={i < review.rating ? "text-[#d97706] fill-[#d97706]" : "text-gray-300 fill-gray-300"} />
                       ))}
                     </div>
-                  </div>
-                  
-                  <button 
-                    onClick={() => { setRatingFilter('all'); setDishFilter('all'); }}
-                    className="text-[9px] font-black uppercase tracking-wider text-[#431407]/70 hover:text-[#e58e26] transition-colors py-1 px-2.5 rounded-lg border border-[#431407]/10 hover:border-[#e58e26]/20 hover:bg-[#fff7ed]"
-                  >
-                    Reset Filters
-                  </button>
-                </div>
-
-                <div className="border-t border-[#431407]/10 pt-3.5">
-                  <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-orange-500/25 scrollbar-track-transparent">
-                    {[
-                      { id: 'all', label: 'All Dishes', emoji: '🍛' },
-                      { id: 'Jollof Rice', label: 'Jollof Rice', emoji: '🍚' },
-                      { id: 'Fried Rice', label: 'Fried Rice', emoji: '🍳' },
-                      { id: 'Mixture', label: 'Mixture Combo', emoji: '🍛' },
-                      { id: 'Banku & Tilapia', label: 'Banku & Tilapia', emoji: '🐟' },
-                      { id: 'Asorted Fried Rice', label: 'Assorted Fried', emoji: '🍲' },
-                      { id: 'Asorted Jollof Rice', label: 'Assorted Jollof', emoji: '🔥' },
-                    ].map(spec => {
-                      const isActive = dishFilter === spec.id;
-                      return (
-                        <button
-                          key={spec.id}
-                          onClick={() => setDishFilter(spec.id)}
-                          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border shrink-0 ${
-                            isActive
-                              ? 'bg-[#431407] text-white border-[#431407] shadow-sm scale-105'
-                              : 'bg-[#fff7ed] text-[#431407]/60 border-[#fed7aa] hover:text-[#431407] hover:bg-[#ffedd5]'
-                          }`}
-                        >
-                          <span>{spec.emoji}</span>
-                          <span>{spec.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {/* Review Cards Grid */}
-              {filteredReviews.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {filteredReviews.map((rev) => (
-                    <div 
-                      key={rev.id}
-                      className="bg-white border border-[#431407]/10 rounded-[2rem] p-6 shadow-sm hover:border-[#e58e26]/30 hover:-translate-y-1.5 hover:shadow-[0_15px_35px_rgba(67,20,7,0.06)] transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
-                    >
-                      <div className="absolute -top-4 -right-1 text-8xl font-serif text-[#431407]/[0.02] select-none pointer-events-none group-hover:text-[#e58e26]/[0.05] transition-colors duration-500">
-                        ”
+                    <p className="text-gray-600 font-medium leading-relaxed italic text-lg mb-6">"{review.text}"</p>
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center font-black text-[#d97706] text-lg">
+                        {review.name.charAt(0)}
                       </div>
-
                       <div>
-                        {/* Rating Row */}
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex gap-0.5 text-[#e58e26]">
-                            {Array.from({ length: rev.rating }).map((_, i) => (
-                              <Star key={i} size={11} className="fill-[#e58e26] text-[#e58e26]" />
-                            ))}
-                          </div>
-                          
-                          {rev.verified ? (
-                            <span className="flex items-center gap-1 text-[8px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">
-                              <CheckCircle size={9} className="fill-emerald-600 text-white" /> Verified Diner
-                            </span>
-                          ) : (
-                            <span className="text-[8px] bg-[#fff7ed] text-[#e58e26] border border-[#fed7aa] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">
-                              Guest Diner
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Title & Review Tag */}
-                        <h4 className="text-[13px] font-black leading-snug text-[#431407] group-hover:text-[#e58e26] transition-colors duration-300">
-                          {rev.title}
-                        </h4>
-
-                        <div className="inline-flex items-center gap-1.5 my-2.5 px-3 py-1 rounded-full text-[8.5px] font-black uppercase tracking-wider bg-[#fff7ed] text-[#e58e26] border border-[#fed7aa]/50">
-                          Ordered: {rev.dish}
-                        </div>
-
-                        {/* Text */}
-                        <p className="text-[11px] leading-relaxed italic text-[#5c1f0e]/80 mb-5 font-semibold">
-                          "{rev.text}"
-                        </p>
-                      </div>
-
-                      {/* Footer / Author info */}
-                      <div className="mt-2 pt-4 border-t border-[#431407]/5 flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2.5">
-                          {rev.avatarUrl ? (
-                            <img 
-                              src={rev.avatarUrl} 
-                              alt={rev.name}
-                              className="w-10 h-10 rounded-full object-cover ring-2 ring-[#e58e26]/30 ring-offset-2 ring-offset-white group-hover:scale-105 transition-transform duration-300 shadow-md"
-                            />
-                          ) : (
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-black text-white bg-gradient-to-tr ${getAvatarGradient(rev.name)} ring-2 ring-[#e58e26]/30 ring-offset-2 ring-offset-white group-hover:scale-105 transition-transform duration-300 shadow-md`}>
-                              {rev.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
-                            </div>
-                          )}
-                          <div>
-                            <h5 className="text-[11.5px] font-black leading-none text-[#431407]">{rev.name}</h5>
-                            <span className="text-[9px] font-bold block mt-1 text-[#5c1f0e]/60 leading-none">{rev.role}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col items-end gap-1.5 shrink-0">
-                          <button
-                            onClick={() => handleHelpfulClick(rev.id)}
-                            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-wider transition-all select-none ${
-                              upvotedReviews.includes(rev.id)
-                                ? 'bg-[#e58e26]/15 text-[#e58e26] border-[#e58e26]/40'
-                                : 'bg-[#fff7ed] text-[#431407]/50 border-[#fed7aa]/60 hover:text-[#e58e26] hover:bg-[#fff7ed] hover:border-[#e58e26]/20'
-                            }`}
-                          >
-                            <ThumbsUp size={10} className={`transition-transform duration-200 ${upvotedReviews.includes(rev.id) ? 'scale-125 stroke-[3px]' : ''}`} />
-                            <span>Helpful {helpfulVotes[rev.id] > 0 ? `(${helpfulVotes[rev.id]})` : ''}</span>
-                          </button>
-                          <span className="text-[8px] text-[#431407]/40 font-medium">{rev.date}</span>
-                        </div>
+                        <h4 className="font-black text-gray-900">{review.name}</h4>
+                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{review.role}</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-20 bg-[#fff7ed] border border-dashed border-[#431407]/15 rounded-[2rem] shadow-inner select-none">
-                  <Utensils size={28} className="mx-auto text-[#e58e26]/30 mb-3 animate-pulse" />
-                  <p className="text-xs text-[#431407]/50 font-bold">No reviews found matching these options.</p>
-                  <button 
-                    onClick={() => { setRatingFilter('all'); setDishFilter('all'); }}
-                    className="mt-3.5 text-[9px] text-[#e58e26] font-black uppercase tracking-widest hover:text-[#d97706] hover:underline transition-colors"
-                  >
-                    Clear Filters
-                  </button>
-                </div>
-              )}
-            </div>
-
-          </div>
-
-          <div className="mt-16 text-center">
-            <p className="text-xs text-[#431407]/50">
-              Have you dined at our KNUST counter?{' '}
-              <button 
-                onClick={() => setIsWriteReviewOpen(true)} 
-                className="text-[#e58e26] hover:text-[#d97706] font-black hover:underline transition-colors ml-1"
-              >
-                Share your dining experience
-              </button>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── LOCATION — cream background with Google Map & absolute details card ── */}
-      <section id="branches" className="py-24 relative select-none bg-[#fffdf9]" style={{ borderTop: '1px solid rgba(67, 20, 7, 0.05)' }}>
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{ backgroundImage: 'linear-gradient(to right,#431407 1px,transparent 1px),linear-gradient(to bottom,#431407 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="mb-16 text-center">
-            <span className="text-[10px] text-[#e58e26] font-bold uppercase tracking-wider flex items-center justify-center gap-1">
-              <MapPin size={12} className="text-[#e58e26] animate-bounce" /> FIND US
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black mt-1 text-[#431407]">Our Outlet Location</h2>
-            <p className="text-sm max-w-lg mx-auto mt-2 text-[#5c1f0e]/70">Visit us in Kumasi for the same authentic, fresh, and piping hot taste.</p>
-            <div className="w-20 h-1 mt-4 rounded-full mx-auto bg-gradient-to-r from-[#431407] to-[#e58e26]" />
-          </div>
-
-          {/* Full bleed google map card with overlay details card */}
-          <div className="relative w-full h-[500px] rounded-[2.5rem] overflow-hidden border border-[#431407]/10 shadow-2xl max-w-4xl mx-auto group">
-            {/* Google Map Iframe */}
-            <iframe
-              title="Bells Kitchen KNUST Location"
-              src="https://maps.google.com/maps?q=No%20Weapon%20Hostel,%20KNUST,%20Kumasi,%20Ghana&t=&z=16&ie=UTF8&iwloc=&output=embed"
-              className="w-full h-full border-0 filter grayscale-[5%] contrast-[105%] brightness-[90%] transition-all duration-700 group-hover:scale-105"
-              allowFullScreen={false}
-              loading="lazy"
-            />
-            
-            {/* Overlay Details Card */}
-            <div className="absolute bottom-6 left-6 md:top-8 md:bottom-auto z-10 max-w-sm w-[90%] md:w-80 bg-white/95 backdrop-blur-xl border border-[#431407]/15 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-left">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-black text-[#431407] tracking-widest uppercase">KNUST Counter</h3>
-                <span className="text-[8px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full tracking-wider animate-pulse">Open</span>
-              </div>
-              
-              <div className="space-y-3.5 text-xs text-[#5c1f0e]/80 font-semibold">
-                <p className="flex items-start gap-2.5">
-                  <MapPin size={16} className="text-[#e58e26] flex-shrink-0 mt-0.5" />
-                  <span className="leading-relaxed font-semibold">Opposite No Weapon Hostel Annex, KNUST, Kumasi</span>
-                </p>
-                <p className="flex items-center gap-2.5">
-                  <Phone size={16} className="text-[#e58e26] flex-shrink-0" />
-                  <span className="font-semibold">+233 302 810 990</span>
-                </p>
-                <div className="flex items-start gap-2.5">
-                  <Clock size={16} className="text-[#e58e26] flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="block text-[9px] text-[#e58e26] uppercase font-black tracking-wider">Working Hours</strong>
-                    <span className="block mt-0.5 font-semibold">Mon – Sat: 9:00 AM – 10:00 PM</span>
-                    <span className="block font-semibold">Sun: 11:00 AM – 9:00 PM</span>
                   </div>
                 </div>
-              </div>
-
-              <a href="tel:+233302810990"
-                className="mt-2 w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs uppercase shadow-md transition-all hover:scale-[1.02] text-white bg-gradient-to-r from-[#e58e26] to-[#d97706]"
-              >
-                <Phone size={12} /> Call KNUST Counter
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── PROMO CTA — chocolate and aromatic orange ─────────────────────────────── */}
-      <section className="py-20 text-center relative overflow-hidden" style={{ background: '#431407' }}>
-        <div className="absolute top-10 left-10 text-6xl opacity-10 pointer-events-none animate-pulse">🍗</div>
-        <div className="absolute bottom-10 right-10 text-6xl opacity-10 pointer-events-none animate-pulse">🍟</div>
-        <div className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, #e58e26 0%, transparent 60%)' }} />
-        <div className="max-w-3xl mx-auto px-6 relative z-10 space-y-6">
-          <span className="inline-block bg-[#e58e26] text-white font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md">
-            🎉 Limited Time Offer
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
-            Hungry? Order Now &amp;<br />Get Free Delivery!
-          </h2>
-          <p className="text-sm md:text-base text-white/80 max-w-xl mx-auto leading-relaxed">
-            Use checkout coupon code <span className="font-bold bg-[#1c0a04] text-[#fed7aa] px-3 py-1 rounded-md uppercase text-xs">BELLS2026</span> for free delivery on your first order.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-            <a href="#explore-menu"
-              className="inline-flex items-center justify-center gap-2 font-black text-xs uppercase text-white shadow-md h-12 rounded-xl px-8 transition-all hover:scale-105"
-              style={{ background: '#e58e26' }}>
-              Order Online
-            </a>
-            <a href="tel:+233302810990"
-              className="inline-flex items-center justify-center gap-2 font-black text-xs uppercase border-2 border-white/50 bg-transparent text-white hover:bg-white hover:text-[#431407] h-12 rounded-xl px-8 transition-all">
-              Call to Order
-            </a>
-          </div>
-          <p className="text-[10px] text-white/50">*Free delivery applies within 5km radius. Min order GH₵ 50.00.</p>
-        </div>
-      </section>
-
-      {/* ── FOOTER — high-end dark chocolate with gold and crimson accents ── */}
-      <footer className="text-[#fff7ed] pt-20 pb-12 relative overflow-hidden bg-gradient-to-b from-[#2a0e05] to-[#1c0a04] border-t border-[#431407]/10">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[150px] opacity-15 pointer-events-none rounded-full filter blur-[80px]"
-          style={{ background: 'radial-gradient(circle, #e58e26 0%, transparent 70%)' }} />
-
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative z-10">
-          <div className="space-y-5">
-            <div className="flex items-center gap-2.5 group">
-              <BelsLogo className="w-12 h-12 group-hover:rotate-6 transition-transform duration-300" />
-              <span className="text-lg font-black tracking-wider text-white">BELLS KITCHEN</span>
-            </div>
-            <p className="text-xs leading-relaxed text-[#fed7aa]/70 font-medium">
-              Ghana's modern dining concept. Preserving local cooking heritage with premium recipes, fast cashier service, and excellent customer care opposite No Weapon Annex.
-            </p>
-          </div>
-          
-          <div className="space-y-5">
-            <h3 className="text-xs font-black text-[#e58e26] uppercase tracking-widest flex items-center gap-2.5">
-              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-[#e58e26] to-[#fed7aa]" /> Quick Navigation
-            </h3>
-            <ul className="space-y-3 text-xs text-[#fed7aa]/80 font-semibold">
-              {[
-                ['Menu Catalog', '#explore-menu'],
-                ['Why Choose Bells', '#why-choose'],
-                ['Find Branch Outlet', '#branches'],
-                ['Diner Reviews', '#testimonials']
-              ].map(([label, href]) => (
-                <li key={label} className="transition-transform duration-150 hover:translate-x-1">
-                  <a href={href} className="hover:text-[#e58e26] transition-colors flex items-center gap-1.5">
-                    <ChevronRight size={10} className="text-[#e58e26]/50" /> {label}
-                  </a>
-                </li>
               ))}
-            </ul>
+            </div>
           </div>
-          
-          <div className="space-y-5">
-            <h3 className="text-xs font-black text-[#e58e26] uppercase tracking-widest flex items-center gap-2.5">
-              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-[#e58e26] to-[#fed7aa]" /> Menu Highlights
-            </h3>
-            <ul className="space-y-3 text-xs text-[#fed7aa]/80 font-semibold">
-              <li className="flex items-center gap-2">🍚 Jollof Rice</li>
-              <li className="flex items-center gap-2">🍳 Fried Rice</li>
-              <li className="flex items-center gap-2">🍛 Mixture Combo</li>
-              <li className="flex items-center gap-2">🐟 Banku &amp; Tilapia</li>
-            </ul>
-          </div>
-          
-          <div className="space-y-5">
-            <h3 className="text-xs font-black text-[#e58e26] uppercase tracking-widest flex items-center gap-2.5">
-              <span className="w-6.5 h-0.5 rounded-full bg-gradient-to-r from-[#e58e26] to-[#fed7aa]" /> Newsletter
-            </h3>
-            <p className="text-xs text-[#fed7aa]/70 font-medium">Get special weekend promo codes and discounts in your inbox.</p>
-            <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
-              <input type="email" value={newsletterEmail} onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder="Your email address" required
-                className="rounded-2xl px-4 py-3 text-xs text-white placeholder-white/20 focus:outline-none w-full border border-white/10 focus:ring-2 focus:ring-[#e58e26]/40 focus:border-transparent transition-all"
-                style={{ background: '#1c0a04' }} />
-              <button type="submit" className="p-3 text-white rounded-2xl transition-all shadow-md hover:scale-105 active:scale-95 bg-gradient-to-r from-[#e58e26] to-[#d97706] duration-200">
-                <Send size={12} />
-              </button>
-            </form>
-            {newsletterSubscribed && <p className="text-[10px] text-emerald-400 animate-pulse font-bold">✓ Thanks for subscribing!</p>}
+
+          {/* FAQs */}
+          <div className="w-full lg:w-1/2">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 rounded-full bg-[#d97706]/10 flex items-center justify-center text-[#d97706]">
+                <HelpCircle size={20} />
+              </div>
+              <h2 className="text-3xl font-black italic text-gray-900 tracking-tight">Frequently Asked</h2>
+            </div>
+            <div className="space-y-4">
+              {faqs.map((faq) => (
+                <div key={faq.id} className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 group hover:border-[#d97706] hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden relative">
+                  {/* Decorative Background Icon */}
+                  <HelpCircle size={80} className="absolute -top-4 -right-4 text-gray-50 opacity-0 group-hover:opacity-100 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500" />
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-black text-gray-900 text-lg group-hover:text-[#d97706] transition-colors">{faq.q}</h3>
+                      <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#d97706] group-hover:text-white transition-colors">
+                        <ChevronDown size={16} />
+                      </div>
+                    </div>
+                    <p className="text-gray-500 font-medium leading-relaxed pr-8">{faq.a}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Ask Question Card */}
+            <div className="mt-8 bg-[#431407] rounded-3xl p-8 relative overflow-hidden group hover:shadow-[0_20px_40px_rgba(67,20,7,0.3)] transition-all duration-500">
+               <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-[#d97706] rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
+               <h3 className="text-white font-black text-xl mb-2">Still have questions?</h3>
+               <p className="text-white/70 font-medium text-sm mb-6">Can't find the answer you're looking for? Please chat with our friendly team.</p>
+               <button className="bg-[#d97706] text-white font-black text-xs uppercase tracking-widest py-3 px-6 rounded-full hover:bg-white hover:text-[#d97706] transition-colors flex items-center gap-2">
+                 Get in touch <ArrowRight size={14} />
+               </button>
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* ── OUR OUTLETS SECTION ── */}
+      <div className="max-w-7xl mx-auto px-4 py-20 mt-12 border-t border-gray-200/50 scroll-anim" id="our-outlets">
         
-        <div className="max-w-6xl mx-auto px-6 mt-16 pt-8 flex flex-col sm:flex-row justify-between items-center text-[10px] font-black uppercase tracking-wider gap-4 border-t border-white/5 text-[#fed7aa]/35">
-          <p>© {new Date().getFullYear()} Bells Kitchen. All rights reserved. Registered in Ghana.</p>
-          <button onClick={() => setIsLoginOpen(true)} className="hover:text-[#e58e26] transition-colors flex items-center gap-1.5 py-1 px-3.5 rounded-xl border border-white/5 bg-white/[0.01] hover:border-white/10 hover:bg-white/5 duration-150">
-            <Lock size={9} /> Staff Portal Access
-          </button>
+        {/* Timeline Branch Selector */}
+        <div className="flex items-center gap-4 mb-16 relative">
+           <button className="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm z-10 hover:bg-gray-50 flex-shrink-0"><ChevronLeft size={20}/></button>
+           
+           <div className="absolute left-[3.5rem] right-[3.5rem] h-0 border-t-2 border-dashed border-gray-300 top-1/2 -translate-y-1/2 z-0" />
+
+           <div className="flex gap-6 overflow-x-auto relative z-10 hide-scrollbar flex-1 items-center px-4 py-2">
+             {branches.map((branch) => {
+               const active = selectedBranch === branch;
+               return (
+                 <div key={branch} onClick={() => setSelectedBranch(branch)} className={`flex items-center gap-3 px-6 py-3.5 rounded-full flex-shrink-0 font-black text-xs tracking-wider cursor-pointer border transition-all ${active ? 'bg-[#431407] text-white border-[#431407] shadow-[0_8px_16px_rgba(67,20,7,0.2)]' : 'bg-white text-gray-500 border-gray-200 shadow-sm hover:bg-gray-50'}`}>
+                   <div className={`w-[18px] h-[18px] rounded-full flex items-center justify-center ${active ? 'bg-[#ffefd4]' : 'bg-gray-200'}`}>
+                     <div className={`w-2.5 h-2.5 rounded-full ${active ? 'bg-[#d97706] shadow-sm' : 'bg-gray-400'}`}/>
+                   </div>
+                   {active ? <MapPin size={16}/> : <Store size={16}/>} 
+                   {branch}
+                 </div>
+               );
+             })}
+           </div>
+
+           <button className="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm z-10 hover:bg-gray-50 flex-shrink-0"><ChevronRight size={20}/></button>
+        </div>
+
+        {/* Map & Details */}
+        <div className="flex flex-col lg:flex-row gap-8 h-[550px]">
+          {/* Details panel */}
+          <div className="w-full lg:w-[35%] flex flex-col gap-6 h-full">
+            <div className="relative">
+              <input type="text" placeholder="Search for branches by name or location" className="w-full border border-gray-200 rounded-full py-4 px-6 text-sm font-semibold shadow-sm focus:outline-none focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] transition-all text-gray-700"/>
+              <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
+            </div>
+            
+            <div className="bg-[#431407] rounded-[2rem] border-[4px] border-[#d97706]/20 shadow-2xl p-8 flex-1 flex flex-col hover:shadow-[0_15px_30px_rgba(217,119,6,0.2)] transition-shadow relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none"/>
+              <div className="flex justify-between items-start mb-6 relative z-10">
+                <h3 className="font-black text-xl text-white uppercase tracking-wide">{selectedBranch}</h3>
+                <div className="w-10 h-10 rounded-full bg-[#d97706] border border-[#b45309] flex items-center justify-center shadow-lg"><ArrowUpRight size={18} className="text-white"/></div>
+              </div>
+              <div className="text-sm text-white/80 mb-8 font-semibold leading-relaxed relative z-10">
+                Opposite No Weapon Hostel Annex<br/>
+                KUMASI REGION
+              </div>
+              <h4 className="font-black text-[#d97706] mb-4 relative z-10 tracking-widest uppercase text-[10px]">Hours Of Operation</h4>
+              <div className="text-sm text-white font-semibold relative z-10 bg-white/5 rounded-xl p-4 border border-white/10 shadow-inner">
+                <p>Sunday - Saturday<br/>09:00 - 22:00</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Map panel */}
+          <div className="w-full lg:w-[65%] h-full rounded-[2.5rem] overflow-hidden shadow-lg border border-gray-200 bg-white relative p-2">
+            <div className="w-full h-full rounded-[2rem] overflow-hidden relative">
+              <iframe title="map" src="https://maps.google.com/maps?q=No%20Weapon%20Hostel,%20KNUST,%20Kumasi,%20Ghana&t=&z=16&ie=UTF8&iwloc=&output=embed" className="w-full h-full border-0 filter brightness-95 contrast-125 saturate-50 hover:filter-none transition-all duration-700"/>
+              {/* Map pin overlay mimicking image */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none drop-shadow-xl animate-bounce">
+                <MapPin size={48} className="text-[#d97706] fill-[#d97706]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── REVIEWS SECTION ── */}
+      <div className="max-w-7xl mx-auto px-4 py-20 bg-[#d97706] rounded-[3rem] shadow-2xl border-4 border-[#ffefd4]/20 my-12 scroll-anim relative overflow-hidden" id="reviews">
+        {/* Decorative background circle */}
+        <div className="absolute top-[-20%] left-[-10%] w-96 h-96 bg-[#b45309] rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-96 h-96 bg-[#ffefd4] rounded-full mix-blend-overlay filter blur-3xl opacity-20"></div>
+        
+        <div className="text-center max-w-2xl mx-auto mb-16 relative z-10">
+          <h2 className="text-[#ffefd4] text-xs font-black uppercase tracking-[0.2em] mb-2 drop-shadow-sm">Testimonials</h2>
+          <h3 className="text-4xl font-black text-white italic tracking-tight drop-shadow-md">What Our Family Says</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 lg:px-8 relative z-10">
+          {[
+            { name: "Ama K.", review: "The best Jollof in Kumasi! The packaging kept it so hot, and the flavors are incredibly rich.", rating: 5 },
+            { name: "Kwame D.", review: "I order the Assorted Fried Rice every weekend. Consistent quality and the delivery is always swift.", rating: 5 },
+            { name: "Sarah O.", review: "Finally, proper party Jollof without having to wait for a wedding. Absolutely love the new branding too!", rating: 5 },
+          ].map((rev, i) => (
+            <div key={i} className="bg-[#431407] p-10 rounded-[2rem] border-2 border-[#b45309]/50 shadow-xl hover:shadow-2xl transition-all relative group hover:-translate-y-2">
+               <div className="absolute top-8 right-8 text-white/5 group-hover:text-white/10 transition-colors">
+                 <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+               </div>
+               <div className="flex gap-1.5 mb-6 text-[#ffefd4]">
+                 {[1,2,3,4,5].map(star => <Flame key={star} size={20} className="fill-[#ffefd4] drop-shadow-sm"/>)}
+               </div>
+               <p className="text-white/90 font-semibold leading-relaxed mb-8 italic text-lg relative z-10">"{rev.review}"</p>
+               <div className="flex items-center gap-4">
+                 <div className="w-12 h-12 bg-[#ffefd4] rounded-full flex items-center justify-center font-black text-[#d97706] text-xl shadow-inner">{rev.name.charAt(0)}</div>
+                 <h4 className="font-black text-white uppercase tracking-wider">{rev.name}</h4>
+               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      </>
+      )}
+
+      {view === 'menu' && (
+        <div className="pt-32 pb-24 min-h-screen animate-fade-in">
+          <div className="text-center mb-16 px-4">
+            <h2 className="text-5xl md:text-6xl font-black italic text-gray-900 tracking-tighter mb-4">The <span className="text-[#d97706]">Full</span> Menu</h2>
+            <p className="text-gray-500 font-bold text-lg">Swipe through our entire catalog, section by section.</p>
+          </div>
+          
+          {Object.entries(
+             landingMenu.reduce((acc, item) => {
+               const cat = item.category;
+               if (!acc[cat]) acc[cat] = [];
+               acc[cat].push(item);
+               return acc;
+             }, {} as Record<string, any[]>)
+          ).map(([categoryName, items]) => (
+            <CategorySlider 
+               key={categoryName} 
+               categoryName={categoryName} 
+               items={items} 
+               onOrder={(item) => {
+                 setPendingPublicItem(item);
+                 setPublicSize(item.hasSizes ? (item.prices.M ? 'M' : 'S') : 'M');
+                 setPublicQty(1);
+                 setPublicAddons([]);
+               }} 
+            />
+          ))}
+        </div>
+      )}
+
+      {/* ── FOOTER ── */}
+      <footer className="bg-[#431407] text-white pt-24 pb-8 border-t-[12px] border-[#d97706] relative overflow-hidden mt-20">
+        {/* Massive Background Text watermark */}
+        <div className="absolute top-0 left-0 w-full overflow-hidden flex items-center justify-center opacity-5 pointer-events-none select-none">
+          <span className="text-[15rem] font-black leading-none whitespace-nowrap">BELLS KITCHEN</span>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          {/* Newsletter Section */}
+          <div className="bg-[#d97706] rounded-[2.5rem] p-10 md:p-14 mb-20 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 border-4 border-[#ffefd4]/20 relative overflow-hidden">
+            <div className="absolute right-[-10%] top-[-50%] w-64 h-64 bg-white/20 rounded-full blur-3xl" />
+            <div className="max-w-xl relative z-10">
+              <h3 className="text-3xl md:text-5xl font-black italic tracking-tight mb-4 text-white">Join the Family.</h3>
+              <p className="text-white/90 font-semibold text-lg">Subscribe to our newsletter for exclusive deals, new menu drops, and <span className="font-black text-[#ffefd4]">20% off your first online order.</span></p>
+            </div>
+            <div className="w-full md:w-auto flex-1 max-w-md relative z-10">
+              <input type="email" placeholder="Enter your email address" className="w-full bg-[#431407]/40 border-2 border-[#b45309] text-white placeholder-white/50 rounded-full py-5 pl-6 pr-36 focus:outline-none focus:border-white focus:bg-[#431407]/60 transition-colors font-bold" />
+              <button className="absolute right-2 top-2 bottom-2 bg-white text-[#d97706] rounded-full px-6 font-black uppercase tracking-wider text-sm hover:bg-[#ffefd4] transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl active:scale-95">
+                Subscribe <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 text-sm font-semibold text-white/70 mb-16">
+            <div className="md:col-span-4">
+               <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-[#d97706] mb-6 bg-white shadow-xl relative group cursor-pointer">
+                  <img src="/packaging_logo.jpg" alt="Bells Kitchen" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" style={{ objectPosition: '20% 50%', transform: 'scale(1.3)' }} />
+               </div>
+               <p className="leading-relaxed text-base max-w-xs text-white/80">
+                 Crafted to redefine everyday meals. Fresh, bold, and unforgettable. Join the fast food revolution today.
+               </p>
+               <div className="flex gap-4 mt-8">
+                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#d97706] hover:border-[#d97706] transition-all cursor-pointer text-white shadow-sm hover:-translate-y-1 hover:scale-110">
+                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                  </div>
+                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#d97706] hover:border-[#d97706] transition-all cursor-pointer text-white shadow-sm hover:-translate-y-1 hover:scale-110">
+                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                  </div>
+                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#d97706] hover:border-[#d97706] transition-all cursor-pointer text-white shadow-sm hover:-translate-y-1 hover:scale-110">
+                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                  </div>
+               </div>
+            </div>
+            
+            <div className="md:col-span-3 md:col-start-6">
+              <h4 className="text-[#d97706] font-black text-lg mb-6 uppercase tracking-wider">Quick Links</h4>
+              <ul className="space-y-4">
+                <li><a href="#" className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Home</a></li>
+                <li><a href="#our-menu" className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Our Menu</a></li>
+                <li><a href="#packaging" className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Packaging</a></li>
+                <li><a href="#our-outlets" className="hover:text-white transition-colors flex items-center gap-2 group"><ArrowRight size={14} className="text-[#d97706] group-hover:translate-x-1 transition-transform"/> Branch Locations</a></li>
+              </ul>
+            </div>
+            
+            <div className="md:col-span-3">
+              <h4 className="text-[#d97706] font-black text-lg mb-6 uppercase tracking-wider">Contact Us</h4>
+              <ul className="space-y-4">
+                <li className="flex items-center gap-3 hover:text-white transition-colors cursor-pointer"><Mail size={16} className="text-[#d97706]" /> info@bellskitchen.com</li>
+                <li className="flex items-center gap-3 hover:text-white transition-colors cursor-pointer"><Flame size={16} className="text-[#d97706]" /> +233 505 201 685</li>
+                <li className="flex items-start gap-3 mt-4 text-white/50 text-xs leading-relaxed border-t border-white/10 pt-4">
+                  Bells Kitchen HQ<br/>
+                  Opposite No Weapon Hostel Annex<br/>
+                  KNUST, Kumasi
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between text-xs font-bold text-white/40">
+            <p>© {new Date().getFullYear()} Bells Kitchen. All rights reserved.</p>
+            <div className="flex gap-6 mt-4 md:mt-0">
+              <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
+              <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
+            </div>
+          </div>
         </div>
       </footer>
 
-      {/* ── LOGIN OVERLAY ──────────────────────────────────────────────── */}
+      {/* ── MODALS (Order Flow) ── */}
+      
+      {/* STAFF LOGIN MODAL */}
       {isLoginOpen && (
-        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in" style={{ background: 'rgba(13,3,2,0.88)' }}>
-          <div className="w-full max-w-md rounded-[36px] shadow-2xl overflow-hidden animate-scale-in relative" style={{ background: '#fff7ed', border: '1px solid #fed7aa' }}>
-            {/* Status bar */}
-            <div className="py-2.5 px-6 flex items-center justify-between text-[8px] font-mono tracking-widest text-white select-none" style={{ background: '#1c0a04' }}>
-              <span className="flex items-center gap-1.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                </span>
-                SYS STATUS: SECURE CONNECTION
-              </span>
-              <span>DEV PORT: POS-5174</span>
+        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden bg-white relative">
+            <button type="button" onClick={() => { setIsLoginOpen(false); setError(''); }} className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all"><X size={16} /></button>
+            <div className="p-8 text-center border-b border-gray-100">
+              <div className="w-16 h-16 bg-[#fff8ed] rounded-full flex items-center justify-center mx-auto mb-4"><User size={24} className="text-[#d97706]"/></div>
+              <h2 className="text-xl font-black text-gray-900 tracking-tight">Staff Portal</h2>
+              <p className="text-xs text-gray-500 mt-1 font-semibold">Authorized cashiers only.</p>
             </div>
-
-            {/* Close */}
-            <button type="button" onClick={() => { setIsLoginOpen(false); setError(''); setIdentifier(''); setPassword(''); }}
-              className="absolute top-16 right-4 p-2 rounded-xl transition-all" style={{ color: '#92400e', background: '#fed7aa' }}>
-              <X size={16} />
-            </button>
-
-            {/* Modal header */}
-            <div className="p-6 pb-2 text-center mt-6">
-              <BelsLogo className="w-14 h-14 mx-auto mb-4" />
-              <h2 className="text-lg font-black tracking-tight" style={{ color: '#431407' }}>Staff Keycard Portal</h2>
-              <p className="text-xs mt-1" style={{ color: '#92400e' }}>Authorized POS cashiers and administrators only.</p>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={handleLoginSubmit} className="p-6 pt-3 space-y-4">
+            <form onSubmit={handleLoginSubmit} className="p-8 space-y-5 bg-gray-50/50">
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-2xl p-3.5 flex items-start gap-2.5 text-xs text-red-700 animate-bounce-sm">
-                  <AlertCircle size={16} className="flex-shrink-0 mt-0.5 text-red-500" />
-                  <div><span className="font-black">Authorization Failed:</span> {error}</div>
+                <div className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold p-3 rounded-xl text-center shadow-sm">
+                  {error}
                 </div>
               )}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider flex items-center gap-1" style={{ color: '#92400e' }}>
-                  <Mail size={11} className="text-red-700" /> Terminal Username (Email or Phone)
-                </label>
-                <input type="text" value={identifier} onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="name@bells.com or 024XXXXXXX" autoFocus
-                  className="w-full rounded-2xl px-4 py-3.5 text-xs outline-none transition-all shadow-inner focus:ring-2"
-                  style={{ background: '#fff7ed', border: '1px solid #fed7aa', color: '#431407' }} />
+                <label className="text-[10px] font-black uppercase tracking-widest block text-gray-500">Email or Phone</label>
+                <input type="text" required value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder="e.g. cashier@bells.com" className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] font-semibold" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider flex items-center gap-1" style={{ color: '#92400e' }}>
-                  <Lock size={11} className="text-red-700" /> Terminal PIN Password
-                </label>
-                <div className="relative">
-                  <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full rounded-2xl px-4 py-3.5 text-xs outline-none transition-all shadow-inner"
-                    style={{ background: '#fff7ed', border: '1px solid #fed7aa', color: '#431407' }} />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-colors" style={{ color: '#92400e' }}>
-                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                  </button>
-                </div>
+                <label className="text-[10px] font-black uppercase tracking-widest block text-gray-500">Password</label>
+                <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] font-semibold" />
               </div>
-              <button type="submit" disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl text-white text-xs font-black tracking-wider uppercase transition-all shadow-md hover:shadow-lg active:scale-98 mt-3 disabled:opacity-50"
-                style={{ background: '#b91c1c' }}>
-                {loading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <>Insert Keycard &amp; Auth <ArrowRight size={14} /></>}
+              <button disabled={loading} type="submit" className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg active:scale-95 bg-[#431407] hover:bg-[#2a0e05] disabled:opacity-50 mt-2">
+                {loading ? 'Authenticating...' : 'Secure Login'}
               </button>
             </form>
-
-            {/* Hint */}
-            <div className="px-6 py-4 text-center select-none" style={{ background: '#1c0a04', borderTop: '1px solid #3d1508' }}>
-              <p className="text-[9px] font-mono" style={{ color: '#6b3020' }}>
-                CASHIER AUTH: cashier@bells.com / cashier123<br />
-                ADMIN AUTH: admin@bells.com / admin123
-              </p>
-            </div>
           </div>
         </div>
       )}
 
-      {/* Floating Public Cart Button */}
-      {!state.currentUser && publicCart.length > 0 && (
-        <button
-          onClick={() => setIsPublicCartOpen(true)}
-          className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-orange-500 to-[#b91c1c] text-white p-4.5 rounded-2xl shadow-2xl flex items-center gap-2.5 font-black text-xs uppercase tracking-wider hover:scale-105 active:scale-95 transition-all border border-orange-400/25 animate-bounce-sm"
-        >
-          <span className="relative flex h-5 w-5 bg-white text-[#b91c1c] rounded-full items-center justify-center text-[10px] font-black">
-            {publicCart.reduce((sum, item) => sum + item.quantity, 0)}
-          </span>
-          <span>View My Order</span>
-          <ArrowRight size={14} />
-        </button>
-      )}
-
-      {/* Public Order Config modal */}
+      {/* PUBLIC ORDER CONFIG MODAL */}
       {pendingPublicItem && (
-        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in" style={{ background: 'rgba(13,3,2,0.88)' }}>
-          <div className="w-full max-w-md rounded-[2.5rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] overflow-hidden animate-scale-in relative border border-white/10"
-            style={{ background: 'linear-gradient(135deg, #2a0e05 0%, #1c0a04 100%)' }}>
-            
-            <button type="button" onClick={() => setPendingPublicItem(null)}
-              className="absolute top-5 right-5 p-2 rounded-xl text-amber-200/50 hover:text-white hover:bg-white/5 transition-all">
-              <X size={16} />
-            </button>
-            
-            <div className="p-6 pb-4 border-b border-white/5 mt-4">
-              <span className="text-[10px] text-amber-400 font-extrabold uppercase tracking-widest bg-white/5 border border-white/10 px-2 py-0.5 rounded-lg">
-                {pendingPublicItem.tag}
-              </span>
-              <h2 className="text-xl font-black text-white mt-2">{pendingPublicItem.name}</h2>
-              <p className="text-xs text-amber-200/60 mt-1">{pendingPublicItem.description}</p>
+        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden bg-white relative">
+            <button type="button" onClick={() => setPendingPublicItem(null)} className="absolute top-5 right-5 p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 hover:bg-gray-200 transition-all"><X size={16} /></button>
+            <div className="bg-[#431407] pt-6 pb-4 px-6 border-b-4 border-[#d97706] relative">
+              <span className="text-[10px] text-white font-black uppercase tracking-widest bg-white/20 border border-white/20 px-3 py-1 rounded-full mb-3 inline-block">{pendingPublicItem.category}</span>
+              <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2 pt-1">
+                 {landingMenu.filter(m => m.category === pendingPublicItem.category && m.available).map(m => (
+                    <button key={m.id} onClick={() => {
+                       setPendingPublicItem(m);
+                       setPublicSize(m.hasSizes ? (m.prices.M ? 'M' : 'S') : 'M');
+                       setPublicQty(1);
+                       setPublicAddons([]);
+                    }} className={`flex-shrink-0 w-20 h-20 rounded-[1rem] overflow-hidden border-2 transition-all relative group ${m.id === pendingPublicItem.id ? 'border-[#ffefd4] scale-105 shadow-lg' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'}`}>
+                       <img src={m.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} className="w-full h-full object-cover" />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex items-end justify-center p-1.5">
+                          <span className="text-white text-[9px] font-black leading-tight line-clamp-2 text-center">{m.name}</span>
+                       </div>
+                    </button>
+                 ))}
+              </div>
             </div>
-            
-            <div className="p-6 space-y-5">
-              {/* Size Selection */}
-              {pendingPublicItem.category !== 'drinks' && (
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider block text-amber-300/80">Select Size</label>
-                  <div className="flex gap-2">
-                    {(['S', 'M', 'L'] as const).map(sz => (
-                      <button
-                        key={sz}
-                        type="button"
-                        onClick={() => setPublicSize(sz)}
-                        className={`flex-1 py-3 rounded-2xl text-xs font-black uppercase transition-all border ${
-                          publicSize === sz
-                            ? 'bg-gradient-to-r from-orange-500 to-[#b91c1c] text-white border-orange-400/35 shadow-md shadow-orange-500/10 scale-105'
-                            : 'bg-[#1c0a04] text-amber-100/60 border-white/10 hover:text-white hover:border-white/20'
-                        }`}
-                      >
-                        {sz === 'S' ? `Small (S) - GH₵ ${pendingPublicItem.prices?.S ?? (parseFloat(pendingPublicItem.price.replace(/[^\d.]/g, '')) - 5)}` :
-                         sz === 'M' ? `Medium (M) - GH₵ ${pendingPublicItem.prices?.M ?? parseFloat(pendingPublicItem.price.replace(/[^\d.]/g, ''))}` :
-                         `Large (L) - GH₵ ${pendingPublicItem.prices?.L ?? (parseFloat(pendingPublicItem.price.replace(/[^\d.]/g, '')) + 10)}`}
+            <div className="p-8 pb-6 border-b border-gray-100 bg-white">
+              <h2 className="text-3xl font-black text-gray-900 leading-tight italic tracking-tight">{pendingPublicItem.name}</h2>
+              <p className="text-sm text-gray-500 mt-2 font-medium leading-relaxed">{pendingPublicItem.description}</p>
+            </div>
+            <div className="p-8 space-y-6 bg-gray-50/50">
+              {pendingPublicItem.hasSizes && (
+                <div className="space-y-3">
+                  <label className="text-[11px] font-black uppercase tracking-widest block text-gray-800">Select Size</label>
+                  <div className="flex gap-3">
+                    {(['S', 'M', 'L'] as const).filter(sz => pendingPublicItem.prices?.[sz] !== undefined).map(sz => (
+                      <button key={sz} type="button" onClick={() => setPublicSize(sz)}
+                        className={`flex-1 py-3.5 rounded-2xl text-xs font-black transition-all border-2 bg-white ${publicSize === sz ? 'border-[#d97706] text-[#d97706] shadow-md scale-105' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+                        {sz} <span className="block text-[10px] font-bold opacity-70 mt-0.5">¢{pendingPublicItem.prices?.[sz]}</span>
                       </button>
                     ))}
                   </div>
                 </div>
               )}
-              
-              {/* Addons Selection */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider block text-amber-300/80">Customize Order (Add-ons)</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {publicAddonOptions.map(addon => {
-                    const isChecked = publicAddons.some(a => a.id === addon.id);
+              <div className="space-y-3">
+                <label className="text-[11px] font-black uppercase tracking-widest block text-gray-800">Add-ons</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {state.addons.filter(a => a.available).map(addon => {
+                    const price = addon.prices.fixed || 0;
+                    const count = publicAddons.filter((a: any) => a.id === addon.id).length;
                     return (
-                      <button
-                        key={addon.id}
-                        type="button"
-                        onClick={() => {
-                          if (isChecked) {
-                            setPublicAddons(publicAddons.filter(a => a.id !== addon.id));
-                          } else {
-                            setPublicAddons([...publicAddons, addon]);
-                          }
-                        }}
-                        className={`p-3 rounded-2xl text-left border transition-all flex items-center justify-between text-xs font-bold leading-none ${
-                          isChecked
-                            ? 'bg-orange-500/10 text-orange-400 border-orange-500/40'
-                            : 'bg-[#1c0a04] text-amber-100/60 border-white/10 hover:border-white/20'
-                        }`}
-                      >
-                        <span>{addon.name}</span>
-                        <span className="text-[10px] text-amber-400">+¢{addon.price}</span>
-                      </button>
+                      <div key={addon.id} className={`p-3 rounded-xl border-2 transition-all flex items-center justify-between text-xs font-bold bg-white ${count > 0 ? 'border-[#d97706] text-[#d97706] bg-orange-50/50' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>
+                        <div className="flex flex-col">
+                          <span>{addon.name}</span>
+                          <span className="text-[10px] opacity-70">+¢{price}</span>
+                        </div>
+                        {count === 0 ? (
+                          <button type="button" onClick={() => setPublicAddons([...publicAddons, { ...addon, price }])} className="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all">
+                             <Plus size={14} strokeWidth={3} />
+                          </button>
+                        ) : (
+                          <div className="flex items-center gap-2 bg-white border border-[#d97706]/30 rounded-full p-1">
+                             <button type="button" onClick={() => {
+                               const idx = publicAddons.findIndex((a: any) => a.id === addon.id);
+                               const newAddons = [...publicAddons];
+                               newAddons.splice(idx, 1);
+                               setPublicAddons(newAddons);
+                             }} className="w-6 h-6 rounded-full bg-orange-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all text-[#d97706]">
+                               <Minus size={12} strokeWidth={3} />
+                             </button>
+                             <span className="w-4 text-center text-xs font-black">{count}</span>
+                             <button type="button" onClick={() => setPublicAddons([...publicAddons, { ...addon, price }])} className="w-6 h-6 rounded-full bg-orange-100 hover:bg-[#d97706] hover:text-white flex items-center justify-center transition-all text-[#d97706]">
+                               <Plus size={12} strokeWidth={3} />
+                             </button>
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
               </div>
-              
-              {/* Quantity Select on the subtotal row to save space */}
-              <div className="flex items-center justify-between pt-4 border-t border-white/5">
+              <div className="flex items-center justify-between pt-6 border-t border-gray-200">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-amber-300/80">Subtotal</p>
-                  <p className="text-xl font-black text-white mt-0.5">
-                    GH₵{(getPublicItemPrice(pendingPublicItem, publicSize, publicAddons) * publicQty).toFixed(2)}
-                  </p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Subtotal</p>
+                  <p className="text-2xl font-black text-gray-900 mt-0.5">GH₵{(getPublicItemPrice(pendingPublicItem, publicSize, publicAddons) * publicQty).toFixed(2)}</p>
                 </div>
-                
-                <div className="flex items-center gap-3 bg-[#1c0a04] border border-white/10 rounded-2xl p-1 shadow-inner">
-                  <button
-                    type="button"
-                    onClick={() => setPublicQty(Math.max(1, publicQty - 1))}
-                    className="w-7 h-7 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/15 text-white rounded-xl font-bold transition-all active:scale-90"
-                  >
-                    <Minus size={11} strokeWidth={2.5} />
-                  </button>
-                  <input
-                    type="number"
-                    min="1"
-                    value={publicQty === 0 ? '' : publicQty}
-                    onChange={(e) => {
-                      if (e.target.value === '') {
-                        setPublicQty(0);
-                      } else {
-                        const val = parseInt(e.target.value, 10);
-                        if (!isNaN(val) && val >= 0) setPublicQty(val);
-                      }
-                    }}
-                    onBlur={() => {
-                      if (publicQty <= 0) setPublicQty(1);
-                    }}
-                    className="font-extrabold text-amber-300 text-xs w-9 text-center bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setPublicQty(publicQty + 1)}
-                    className="w-7 h-7 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/15 text-white rounded-xl font-bold transition-all active:scale-90"
-                  >
-                    <Plus size={11} strokeWidth={2.5} />
-                  </button>
+                <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-full p-1.5 shadow-sm">
+                  <button type="button" onClick={() => setPublicQty(Math.max(1, publicQty - 1))} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Minus size={14} strokeWidth={2.5} /></button>
+                  <span className="font-black text-gray-900 text-sm w-6 text-center">{publicQty}</span>
+                  <button type="button" onClick={() => setPublicQty(publicQty + 1)} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Plus size={14} strokeWidth={2.5} /></button>
                 </div>
               </div>
-              
-              {/* Add to Cart button */}
-              <button
-                type="button"
-                onClick={handleAddPublicCart}
-                className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl text-[#1c0a04] text-xs font-black tracking-wider uppercase transition-all shadow-lg shadow-orange-500/10 hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 duration-200 mt-2"
-              >
-                <span>Add to Order</span>
-                <ArrowRight size={14} />
+              <button type="button" onClick={handleAddPublicCart} className="w-full flex items-center justify-center py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 active:translate-y-0 bg-[#d97706] hover:bg-[#b45309] mt-4">
+                Add to Order
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Public Cart Drawer */}
+      {/* PUBLIC CART DRAWER */}
       {isPublicCartOpen && (
-        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in" style={{ background: 'rgba(13,3,2,0.88)' }}>
-          <div className="w-full max-w-lg rounded-[2.5rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] overflow-hidden animate-scale-in relative border border-white/10 flex flex-col max-h-[90vh]"
-            style={{ background: 'linear-gradient(135deg, #2a0e05 0%, #1c0a04 100%)' }}>
-            
-            <button type="button" onClick={() => setIsPublicCartOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-xl text-amber-200/50 hover:text-white hover:bg-white/5 transition-all">
-              <X size={16} />
-            </button>
-            
-            <div className="p-6 border-b border-white/5 mt-4 flex-shrink-0">
-              <h2 className="text-xl font-black text-white">Your Culinary Selection</h2>
-              <p className="text-xs text-amber-300/60 mt-1">Review your items and send the order to us via WhatsApp.</p>
+        <div className="fixed inset-0 backdrop-blur-sm z-50 flex justify-end" style={{ background: 'rgba(0,0,0,0.5)' }}>
+          <div className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-slide-up sm:animate-none">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-black text-gray-900">Your Order</h2>
+                <p className="text-xs text-gray-500 font-bold mt-1 uppercase tracking-wider">{publicCart.length} Items</p>
+              </div>
+              <button type="button" onClick={() => setIsPublicCartOpen(false)} className="p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all"><X size={18} /></button>
             </div>
-            
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              {/* Item List */}
-              <div className="space-y-3">
-                {publicCart.map(item => (
-                  <div key={item.cartItemId} className="bg-[#1c0a04] rounded-2xl p-4 border border-white/5 flex flex-col gap-2">
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/50">
+              {publicCart.length === 0 ? (
+                <div className="text-center py-20">
+                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"><ShoppingBag size={32} className="text-gray-300"/></div>
+                  <p className="font-bold text-gray-400">Your cart is empty.</p>
+                </div>
+              ) : (
+                publicCart.map((item: any) => (
+                  <div key={item.cartItemId} className="bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-sm">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="text-xs font-black text-white">{item.item.name} ({item.size})</h4>
-                        {item.addons.length > 0 && (
-                          <p className="text-[10px] text-amber-200/50 mt-0.5 leading-normal">
-                            + {item.addons.map((a: any) => a.name).join(', ')}
-                          </p>
-                        )}
+                        <h4 className="text-sm font-black text-gray-900">{item.item.name}</h4>
+                        <p className="text-xs text-gray-500 font-bold mt-1">Size: {item.size}</p>
+                        {item.addons.length > 0 && <p className="text-[11px] text-gray-400 font-semibold mt-1 truncate max-w-[200px]">+ {item.addons.map((a: any) => a.name).join(', ')}</p>}
                       </div>
-                      <span className="text-xs font-black text-amber-400">GH₵{item.totalPrice.toFixed(2)}</span>
+                      <span className="text-sm font-black text-[#d97706]">GH₵{item.totalPrice.toFixed(2)}</span>
                     </div>
-                    
-                    <div className="flex justify-between items-center pt-2 border-t border-white/5 mt-1">
-                      <button
-                        type="button"
-                        onClick={() => setPublicCart(publicCart.filter(c => c.cartItemId !== item.cartItemId))}
-                        className="text-[10px] text-red-400 hover:text-red-300 font-bold uppercase tracking-wider flex items-center gap-1"
-                      >
-                        <Trash2 size={12} /> Remove
-                      </button>
-                      
-                      <div className="flex items-center gap-2 bg-black/30 border border-white/5 rounded-xl p-0.5 shadow-inner">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newQty = Math.max(1, item.quantity - 1);
-                            setPublicCart(publicCart.map(c => c.cartItemId === item.cartItemId ? { ...c, quantity: newQty, totalPrice: c.unitPrice * newQty } : c));
-                          }}
-                          className="w-6 h-6 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-lg text-white font-bold text-xs"
-                        >
-                          <Minus size={10} strokeWidth={2.5} />
-                        </button>
-                        <input
-                          type="number"
-                          min="1"
-                          value={item.quantity === 0 ? '' : item.quantity}
-                          onChange={(e) => {
-                            if (e.target.value === '') {
-                              setPublicCart(publicCart.map(c => c.cartItemId === item.cartItemId ? { ...c, quantity: 0, totalPrice: 0 } : c));
-                            } else {
-                              const val = parseInt(e.target.value, 10);
-                              if (!isNaN(val) && val >= 0) {
-                                setPublicCart(publicCart.map(c => c.cartItemId === item.cartItemId ? { ...c, quantity: val, totalPrice: c.unitPrice * val } : c));
-                              }
-                            }
-                          }}
-                          onBlur={() => {
-                            if (item.quantity <= 0) {
-                              setPublicCart(publicCart.filter(c => c.cartItemId !== item.cartItemId));
-                            }
-                          }}
-                          className="font-extrabold text-amber-300 text-xs w-8 text-center bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newQty = item.quantity + 1;
-                            setPublicCart(publicCart.map(c => c.cartItemId === item.cartItemId ? { ...c, quantity: newQty, totalPrice: c.unitPrice * newQty } : c));
-                          }}
-                          className="w-6 h-6 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-lg text-white font-bold text-xs"
-                        >
-                          <Plus size={10} strokeWidth={2.5} />
-                        </button>
+                    <div className="flex justify-between items-center pt-4 mt-4 border-t border-gray-50">
+                      <button type="button" onClick={() => setPublicCart(publicCart.filter((c: any) => c.cartItemId !== item.cartItemId))} className="text-[10px] text-gray-400 hover:text-red-500 font-black uppercase tracking-wider flex items-center gap-1 transition-colors"><Trash2 size={12} /> Remove</button>
+                      <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-full p-1">
+                        <button type="button" onClick={() => { const nq = Math.max(1, item.quantity - 1); setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: nq, totalPrice: c.unitPrice * nq } : c)); }} className="w-7 h-7 flex items-center justify-center bg-white rounded-full text-gray-800 font-bold shadow-sm"><Minus size={12} /></button>
+                        <span className="text-gray-900 text-xs font-black w-4 text-center">{item.quantity}</span>
+                        <button type="button" onClick={() => { const nq = item.quantity + 1; setPublicCart(publicCart.map((c: any) => c.cartItemId === item.cartItemId ? { ...c, quantity: nq, totalPrice: c.unitPrice * nq } : c)); }} className="w-7 h-7 flex items-center justify-center bg-white rounded-full text-gray-800 font-bold shadow-sm"><Plus size={12} /></button>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-              
-              {/* Order total */}
-              <div className="flex justify-between items-center bg-white/5 border border-white/10 rounded-2xl p-4">
-                <span className="text-xs font-black text-amber-300 uppercase tracking-widest">Subtotal Amount</span>
-                <span className="text-xl font-black text-white">GH₵{publicCart.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2)}</span>
-              </div>
-              
-              {/* Customer Info Form */}
-              <div className="space-y-3.5 border-t border-white/5 pt-4">
-                <h3 className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-1.5">
-                  <span className="w-5 h-0.5 bg-orange-500 rounded-full" /> Delivery Details
-                </h3>
-                
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-bold uppercase tracking-wider block text-amber-300/80">Your Full Name</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Kwame Asante"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      className="w-full rounded-2xl px-4 py-2.5 text-xs outline-none transition-all bg-[#1c0a04] border border-white/10 text-white placeholder-white/20 focus:ring-1 focus:ring-orange-500/40"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-bold uppercase tracking-wider block text-amber-300/80">Your Phone Number</label>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="e.g. 0244123456"
-                      value={customerPhone}
-                      onChange={(e) => setCustomerPhone(e.target.value)}
-                      className="w-full rounded-2xl px-4 py-2.5 text-xs outline-none transition-all bg-[#1c0a04] border border-white/10 text-white placeholder-white/20 focus:ring-1 focus:ring-orange-500/40"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-1">
-                  <label className="text-[9px] font-bold uppercase tracking-wider block text-amber-300/80">Order Method</label>
-                  <div className="flex gap-2">
-                    {(['takeaway', 'delivery'] as const).map(method => (
-                      <button
-                        key={method}
-                        type="button"
-                        onClick={() => setServiceMethod(method)}
-                        className={`flex-1 py-2.5 rounded-2xl text-[10px] font-black uppercase transition-all border ${
-                          serviceMethod === method
-                            ? 'bg-gradient-to-r from-orange-500 to-[#b91c1c] text-white border-orange-400/35 shadow-md scale-[1.01]'
-                            : 'bg-[#1c0a04] text-amber-100/60 border-white/10 hover:text-white'
-                        }`}
-                      >
-                        {method === 'takeaway' ? '🚶 Takeaway (KNUST Counter)' : '🛵 Delivery to Campus'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                
-                {serviceMethod === 'delivery' && (
-                  <div className="space-y-1 animate-slide-up">
-                    <label className="text-[9px] font-bold uppercase tracking-wider block text-amber-300/80">Delivery Address / KNUST Hostel Name</label>
-                    <textarea
-                      required
-                      rows={2}
-                      placeholder="e.g. No Weapon Hostel Annex, Room 302, opposite Annex Gate"
-                      value={deliveryAddress}
-                      onChange={(e) => setDeliveryAddress(e.target.value)}
-                      className="w-full rounded-2xl px-4 py-2.5 text-xs outline-none transition-all bg-[#1c0a04] border border-white/10 text-white placeholder-white/20 focus:ring-1 focus:ring-orange-500/40 resize-none"
-                    />
-                  </div>
-                )}
-              </div>
+                ))
+              )}
             </div>
-            
-            {/* Submit drawer footer */}
-            <div className="p-6 border-t border-white/5 flex-shrink-0">
-              <button
-                type="button"
-                onClick={handleWhatsAppSubmit}
-                className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl text-white text-xs font-black tracking-wider uppercase transition-all shadow-lg active:scale-[0.98] hover:scale-[1.01] bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/10"
-              >
-                <span>💬 Send Order via WhatsApp</span>
-                <ArrowRight size={14} />
+            <div className="p-6 border-t border-gray-100 bg-white">
+              <div className="flex items-center justify-between mb-6">
+                <span className="text-xs font-black uppercase text-gray-500 tracking-widest">Total Amount</span>
+                <span className="text-3xl font-black text-gray-900">GH₵{publicCart.reduce((sum: number, item: any) => sum + item.totalPrice, 0).toFixed(2)}</span>
+              </div>
+              <button disabled={publicCart.length === 0} type="button" onClick={handleWhatsAppSubmit} className="w-full flex items-center justify-center gap-2 py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none bg-[#25D366] hover:bg-[#1ebd57]">
+                <Send size={16} /> Complete via WhatsApp
               </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* ── WRITE A REVIEW MODAL ───────────────────────────────────────── */}
-      {isWriteReviewOpen && (
-        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in" style={{ background: 'rgba(13,3,2,0.88)' }}>
-          <div className="w-full max-w-md rounded-[2.5rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] overflow-hidden animate-scale-in relative border border-white/10"
-            style={{ background: 'linear-gradient(135deg, #2a0e05 0%, #1c0a04 100%)' }}>
-            
-            <button type="button" onClick={() => { setIsWriteReviewOpen(false); setReviewSuccess(false); }}
-              className="absolute top-5 right-5 p-2 rounded-xl text-amber-200/50 hover:text-white hover:bg-white/5 transition-all">
-              <X size={16} />
-            </button>
-            
-            <div className="p-6 pb-4 text-center border-b border-white/5 mt-4">
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-3 bg-gradient-to-tr from-[#b91c1c] to-orange-500">
-                <Sparkles size={20} className="text-white fill-white animate-pulse" />
-              </div>
-              <h2 className="text-lg font-black text-white">Share Your Experience</h2>
-              <p className="text-xs mt-1 text-amber-300/60">Let us know what you think about our food and service.</p>
-            </div>
-
-            {reviewSuccess ? (
-              <div className="p-8 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto text-emerald-400">
-                  <CheckCircle size={32} className="fill-emerald-400 text-[#1c0a04]" />
-                </div>
-                <h3 className="text-base font-black text-white">Review Submitted!</h3>
-                <p className="text-xs leading-relaxed max-w-xs mx-auto text-amber-200/60">
-                  Thank you! Your feedback has been successfully posted. Your review is now live on our board.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleReviewSubmit} className="p-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  {[{ label: 'Your Name', val: reviewName, set: setReviewName, placeholder: 'e.g. Kwame A.' },
-                    { label: 'Your Role / Tag', val: reviewRole, set: setReviewRole, placeholder: 'e.g. Local Foodie' }].map(({ label, val, set, placeholder }) => (
-                    <div key={label} className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider block text-amber-300/80">{label}</label>
-                      <input type="text" value={val} onChange={(e) => set(e.target.value)} placeholder={placeholder} required={label === 'Your Name'}
-                        className="w-full rounded-2xl px-4 py-2.5 text-xs outline-none transition-all focus:ring-2 focus:ring-orange-500/40 bg-[#1c0a04] border border-white/10 text-white placeholder-white/20" />
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider block text-amber-300/80">Rating (Stars)</label>
-                  <div className="flex gap-1.5">
-                    {[1,2,3,4,5].map((star) => (
-                      <button key={star} type="button" onClick={() => setReviewRating(star)} className="p-1 text-amber-500 transition-transform hover:scale-125">
-                        <Star size={24} className={star <= reviewRating ? 'fill-amber-500 text-amber-500 filter drop-shadow-[0_0_4px_rgba(245,158,11,0.5)]' : 'text-white/10 hover:text-amber-500/50'} />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="space-y-1.5 relative">
-                  <label className="text-[10px] font-bold uppercase tracking-wider block text-amber-300/80">Favorite Dish Reviewed</label>
-                  <div className="relative">
-                    <select value={reviewDish} onChange={(e) => setReviewDish(e.target.value)}
-                      className="w-full rounded-2xl px-4 py-2.5 text-xs outline-none transition-all cursor-pointer bg-[#1c0a04] border border-white/10 text-white appearance-none focus:ring-2 focus:ring-orange-500/40 font-bold">
-                      <option className="bg-[#1c0a04] text-white">🍚 Jollof Rice</option>
-                      <option className="bg-[#1c0a04] text-white">🍳 Fried Rice</option>
-                      <option className="bg-[#1c0a04] text-white">🍛 Mixture</option>
-                      <option className="bg-[#1c0a04] text-white">🐟 Banku & Tilapia</option>
-                      <option className="bg-[#1c0a04] text-white">🍲 Asorted Fried Rice</option>
-                      <option className="bg-[#1c0a04] text-white">🔥 Asorted Jollof Rice</option>
-                    </select>
-                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-white/50 text-[8px] font-bold">▼</div>
-                  </div>
-                </div>
-                
-                {[{ label: 'Review Headline', val: reviewTitle, set: setReviewTitle, placeholder: 'e.g. Incredibly delicious!', multiline: false },
-                  { label: 'Your Review Description', val: reviewText, set: setReviewText, placeholder: 'Describe your experience: taste, seasoning, size…', multiline: true }].map(({ label, val, set, placeholder, multiline }) => (
-                  <div key={label} className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-wider block text-amber-300/80">{label}</label>
-                    {multiline ? (
-                      <textarea rows={3} required value={val} onChange={(e) => set(e.target.value)} placeholder={placeholder}
-                        className="w-full rounded-2xl px-4 py-2.5 text-xs outline-none transition-all resize-none focus:ring-2 focus:ring-orange-500/40 bg-[#1c0a04] border border-white/10 text-white placeholder-white/20" />
-                    ) : (
-                      <input type="text" required value={val} onChange={(e) => set(e.target.value)} placeholder={placeholder}
-                        className="w-full rounded-2xl px-4 py-2.5 text-xs outline-none transition-all focus:ring-2 focus:ring-orange-500/40 bg-[#1c0a04] border border-white/10 text-white placeholder-white/20" />
-                    )}
-                  </div>
-                ))}
-                
-                <button type="submit"
-                  className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-[#1c0a04] text-xs font-black tracking-wider uppercase transition-all shadow-lg shadow-orange-500/10 hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 duration-200 mt-2">
-                  <Send size={12} /> Submit Feedback
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-
+      
+      {/* Hide scrollbars class addition to head */}
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-anim { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .scroll-anim.animate-slide-up-fade { opacity: 1; transform: translateY(0); }
+        @keyframes slow-zoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+      `}</style>
     </div>
   );
 }

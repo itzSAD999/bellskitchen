@@ -11,15 +11,15 @@ export default {
         brand: {
           50:  '#fff8ed',
           100: '#ffefd4',
-          200: '#ffdb9a',
-          300: '#ffc063',
-          400: '#ffa02e',
-          500: '#f97f0a',   // Primary orange
-          600: '#ea6104',
-          700: '#c24706',
-          800: '#9b380d',
-          900: '#7d300e',
-          950: '#441508',
+          200: '#fed7aa',
+          300: '#fdba74',
+          400: '#fb923c',
+          500: '#d97706',   // Primary vibrant orange
+          600: '#b45309',   // Hover orange
+          700: '#92400e',
+          800: '#78350f',
+          900: '#431407',   // Deep Chocolate Brown
+          950: '#2a0e05',   // Extra dark chocolate
         },
         amber: {
           50:  '#fffbeb',

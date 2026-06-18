@@ -21,41 +21,41 @@ export default function AdminScreen() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-brand-50">
+    <div className="flex flex-col h-full bg-[#f8f9fa]">
       {/* Tab selection and Lock button row */}
-      <div className="flex items-center justify-between bg-white border-b border-brand-100 px-5 flex-shrink-0">
-        <div className="flex gap-1">
+      <div className="flex items-center justify-between bg-[#431407] border-b-4 border-brand-500 px-5 flex-shrink-0 shadow-lg relative z-10">
+        <div className="flex gap-1 pt-2">
           <button
             onClick={() => setActiveTab('sales')}
-            className={`flex items-center gap-2 px-3 py-4 text-xs uppercase tracking-widest font-black border-b-2 transition-all duration-150 ${
+            className={`flex items-center gap-2 px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
               activeTab === 'sales'
-                ? 'border-brand-500 text-brand-600'
-                : 'border-transparent text-dark-400 hover:text-dark-700'
+                ? 'border-brand-500 text-brand-500 bg-brand-500/10 rounded-t-xl'
+                : 'border-transparent text-white/60 hover:text-white hover:bg-white/5 rounded-t-xl'
             }`}
           >
-            <BarChart2 size={15} />
+            <BarChart2 size={16} />
             Sales
           </button>
           <button
             onClick={() => setActiveTab('menu')}
-            className={`flex items-center gap-2 px-3 py-4 text-xs uppercase tracking-widest font-black border-b-2 transition-all duration-150 ${
+            className={`flex items-center gap-2 px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
               activeTab === 'menu'
-                ? 'border-brand-500 text-brand-600'
-                : 'border-transparent text-dark-400 hover:text-dark-700'
+                ? 'border-brand-500 text-brand-500 bg-brand-500/10 rounded-t-xl'
+                : 'border-transparent text-white/60 hover:text-white hover:bg-white/5 rounded-t-xl'
             }`}
           >
-            <UtensilsCrossed size={15} />
+            <UtensilsCrossed size={16} />
             Menu
           </button>
           <button
             onClick={() => setActiveTab('staff')}
-            className={`flex items-center gap-2 px-3 py-4 text-xs uppercase tracking-widest font-black border-b-2 transition-all duration-150 ${
+            className={`flex items-center gap-2 px-4 py-4 text-xs uppercase tracking-widest font-black border-b-4 transition-all duration-150 ${
               activeTab === 'staff'
-                ? 'border-brand-500 text-brand-600'
-                : 'border-transparent text-dark-400 hover:text-dark-700'
+                ? 'border-brand-500 text-brand-500 bg-brand-500/10 rounded-t-xl'
+                : 'border-transparent text-white/60 hover:text-white hover:bg-white/5 rounded-t-xl'
             }`}
           >
-            <Users size={15} />
+            <Users size={16} />
             Staff
           </button>
         </div>
@@ -63,10 +63,10 @@ export default function AdminScreen() {
         {/* Lock button inline */}
         <button
           onClick={lock}
-          className="flex items-center gap-1.5 bg-dark-50 border border-dark-200/50 hover:bg-dark-100 hover:border-dark-300 text-dark-700 text-[10px] font-black uppercase tracking-wider px-3.5 py-2 rounded-xl transition-all duration-150 shadow-sm"
+          className="flex items-center gap-1.5 bg-white/10 border border-white/20 hover:bg-red-500 hover:border-red-500 hover:text-white text-white text-[10px] font-black uppercase tracking-wider px-4 py-2 rounded-xl transition-all duration-300 shadow-sm mb-2"
         >
-          <LogOut size={12} />
-          Lock
+          <LogOut size={14} />
+          Lock Terminal
         </button>
       </div>
 

@@ -1,0 +1,11 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="48" fill="#431407"/>
+  <circle cx="50" cy="50" r="46" stroke="#e58e26" stroke-width="2.5"/>
+  <circle cx="50" cy="50" r="38" stroke="#e58e26" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <path d="M 36 32 C 40 24, 60 24, 64 32" stroke="#e58e26" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <circle cx="50" cy="22" r="2.5" fill="#e58e26"/>
+  <text x="50" y="44" fill="white" font-size="17" font-family="Georgia, serif" font-style="italic" font-weight="bold" text-anchor="middle">Bel's</text>
+  <line x1="22" y1="50" x2="78" y2="50" stroke="#e58e26" stroke-width="2"/>
+  <text x="50" y="64" fill="#e58e26" font-size="10" font-family="system-ui, sans-serif" font-weight="900" text-anchor="middle" letter-spacing="1.2">KITCHEN</text>
+  <text x="50" y="76" fill="white" font-size="7" font-family="system-ui, sans-serif" font-weight="bold" text-anchor="middle" letter-spacing="1.8">CATERICE</text>
+</svg>

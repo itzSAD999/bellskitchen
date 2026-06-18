@@ -72,33 +72,33 @@ export default function MenuCard({ item, onTap }: Props) {
       onClick={() => item.available && onTap(item)}
       disabled={!item.available}
       className={`
-        relative flex flex-col items-start p-5 rounded-3xl border transition-all duration-300 text-left w-full select-none
+        relative flex flex-col items-start p-6 rounded-[2rem] border-2 transition-all duration-300 text-left w-full select-none
         ${item.available
-          ? 'bg-white border-dark-100/80 hover:border-brand-400/50 hover:shadow-card-lg hover:scale-[1.02] hover:-translate-y-0.5 cursor-pointer active:scale-98 shadow-sm'
+          ? 'bg-white border-dark-100/50 hover:border-brand-500 hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 cursor-pointer active:scale-95 shadow-md'
           : 'bg-dark-50/50 border-dark-100 opacity-50 cursor-not-allowed'
         }
       `}
     >
       {/* Visual Badge wrapper for Vector Icon */}
       <div className={`
-        w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-4 border transition-colors
+        w-14 h-14 rounded-full flex items-center justify-center text-2xl mb-5 shadow-inner transition-colors
         ${item.available ? theme.bgClass : 'bg-dark-100 border-dark-200 text-dark-400'}
       `}>
-        <IconComponent className={item.available ? theme.textClass : 'text-dark-400'} size={22} strokeWidth={2.2} />
+        <IconComponent className={item.available ? theme.textClass : 'text-dark-400'} size={24} strokeWidth={2.5} />
       </div>
 
       {/* Name */}
-      <h3 className="font-bold text-dark-950 text-sm leading-tight mb-1 select-none">
+      <h3 className="font-black text-dark-950 text-[15px] uppercase tracking-wide leading-tight mb-2 select-none">
         {item.name}
       </h3>
 
       {/* Price & sizes */}
-      <div className="flex flex-col gap-1.5 w-full mt-auto pt-3 border-t border-dark-100/40">
-        <span className="text-brand-600 font-extrabold text-base leading-none select-none">
+      <div className="flex flex-col gap-1.5 w-full mt-auto pt-4 border-t-2 border-dark-100/30">
+        <span className="text-brand-500 font-black text-xl leading-none select-none">
           {priceDisplay}
         </span>
         {item.hasSizes && (
-          <span className="text-[10px] text-dark-400 font-bold uppercase tracking-wider select-none">
+          <span className="text-[10px] text-dark-400 font-bold uppercase tracking-[0.1em] select-none">
             Sizes: S · M · L
           </span>
         )}
@@ -106,7 +106,7 @@ export default function MenuCard({ item, onTap }: Props) {
 
       {/* Sold out badge */}
       {!item.available && (
-        <span className="absolute top-3 right-3 bg-red-100 text-red-600 border border-red-200 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+        <span className="absolute top-4 right-4 bg-red-100 text-red-600 border border-red-200 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
           Sold Out
         </span>
       )}

@@ -39,18 +39,18 @@ export default function SizePicker({ item, onConfirm, onClose }: Props) {
         <div className="w-10 h-1 bg-dark-200 rounded-full mx-auto mb-6" />
 
         {/* Header */}
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex items-start justify-between mb-8">
           <div>
-            <h3 className="text-xl font-bold text-dark-950">{item.name}</h3>
-            <p className="text-dark-400 text-sm mt-0.5">Select a size and configure options</p>
+            <h3 className="text-3xl font-black text-brand-900 italic tracking-tight uppercase">{item.name}</h3>
+            <p className="text-dark-500 text-sm mt-1 font-semibold">Select a size and configure options</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-brand-50 text-dark-400 active:scale-95 transition-all">
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-brand-50 text-dark-400 active:scale-95 transition-all bg-dark-50 shadow-sm border border-dark-100">
             <X size={20} />
           </button>
         </div>
 
         {/* Size options */}
-        <div className="flex gap-4 justify-center mb-5">
+        <div className="flex gap-4 justify-center mb-6">
           {sizes.map(size => {
             const isCurrent = selectedSize === size;
             return (
@@ -59,16 +59,16 @@ export default function SizePicker({ item, onConfirm, onClose }: Props) {
                 type="button"
                 onClick={() => setSelectedSize(size)}
                 className={`
-                  flex flex-col items-center gap-2.5 p-5 rounded-2xl border-2 transition-all duration-150 flex-1
+                  flex flex-col items-center gap-2 p-6 rounded-[2rem] border-[3px] transition-all duration-300 flex-1 hover:-translate-y-1 active:translate-y-0
                   ${isCurrent
-                    ? 'bg-brand-50/50 border-brand-400 shadow-sm'
-                    : 'bg-white border-dark-100 hover:border-brand-100'
+                    ? 'bg-brand-50 border-brand-500 shadow-[0_10px_20px_rgba(217,119,6,0.15)]'
+                    : 'bg-white border-dark-100/50 hover:border-brand-300 hover:shadow-lg'
                   }
                 `}
               >
-                <span className={`text-2xl font-black ${isCurrent ? 'text-brand-700' : 'text-dark-800'}`}>{size}</span>
-                <span className="text-[10px] text-dark-400 font-bold uppercase tracking-wider">{SIZE_LABELS[size]}</span>
-                <span className="text-brand-500 font-black text-lg">¢{item.prices[size]}</span>
+                <span className={`text-4xl font-black ${isCurrent ? 'text-brand-600' : 'text-dark-800'}`}>{size}</span>
+                <span className={`text-[10px] font-bold uppercase tracking-[0.15em] ${isCurrent ? 'text-brand-700' : 'text-dark-400'}`}>{SIZE_LABELS[size]}</span>
+                <span className={`font-black text-xl mt-1 ${isCurrent ? 'text-brand-500' : 'text-dark-600'}`}>¢{item.prices[size]}</span>
               </button>
             );
           })}

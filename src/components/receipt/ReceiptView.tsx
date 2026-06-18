@@ -69,9 +69,9 @@ export default function ReceiptView({ order }: Props) {
               <span>¢{baseLineTotal.toFixed(2)}</span>
             </div>
             {groupedAddons.length > 0 && (
-              <div className="pl-3 text-[10px] leading-tight text-gray-800 flex flex-wrap gap-x-1">
+              <div className="pl-3 text-[10px] leading-tight text-gray-800">
                 <span className="font-semibold">Add-ons:</span>
-                {groupedAddons.map((addon, index) => {
+                {groupedAddons.map((addon) => {
                   const qtyPerPack = addon.quantity;
                   const totalQty = qtyPerPack * bundle.quantity;
                   const addonLabel = bundle.quantity > 1
@@ -79,10 +79,10 @@ export default function ReceiptView({ order }: Props) {
                     : qtyPerPack > 1 ? `x${qtyPerPack}` : '';
 
                   return (
-                    <span key={addon.menuItemId} className="inline-block">
-                      +{addon.name}{addonLabel ? ` (${addonLabel})` : ''} (¢{(addon.totalPrice * bundle.quantity).toFixed(2)})
-                      {index < groupedAddons.length - 1 ? ',' : ''}
-                    </span>
+                    <div key={addon.menuItemId} className="flex justify-between">
+                      <span>+{addon.name}{addonLabel ? ` (${addonLabel})` : ''}</span>
+                      <span>¢{(addon.totalPrice * bundle.quantity).toFixed(2)}</span>
+                    </div>
                   );
                 })}
               </div>
