@@ -1045,7 +1045,7 @@ export default function LandingScreen() {
                     <div key={m.id} className="flex-shrink-0 w-32 bg-gray-50 rounded-2xl p-2.5 border border-gray-100 shadow-sm flex flex-col items-center text-center">
                        <img src={m.imageUrl} alt={m.name} className="w-12 h-12 rounded-full object-cover mb-2 shadow-sm border-2 border-white"/>
                        <h4 className="text-[10px] font-black text-gray-900 leading-tight mb-1 truncate w-full">{m.name}</h4>
-                       <span className="text-[10px] font-bold text-[#d97706] mb-2">¢{m.prices.fixed}</span>
+                       <span className="text-[10px] font-bold text-[#d97706] mb-2">¢{m.hasSizes ? (m.prices.S || m.prices.M) : (m.prices as any).fixed}</span>
                        <button onClick={() => setPendingPublicItem(m)} className="w-full py-1.5 bg-white border border-gray-200 rounded-lg text-[9px] font-black uppercase tracking-wider text-gray-700 hover:bg-[#d97706] hover:text-white hover:border-[#d97706] transition-colors">Add</button>
                     </div>
                   ))}
