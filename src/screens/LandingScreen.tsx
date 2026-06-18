@@ -110,8 +110,8 @@ const CategorySlider = ({ categoryName, items, onOrder }: { categoryName: string
         <div className="mt-16 pt-4 border-t border-gray-200/60">
           <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
             {items.map((item, i) => (
-              <div key={item.id} onClick={() => setIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group">
-                <img src={item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:-translate-y-2 ${i === index ? 'border-[#d97706]' : 'border-white'} ${!item.available ? 'opacity-50 grayscale' : ''}`} />
+              <div key={item.id} onClick={() => setIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                <img src={item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === index ? 'border-[#d97706]' : 'border-white'} ${!item.available ? 'opacity-50 grayscale' : ''}`} />
                 <div className={`text-white text-[10px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === index ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                    {item.name}
                 </div>
@@ -302,10 +302,10 @@ export default function LandingScreen() {
         {/* ── MASSIVE HERO SECTION ── */}
       <div className="relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden mt-0" id="home">
         {/* Background Image & Overlay */}
-        <div className="absolute inset-0 w-full h-full bg-black">
-           <img src="https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&q=80&w=2000" alt="Delicious Food Background" className="w-full h-full object-cover opacity-60 scale-105 animate-[slow-zoom_20s_ease-in-out_infinite_alternate]" />
-           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#f8f9fa] mix-blend-multiply"/>
-           <div className="absolute inset-0 bg-gradient-to-tr from-[#d97706]/20 to-transparent"/>
+        <div className="absolute inset-0 w-full h-full bg-black pointer-events-none">
+           <img src="https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&q=80&w=2000" alt="Delicious Food Background" className="w-full h-full object-cover opacity-60 scale-105 animate-[slow-zoom_20s_ease-in-out_infinite_alternate] pointer-events-none" />
+           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#f8f9fa] mix-blend-multiply pointer-events-none"/>
+           <div className="absolute inset-0 bg-gradient-to-tr from-[#d97706]/20 to-transparent pointer-events-none"/>
         </div>
         
         {/* Floating Decorative Elements */}
@@ -388,7 +388,7 @@ export default function LandingScreen() {
               </button>
               <div className="flex flex-col">
                 <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
-                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredJollof.hasSizes ? (featuredJollof.prices.S || featuredJollof.prices.M) : featuredJollof.prices.fixed}</span>
+                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredJollof.hasSizes ? (featuredJollof.prices.S || featuredJollof.prices.M) : (featuredJollof.prices as any).fixed}</span>
               </div>
             </div>
           </div>
@@ -459,7 +459,7 @@ export default function LandingScreen() {
               </button>
               <div className="flex flex-col">
                 <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
-                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredBanku.hasSizes ? (featuredBanku.prices.S || featuredBanku.prices.M) : featuredBanku.prices.fixed}</span>
+                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredBanku.hasSizes ? (featuredBanku.prices.S || featuredBanku.prices.M) : (featuredBanku.prices as any).fixed}</span>
               </div>
             </div>
           </div>
@@ -527,7 +527,7 @@ export default function LandingScreen() {
               </button>
               <div className="flex flex-col">
                 <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
-                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredFried.hasSizes ? (featuredFried.prices.S || featuredFried.prices.M) : featuredFried.prices.fixed}</span>
+                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredFried.hasSizes ? (featuredFried.prices.S || featuredFried.prices.M) : (featuredFried.prices as any).fixed}</span>
               </div>
             </div>
           </div>

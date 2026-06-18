@@ -127,6 +127,17 @@
   .nav-tab.active {
     @apply text-brand-600;
   }
+
+  .scroll-anim {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .scroll-anim.animate-slide-up-fade {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Utilities ────────────────────────────────────────────────── */
