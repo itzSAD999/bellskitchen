@@ -302,15 +302,15 @@ export default function LandingScreen() {
         {/* ── MASSIVE HERO SECTION ── */}
       <div className="relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden mt-0" id="home">
         {/* Background Image & Overlay */}
-        <div className="absolute inset-0 w-full h-full">
-           <img src="https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&q=80&w=2000" alt="Delicious Food Background" className="w-full h-full object-cover scale-105 animate-[slow-zoom_20s_ease-in-out_infinite_alternate]" />
-           <div className="absolute inset-0 bg-gradient-to-b from-[#431407]/90 via-black/60 to-[#f8f9fa] mix-blend-multiply"/>
+        <div className="absolute inset-0 w-full h-full bg-black">
+           <img src="https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&q=80&w=2000" alt="Delicious Food Background" className="w-full h-full object-cover opacity-60 scale-105 animate-[slow-zoom_20s_ease-in-out_infinite_alternate]" />
+           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#f8f9fa] mix-blend-multiply"/>
            <div className="absolute inset-0 bg-gradient-to-tr from-[#d97706]/20 to-transparent"/>
         </div>
         
         {/* Floating Decorative Elements */}
-        <div className="absolute top-1/4 left-10 w-24 h-24 bg-[#d97706]/20 rounded-full blur-2xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-10 w-32 h-32 bg-[#ffefd4]/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/4 left-10 w-24 h-24 bg-[#d97706]/20 rounded-full blur-2xl animate-pulse pointer-events-none" />
+        <div className="absolute bottom-1/4 right-10 w-32 h-32 bg-[#ffefd4]/10 rounded-full blur-3xl animate-pulse delay-1000 pointer-events-none" />
         
         {/* Hero Content */}
         <div className="relative z-10 text-center max-w-5xl mx-auto px-4 mt-20 scroll-anim">
@@ -319,19 +319,19 @@ export default function LandingScreen() {
              Welcome to Bells Kitchen
            </div>
            
-           <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-[3rem] p-10 md:p-16 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative">
-             <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#d97706]/30 blur-3xl rounded-full"/>
-             <h1 className="text-white text-5xl md:text-7xl lg:text-[6.5rem] font-black mb-8 tracking-tighter leading-[1.05] relative z-10">
-                Redefining <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffefd4] to-[#d97706] italic">Everyday</span> Meals.
+           <div className="relative pt-6 pb-6">
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#d97706]/40 blur-[100px] rounded-full pointer-events-none"/>
+             <h1 className="text-white text-5xl md:text-7xl lg:text-[7rem] font-black mb-8 tracking-tighter leading-[1.05] relative z-10 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
+                Redefining <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffefd4] to-[#d97706] italic drop-shadow-[0_5px_15px_rgba(217,119,6,0.5)]">Everyday</span> Meals.
              </h1>
-             <p className="text-white/80 text-lg md:text-2xl font-semibold leading-relaxed mb-12 max-w-2xl mx-auto relative z-10">
+             <p className="text-white/90 text-lg md:text-2xl font-semibold leading-relaxed mb-12 max-w-2xl mx-auto relative z-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                 Experience the finest Jollof and Fried Rice, delivered hot in our signature premium packaging. <span className="text-[#ffefd4]">True flavors of Kumasi.</span>
              </p>
              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10">
-                <button onClick={() => setView('menu')} className="w-full sm:w-auto bg-gradient-to-r from-[#d97706] to-[#b45309] text-white font-black text-sm tracking-wider py-4 px-12 rounded-full shadow-[0_10px_30px_rgba(217,119,6,0.5)] hover:shadow-[0_15px_40px_rgba(217,119,6,0.7)] hover:-translate-y-1 transition-all">
+                <button onClick={() => setView('menu')} className="w-full sm:w-auto bg-gradient-to-r from-[#d97706] to-[#b45309] text-white font-black text-sm tracking-wider py-4 px-12 rounded-full shadow-[0_10px_30px_rgba(217,119,6,0.5)] hover:shadow-[0_15px_40px_rgba(217,119,6,0.7)] hover:-translate-y-1 hover:scale-105 transition-all">
                   EXPLORE MENU
                 </button>
-                <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/5 backdrop-blur-md border-2 border-white/20 text-white font-black text-sm tracking-wider py-4 px-12 rounded-full hover:bg-white hover:text-[#431407] hover:border-white transition-all shadow-lg hover:-translate-y-1">
+                <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-black text-sm tracking-wider py-4 px-12 rounded-full hover:bg-white hover:text-[#431407] hover:border-white transition-all shadow-lg hover:-translate-y-1 hover:scale-105">
                   FIND US
                 </button>
              </div>
@@ -398,8 +398,8 @@ export default function LandingScreen() {
             <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Jollofs</h4>
             <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
               {jollofItems.map((item, i) => (
-                <div key={item.id} onClick={() => setJollofIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group">
-                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:-translate-y-2 ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                <div key={item.id} onClick={() => setJollofIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
                   <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
@@ -469,8 +469,8 @@ export default function LandingScreen() {
             <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Banku</h4>
             <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
               {bankuItems.map((item, i) => (
-                <div key={item.id} onClick={() => setBankuIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group">
-                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:-translate-y-2 ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                <div key={item.id} onClick={() => setBankuIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
                   <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
@@ -537,8 +537,8 @@ export default function LandingScreen() {
             <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Fried Rice</h4>
             <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
               {friedItems.map((item, i) => (
-                <div key={item.id} onClick={() => setFriedIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group">
-                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:-translate-y-2 ${i === friedIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                <div key={item.id} onClick={() => setFriedIndex(i)} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === friedIndex ? 'border-[#d97706]' : 'border-white'}`} />
                   <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
