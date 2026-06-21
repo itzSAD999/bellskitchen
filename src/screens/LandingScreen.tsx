@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import {
   Home, Menu as MenuIcon, Store, Users, FileText, User, ChevronLeft, ChevronRight,
   MapPin, Search, ArrowUpRight, Flame, Plus, Minus, Trash2, X, ShoppingBag, Send,
-  Mail, ArrowRight, Star, Quote, MessageCircle, HelpCircle, ChevronDown, Sparkles
+  Mail, ArrowRight, Star, Quote, MessageCircle, HelpCircle, ChevronDown, Sparkles, Compass
 } from 'lucide-react';
 
 import { bgPatternUrl, bgPatternBrownUrl } from '../utils/bgPattern';
@@ -14,10 +14,10 @@ const bgPattern = bgPatternUrl;
 /* ─── Mock Data ─── */
 const landingMenu = [
   { id: 'item_002', name: 'Jollof Rice', category: 'jollof', description: 'Rich, traditional party-style Jollof rice cooked in a seasoned, aromatic tomato and pepper broth. Forget the mediocre versions. This is Proper Jollof that is perfectly seasoned.', price: 'GH₵ 40.00', prices: { S: 35, M: 40, L: 45 }, imageUrl: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
-  { id: 'item_006', name: 'Asorted Jollof', category: 'jollof', description: 'Famous party Jollof tossed with sliced beef, diced chicken, and sausages for a loaded Ghanaian classic.', price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, imageUrl: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
+  { id: 'item_006', name: 'Assorted Jollof', category: 'jollof', description: 'Famous party Jollof tossed with sliced beef, diced chicken, and sausages for a loaded Ghanaian classic.', price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, imageUrl: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
   
   { id: 'item_001', name: 'Fried Rice', category: 'fried', description: 'Savory wok-fired Fried Rice tossed with fresh carrots, green peas, spring onions, and local spices. We reject mediocrity.', price: 'GH₵ 40.00', prices: { S: 35, M: 40, L: 45 }, imageUrl: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
-  { id: 'item_005', name: 'Asorted Fried Rice', category: 'fried', description: 'Rich and hearty wok-fired Fried Rice loaded with tender beef, chicken, sausages, and fresh vegetables.', price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, imageUrl: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
+  { id: 'item_005', name: 'Assorted Fried Rice', category: 'fried', description: 'Rich and hearty wok-fired Fried Rice loaded with tender beef, chicken, sausages, and fresh vegetables.', price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, imageUrl: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
   { id: 'item_003', name: 'Mixture', category: 'fried', description: 'The perfect half-and-half combination! Equal parts signature Jollof Rice and savory Fried Rice.', price: 'GH₵ 40.00', prices: { S: 35, M: 40, L: 45 }, imageUrl: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
 
   { id: 'item_004', name: 'Banku & Tilapia', category: 'banku', description: 'Freshly grilled whole Tilapia seasoned with local herbs, served with hot fermented banku and our signature pepper sauce.', price: 'GH₵ 65.00', prices: { S: 60, M: 65, L: 70 }, imageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=800', available: true, hasSizes: true },
@@ -51,7 +51,7 @@ const NavItem = ({ icon, label, active = false, onClick }: { icon: React.ReactNo
   </button>
 );
 
-const CategorySlider = ({ categoryName, items, isOpen, onOrder, disableScrollSpy = false }: { categoryName: string, items: any[], isOpen: boolean, onOrder: (item: any) => void, disableScrollSpy?: boolean }) => {
+const CategorySlider = ({ id, categoryName, items, isOpen, onOrder, disableScrollSpy = false }: { id?: string, categoryName: string, items: any[], isOpen: boolean, onOrder: (item: any) => void, disableScrollSpy?: boolean }) => {
   const [index, setIndex] = useState(0);
   const featured = items[index];
   const containerRef = useRef<HTMLDivElement>(null);
@@ -103,7 +103,7 @@ const CategorySlider = ({ categoryName, items, isOpen, onOrder, disableScrollSpy
 
       {/* Slider */}
       <div className="w-full lg:w-[60%]">
-        <div className="relative rounded-[2rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[16/7]">
+        <div id={id} className="relative rounded-[2rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[16/7]">
           <img src={featured.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={featured.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer" onClick={() => { if(isOpen && featured.available) onOrder(featured); }} />
           {!featured.available && (
              <div className="absolute inset-0 bg-black/60 z-20 flex items-center justify-center">
@@ -143,9 +143,14 @@ const CategorySlider = ({ categoryName, items, isOpen, onOrder, disableScrollSpy
                 } else {
                   setIndex(i);
                 }
-              }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
-                <img src={item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.name} className={`w-[80px] h-[80px] rounded-full object-cover shadow-lg border-[4px] transition-all duration-300 group-hover:shadow-2xl ${i === index ? 'border-[#d97706]' : 'border-white'} ${!item.available ? 'opacity-50 grayscale' : ''}`} />
-                <div className={`text-white text-[9px] font-black py-2 px-2 rounded-xl mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === index ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+              }} className="flex flex-col items-center flex-shrink-0 w-28 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                <div className="relative">
+                  <img src={item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.name} className={`w-[84px] h-[84px] rounded-full object-cover shadow-lg border-[4px] food-thumbnail ${i === index ? 'food-thumbnail-active' : 'border-white'} ${!item.available ? 'opacity-50 grayscale' : ''}`} />
+                  <div className="absolute -top-1 -right-1 bg-[#d97706] text-white font-black text-[9px] px-2 py-0.5 rounded-full shadow border border-white">
+                    ¢{item.hasSizes ? (item.prices.S || item.prices.M) : (item.prices as any).fixed}
+                  </div>
+                </div>
+                <div className={`text-white text-[9px] font-black py-2 px-2 rounded-xl mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === index ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                    {item.name}
                 </div>
               </div>
@@ -160,6 +165,18 @@ const CategorySlider = ({ categoryName, items, isOpen, onOrder, disableScrollSpy
 export default function LandingScreen() {
   const { state, dispatch } = useApp();
 
+  /* ── Sliders State ── */
+  const [jollofIndex, setJollofIndex] = useState(0);
+  const [friedIndex, setFriedIndex] = useState(0);
+  const [bankuIndex, setBankuIndex] = useState(0);
+  const jollofItems = landingMenu.filter(m => m.category === 'jollof' || m.name.toLowerCase() === 'mixture');
+  const friedItems = landingMenu.filter(m => m.category === 'fried');
+  const bankuItems = landingMenu.filter(m => m.category === 'banku');
+  const featuredJollof = jollofItems[jollofIndex] || jollofItems[0];
+  const featuredFried = friedItems[friedIndex] || friedItems[0];
+  const featuredBanku = bankuItems[bankuIndex] || bankuItems[0];
+  const [toastMessage, setToastMessage] = useState('');
+
   /* ── View State ── */
   const [view, setView] = useState<'home' | 'menu'>('home');
 
@@ -170,6 +187,11 @@ export default function LandingScreen() {
   const [pendingPublicItem, setPendingPublicItem] = useState<any | null>(null);
   const [tourStep, setTourStep] = useState<number | null>(null);
   const [targetRect, setTargetRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
+
+  const [publicSize, setPublicSize] = useState<'S' | 'M' | 'L'>('M');
+  const [publicQty, setPublicQty] = useState<number>(1);
+  const [publicAddons, setPublicAddons] = useState<any[]>([]);
+  const [addedFeedback, setAddedFeedback] = useState(false);
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem('bells_tour_completed');
@@ -187,18 +209,53 @@ export default function LandingScreen() {
   };
 
   useEffect(() => {
+    // Synchronize modal, cart, and mock order data based on the active tour step
+    if (tourStep === 2) {
+      const targetItem = jollofItems[0] || landingMenu[0];
+      setPendingPublicItem(targetItem);
+      setPublicSize(targetItem.hasSizes ? (targetItem.prices.M ? 'M' : 'S') : 'M');
+      setPublicQty(1);
+      setPublicAddons([]);
+      setIsPublicCartOpen(false);
+    } else if (tourStep === 3) {
+      setPendingPublicItem(null);
+      setIsPublicCartOpen(true);
+      const targetItem = jollofItems[0] || landingMenu[0];
+      const tourCartItem = {
+        cartItemId: 'tour-cart-item-id',
+        item: targetItem,
+        size: 'M',
+        quantity: 1,
+        addons: [],
+        unitPrice: targetItem.prices.M || targetItem.prices.S || 40,
+        totalPrice: targetItem.prices.M || targetItem.prices.S || 40
+      };
+      if (!publicCart.some((c: any) => c.cartItemId === 'tour-cart-item-id')) {
+        setPublicCart((prev: any[]) => [...prev, tourCartItem]);
+      }
+    } else {
+      setPendingPublicItem(null);
+      setIsPublicCartOpen(false);
+      // Clean up mock tour item if exiting or going back
+      setPublicCart((prev: any[]) => prev.filter(c => c.cartItemId !== 'tour-cart-item-id'));
+    }
+
     if (tourStep === null || tourStep === 0) {
       setTargetRect(null);
       return;
     }
 
-    const updateRect = () => {
-      let targetId = '';
-      if (tourStep === 1) targetId = 'jollof-slider';
-      else if (tourStep === 2) targetId = 'first-jollof-item';
-      else if (tourStep === 3) targetId = 'nav-cart-btn';
+    let activeTargetId = '';
+    if (tourStep === 1) {
+      activeTargetId = view === 'menu' ? 'menu-jollof-slider' : 'jollof-slider';
+    } else if (tourStep === 2) {
+      activeTargetId = 'modal-size-selector';
+    } else if (tourStep === 3) {
+      activeTargetId = 'cart-whatsapp-btn';
+    }
 
-      const element = document.getElementById(targetId);
+    const updateRect = () => {
+      const element = document.getElementById(activeTargetId);
       if (element) {
         const rect = element.getBoundingClientRect();
         setTargetRect({
@@ -210,30 +267,43 @@ export default function LandingScreen() {
       }
     };
 
-    let targetId = '';
-    if (tourStep === 1) targetId = 'jollof-slider';
-    else if (tourStep === 2) targetId = 'first-jollof-item';
-    else if (tourStep === 3) targetId = 'nav-cart-btn';
+    let scrollTimeout: any = null;
+    let pollInterval: any = null;
 
-    const element = document.getElementById(targetId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Wait for scroll transition to finish
-      const timer = setTimeout(updateRect, 500);
-      window.addEventListener('resize', updateRect);
-      window.addEventListener('scroll', updateRect);
-      return () => {
-        clearTimeout(timer);
-        window.removeEventListener('resize', updateRect);
-        window.removeEventListener('scroll', updateRect);
-      };
-    }
-  }, [tourStep]);
+    const attemptScrollAndPosition = () => {
+      const element = document.getElementById(activeTargetId);
+      if (element) {
+        if (activeTargetId !== 'modal-size-selector' && activeTargetId !== 'cart-whatsapp-btn') {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        // Polling calculations to ensure precise alignment as scroll finishes
+        let ticks = 0;
+        pollInterval = setInterval(() => {
+          updateRect();
+          ticks++;
+          if (ticks > 12) {
+            clearInterval(pollInterval);
+          }
+        }, 100);
+      } else {
+        // Retry if element is not in DOM yet (e.g. modal/cart loading)
+        scrollTimeout = setTimeout(attemptScrollAndPosition, 50);
+      }
+    };
 
-  const [publicSize, setPublicSize] = useState<'S' | 'M' | 'L'>('M');
-  const [publicQty, setPublicQty] = useState<number>(1);
-  const [publicAddons, setPublicAddons] = useState<any[]>([]);
-  const [addedFeedback, setAddedFeedback] = useState(false);
+    attemptScrollAndPosition();
+
+    window.addEventListener('resize', updateRect);
+    window.addEventListener('scroll', updateRect);
+    
+    return () => {
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      if (pollInterval) clearInterval(pollInterval);
+      window.removeEventListener('resize', updateRect);
+      window.removeEventListener('scroll', updateRect);
+    };
+  }, [tourStep, view, jollofItems]);
 
   /* ── Checkout Details State ── */
   const [customerName, setCustomerName] = useState('');
@@ -253,18 +323,6 @@ export default function LandingScreen() {
   /* ── Branches State ── */
   const branches = ['KNUST BRANCH', 'ADUM BRANCH', 'BANTAMA BRANCH', 'AHODWO BRANCH'];
   const [selectedBranch, setSelectedBranch] = useState(branches[0]);
-
-  /* ── Sliders State ── */
-  const [jollofIndex, setJollofIndex] = useState(0);
-  const [friedIndex, setFriedIndex] = useState(0);
-  const [bankuIndex, setBankuIndex] = useState(0);
-  const jollofItems = landingMenu.filter(m => m.name.toLowerCase().includes('jollof'));
-  const friedItems = landingMenu.filter(m => m.name.toLowerCase().includes('fried rice') || m.name.toLowerCase().includes('assorted'));
-  const bankuItems = landingMenu.filter(m => m.name.toLowerCase().includes('banku') || m.name.toLowerCase().includes('tilapia'));
-  const featuredJollof = jollofItems[jollofIndex] || jollofItems[0];
-  const featuredFried = friedItems[friedIndex] || friedItems[0];
-  const featuredBanku = bankuItems[bankuIndex] || bankuItems[0];
-  const [toastMessage, setToastMessage] = useState('');
 
   /* ── Scroll effect for header, nav bar hiding & image toggling ── */
   const [scrolled, setScrolled] = useState(false);
@@ -455,7 +513,7 @@ export default function LandingScreen() {
             <NavItem icon={<Home/>} label="Home" active={view === 'home'} onClick={() => { setView('home'); window.scrollTo({top: 0, behavior: 'smooth'}); }} />
             <NavItem icon={<MenuIcon/>} label="OUR MENU" active={view === 'menu'} onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} />
             <NavItem icon={<Store/>} label="Outlets" onClick={() => { setView('home'); setTimeout(() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' }), 100); }} />
-            <NavItem icon={<HelpCircle/>} label="Guide" onClick={() => setTourStep(0)} />
+            <NavItem icon={<HelpCircle/>} label="Guide" onClick={() => { setTourStep(0); }} />
           </div>
 
           {/* Right: Order Now Button & Login */}
@@ -594,12 +652,12 @@ export default function LandingScreen() {
               {jollofItems.map((item, i) => (
                 <div key={item.id} id={i === 0 ? "first-jollof-item" : undefined} onClick={() => { setJollofIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
                   <div className="relative">
-                    <img src={item.imageUrl} alt={item.name} className={`w-[72px] h-[72px] rounded-full object-cover shadow-lg border-[3px] transition-all duration-300 group-hover:shadow-2xl ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                    <img src={item.imageUrl} alt={item.name} className={`w-[72px] h-[72px] rounded-full object-cover shadow-lg border-[3px] food-thumbnail ${i === jollofIndex ? 'food-thumbnail-active' : 'border-white'}`} />
                     <div className="absolute -top-1.5 -right-1.5 bg-[#d97706] text-white font-black text-[9px] px-2 py-0.5 rounded-full shadow border border-white">
                       ¢{item.prices.S}
                     </div>
                   </div>
-                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors truncate ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -663,12 +721,12 @@ export default function LandingScreen() {
               {bankuItems.map((item, i) => (
                 <div key={item.id} onClick={() => { setBankuIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
                   <div className="relative">
-                    <img src={item.imageUrl} alt={item.name} className={`w-[72px] h-[72px] rounded-full object-cover shadow-lg border-[3px] transition-all duration-300 group-hover:shadow-2xl ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                    <img src={item.imageUrl} alt={item.name} className={`w-[72px] h-[72px] rounded-full object-cover shadow-lg border-[3px] food-thumbnail ${i === bankuIndex ? 'food-thumbnail-active' : 'border-white'}`} />
                     <div className="absolute -top-1.5 -right-1.5 bg-[#d97706] text-white font-black text-[9px] px-2 py-0.5 rounded-full shadow border border-white">
                       ¢{item.prices.S}
                     </div>
                   </div>
-                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors truncate ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -736,12 +794,12 @@ export default function LandingScreen() {
               {friedItems.map((item, i) => (
                 <div key={item.id} onClick={() => { setFriedIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
                   <div className="relative">
-                    <img src={item.imageUrl} alt={item.name} className={`w-[72px] h-[72px] rounded-full object-cover shadow-lg border-[3px] transition-all duration-300 group-hover:shadow-2xl ${i === friedIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                    <img src={item.imageUrl} alt={item.name} className={`w-[72px] h-[72px] rounded-full object-cover shadow-lg border-[3px] food-thumbnail ${i === friedIndex ? 'food-thumbnail-active' : 'border-white'}`} />
                     <div className="absolute -top-1.5 -right-1.5 bg-[#d97706] text-white font-black text-[9px] px-2 py-0.5 rounded-full shadow border border-white">
                       ¢{item.prices.S}
                     </div>
                   </div>
-                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors truncate ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -812,7 +870,7 @@ export default function LandingScreen() {
                 
                 <div 
                   className="bg-[#431407] rounded-3xl border-[3px] border-[#d97706]/20 shadow-2xl p-6 flex-1 flex flex-col hover:shadow-[0_12px_24px_rgba(217,119,6,0.15)] transition-shadow relative overflow-hidden cursor-pointer group" 
-                  onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(selectedBranch + ' Kumasi Ghana')}`, '_blank')}
+                  onClick={() => window.open("https://www.google.com/maps/place/BeLs+CATERING+SERVICE/@6.6704355,-1.5645456,17z/data=!3m1!4b1!4m6!3m5!1s0xfdb95abfa54ab0d:0x6f265d09ad4e25f6!8m2!3d6.6704355!4d-1.5645456!16s%2Fg%2F11g9y_s1w5", "_blank")}
                   style={{ backgroundImage: bgPatternBrownUrl }}
                 >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none"/>
@@ -834,9 +892,17 @@ export default function LandingScreen() {
               {/* Map panel */}
               <div className="w-full lg:w-[65%] h-full rounded-3xl overflow-hidden shadow-lg border border-gray-200 bg-white relative p-1.5">
                 <div className="w-full h-full rounded-2xl overflow-hidden relative">
-                  <iframe title="map" src="https://maps.google.com/maps?q=No%20Weapon%20Hostel,%20KNUST,%20Kumasi,%20Ghana&t=&z=16&ie=UTF8&iwloc=&output=embed" className="w-full h-full border-0 filter brightness-95 contrast-125 saturate-50 hover:filter-none transition-all duration-700"/>
+                  <iframe title="map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3962.810119724222!2d-1.5645456264348612!3d6.670435493324623!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdb95abfa54ab0d%3A0x6f265d09ad4e25f6!2sBeLs%20CATERING%20SERVICE!5e0!3m2!1sen!2sgh!4v1782011878734!5m2!1sen!2sgh" className="w-full h-full border-0 filter brightness-95 contrast-125 saturate-50 hover:filter-none transition-all duration-700" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                  
+                  {/* Click overlay to open in Google Maps */}
+                  <div 
+                    onClick={() => window.open("https://www.google.com/maps/place/BeLs+CATERING+SERVICE/@6.6704355,-1.5645456,17z/data=!3m1!4b1!4m6!3m5!1s0xfdb95abfa54ab0d:0x6f265d09ad4e25f6!8m2!3d6.6704355!4d-1.5645456!16s%2Fg%2F11g9y_s1w5", "_blank")} 
+                    className="absolute inset-0 cursor-pointer z-10 bg-transparent" 
+                    title="Click to open in Google Maps"
+                  />
+
                   {/* Map pin overlay mimicking image */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none drop-shadow-xl animate-bounce">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none drop-shadow-xl animate-bounce z-20">
                     <MapPin size={40} className="text-[#d97706] fill-[#d97706]" />
                   </div>
                 </div>
@@ -955,6 +1021,7 @@ export default function LandingScreen() {
             return (
               <CategorySlider 
                  key={categoryName} 
+                 id={categoryName === 'jollof' ? 'menu-jollof-slider' : undefined}
                  categoryName={friendlyName} 
                  items={items} 
                  isOpen={state.storeSettings.isOpen}
@@ -1127,7 +1194,7 @@ export default function LandingScreen() {
                     {pendingPublicItem.hasSizes && (
                       <div className="space-y-3">
                         <label className="text-[11px] font-black uppercase tracking-widest block text-gray-800">Select Size</label>
-                        <div className="flex gap-3">
+                        <div id="modal-size-selector" className="flex gap-3">
                           {(['S', 'M', 'L'] as const).filter(sz => pendingPublicItem.prices?.[sz] !== undefined).map(sz => (
                             <button key={sz} type="button" onClick={() => setPublicSize(sz)}
                               className={`flex-1 py-3 px-4 rounded-[1.5rem] text-sm font-black uppercase tracking-wider transition-all border-2 flex flex-col items-center justify-center leading-none bg-white ${
@@ -1144,7 +1211,7 @@ export default function LandingScreen() {
                     )}
                     <div className="space-y-3">
                       <label className="text-[11px] font-black uppercase tracking-widest block text-gray-800">Add-ons</label>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div id="modal-addons-selector" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {state.addons.filter(a => a.available).map(addon => {
                           const price = addon.prices.fixed || 0;
                           const count = publicAddons.filter((a: any) => a.id === addon.id).length;
@@ -1399,7 +1466,7 @@ export default function LandingScreen() {
                 <span className="text-xs font-black uppercase text-gray-500 tracking-widest">Total Amount</span>
                 <span className="text-3xl font-black text-gray-900">GH₵{publicCart.reduce((sum: number, item: any) => sum + item.totalPrice, 0).toFixed(2)}</span>
               </div>
-              <button disabled={publicCart.length === 0} type="button" onClick={() => setIsDeliveryModalOpen(true)} className="w-full flex items-center justify-center gap-2 py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none bg-[#25D366] hover:bg-[#1ebd57] select-none">
+              <button id="cart-whatsapp-btn" disabled={publicCart.length === 0} type="button" onClick={() => setIsDeliveryModalOpen(true)} className="w-full flex items-center justify-center gap-2 py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none bg-[#25D366] hover:bg-[#1ebd57] select-none">
                 <Send size={16} /> Complete via WhatsApp
               </button>
             </div>
@@ -1488,7 +1555,7 @@ export default function LandingScreen() {
           {/* Spotlight highlight border around targeted element */}
           {targetRect && (
             <div 
-              className="absolute rounded-[1.5rem] border-[4px] border-[#d97706] shadow-[0_0_30px_rgba(217,119,6,0.65),_0_0_0_9999px_rgba(0,0,0,0.65)] transition-all duration-500 ease-out pointer-events-none z-[145]"
+              className="absolute rounded-[1.5rem] border-[4px] pointer-events-none z-[145] animate-spotlight-pulse"
               style={{
                 top: `${targetRect.top - 6}px`,
                 left: `${targetRect.left - 6}px`,
@@ -1500,18 +1567,18 @@ export default function LandingScreen() {
 
           {/* Floating interactive tooltip card */}
           <div 
-            className="absolute bg-[#431407]/95 border-2 border-[#d97706]/40 text-white rounded-[2rem] p-6 w-[320px] shadow-[0_20px_50px_rgba(0,0,0,0.85)] z-[150] transition-all duration-500 flex flex-col pointer-events-auto animate-scale-in"
+            className="fixed bg-[#431407]/95 border-2 border-[#d97706]/40 text-white rounded-[2rem] p-6 w-[320px] shadow-[0_20px_50px_rgba(0,0,0,0.85)] z-[150] transition-all duration-500 flex flex-col pointer-events-auto animate-scale-in"
             style={
-              targetRect
+              tourStep === 0
                 ? {
-                    top: `${targetRect.top + targetRect.height + 20}px`,
-                    left: `${Math.max(16, Math.min(window.innerWidth - 336, targetRect.left + targetRect.width / 2 - 160))}px`,
-                  }
-                : {
-                    position: 'fixed',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
+                  }
+                : {
+                    bottom: '24px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
                   }
             }
             onClick={(e) => e.stopPropagation()}
@@ -1520,22 +1587,19 @@ export default function LandingScreen() {
             <div className="absolute -top-10 -right-10 w-24 h-24 bg-[#d97706]/20 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
 
-            {/* Custom Arrow pointing directly to target center */}
-            {targetRect && (
-              <div 
-                className="absolute -top-3 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[12px] border-b-[#431407]/95"
-                style={{
-                  left: `${targetRect.left + targetRect.width / 2 - Math.max(16, Math.min(window.innerWidth - 336, targetRect.left + targetRect.width / 2 - 160))}px`,
-                  transform: 'translateX(-50%)'
-                }}
-              />
-            )}
-
-            {/* Step Counter */}
+            {/* Step Counter & Level Bar */}
             <div className="flex justify-between items-center mb-5 relative z-10">
-              <span className="text-[9px] bg-[#d97706]/35 border border-[#d97706]/50 px-2.5 py-1 rounded-full font-black uppercase tracking-wider text-[#ffefd4]">
-                Guide: Step {tourStep} of 3
-              </span>
+              <div className="flex flex-col items-start gap-1">
+                <span className="text-[9px] bg-[#d97706]/35 border border-[#d97706]/50 px-2.5 py-1 rounded-full font-black uppercase tracking-wider text-[#ffefd4]">
+                  Guide: Step {tourStep} of 3
+                </span>
+                {/* Visual Level Pills */}
+                <div className="flex gap-1 mt-1.5 pl-1">
+                  <div className={`w-3 h-1.5 rounded-full transition-all ${tourStep >= 1 ? 'bg-[#d97706] w-6' : 'bg-white/20'}`} />
+                  <div className={`w-3 h-1.5 rounded-full transition-all ${tourStep >= 2 ? 'bg-[#d97706] w-6' : 'bg-white/20'}`} />
+                  <div className={`w-3 h-1.5 rounded-full transition-all ${tourStep >= 3 ? 'bg-[#d97706] w-6' : 'bg-white/20'}`} />
+                </div>
+              </div>
               <button 
                 onClick={() => setTourStep(null)} 
                 className="text-white/60 hover:text-white hover:bg-white/10 w-7 h-7 rounded-full flex items-center justify-center transition-colors cursor-pointer"
@@ -1572,7 +1636,7 @@ export default function LandingScreen() {
                 </div>
                 <h3 className="text-xl font-black italic mb-2 text-white">2. Customize Tray</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  Tap directly on any dish thumbnail to open customizations. Choose sizes (S, M, L) and add premium sides like chicken, sausage, and egg!
+                  We've automatically opened the Jollof Rice tray configuration so you can see it live! Try choosing sizes (S, M, L) and adding premium sides.
                 </p>
                 <div className="flex gap-2 w-full">
                   <button onClick={() => setTourStep(1)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
@@ -1590,9 +1654,9 @@ export default function LandingScreen() {
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
                   <ShoppingBag size={28} />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">3. Submit via WhatsApp</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">3. Review & Checkout</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  Review your tray via the shopping bag button. Fill in your name/phone and submit to WhatsApp to send us a ticket receipt instantly!
+                  We've automatically opened the order cart drawer! You can review items, see total pricing, and click here to trigger the WhatsApp checkout form.
                 </p>
                 <div className="flex gap-2 w-full">
                   <button onClick={() => setTourStep(2)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
@@ -1626,7 +1690,7 @@ export default function LandingScreen() {
 
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-6 shadow-lg rotate-3">
-                <Sparkles size={32} />
+                <Compass size={32} />
               </div>
               <h3 className="text-2xl font-black italic mb-3 text-white">Welcome to Bells Kitchen!</h3>
               <p className="text-white/80 text-sm font-semibold leading-relaxed mb-8">
@@ -1648,7 +1712,7 @@ export default function LandingScreen() {
       {/* FLOATING TOUR GUIDE BUTTON */}
       {tourStep === null && (
         <button 
-          onClick={() => setTourStep(0)} 
+          onClick={() => { setTourStep(0); }} 
           className="fixed bottom-24 right-6 lg:bottom-8 lg:right-8 z-40 bg-[#d97706] hover:bg-[#b45309] text-white rounded-full p-4 shadow-[0_8px_25px_rgba(217,119,6,0.5)] hover:scale-110 active:scale-95 transition-all flex items-center justify-center group pointer-events-auto"
           title="Start User Guide"
         >
@@ -1680,6 +1744,36 @@ export default function LandingScreen() {
         .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
         .hover-sweep { background-size: 200% auto; transition: background-position 0.5s; background-image: linear-gradient(to right, #d97706 0%, #b45309 51%, #d97706 100%); }
         .hover-sweep:hover { background-position: right center; }
+        @keyframes spotlight-pulse {
+          0%, 100% {
+            border-color: #d97706;
+            box-shadow: 0 0 20px rgba(217,119,6,0.5), 0 0 0 9999px rgba(0,0,0,0.65);
+          }
+          50% {
+            border-color: #fbbf24;
+            box-shadow: 0 0 35px rgba(251,191,36,0.85), 0 0 0 9999px rgba(0,0,0,0.65);
+          }
+        }
+        .animate-spotlight-pulse {
+          animation: spotlight-pulse 2s infinite ease-in-out;
+        }
+        .food-thumbnail {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .food-thumbnail:hover {
+          border-color: #fbbf24 !important;
+          box-shadow: 0 0 15px rgba(251, 191, 36, 0.7), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+          transform: scale(1.08);
+          filter: brightness(1.1);
+        }
+        .food-thumbnail:active {
+          transform: scale(0.95);
+        }
+        .food-thumbnail-active {
+          border-color: #fbbf24 !important;
+          box-shadow: 0 0 15px rgba(251, 191, 36, 0.8), 0 4px 12px rgba(217, 119, 6, 0.25) !important;
+          filter: brightness(1.1);
+        }
       `}</style>
     </div>
   );
