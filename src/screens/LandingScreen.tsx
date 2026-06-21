@@ -316,9 +316,17 @@ export default function LandingScreen() {
       activeTargetId = 'send-order-whatsapp-btn';
     }
 
+    let highlightedElement: HTMLElement | null = null;
+
     const updateRect = () => {
       const element = document.getElementById(activeTargetId);
       if (element) {
+        if (highlightedElement && highlightedElement !== element) {
+          highlightedElement.classList.remove('tour-spotlight-target');
+        }
+        element.classList.add('tour-spotlight-target');
+        highlightedElement = element;
+
         const rect = element.getBoundingClientRect();
         setTargetRect({
           top: rect.top,
@@ -373,6 +381,10 @@ export default function LandingScreen() {
       if (pollInterval) clearInterval(pollInterval);
       window.removeEventListener('resize', updateRect);
       window.removeEventListener('scroll', updateRect);
+      if (highlightedElement) {
+        highlightedElement.classList.remove('tour-spotlight-target');
+      }
+      document.querySelectorAll('.tour-spotlight-target').forEach(el => el.classList.remove('tour-spotlight-target'));
     };
   }, [tourStep, view, jollofItems]);
 
@@ -551,6 +563,15 @@ export default function LandingScreen() {
     }, 800);
   };
 
+  const getSpotlightClipPath = (rect: { top: number; left: number; width: number; height: number }) => {
+    const pad = 10;
+    const t = Math.max(0, rect.top - pad);
+    const l = Math.max(0, rect.left - pad);
+    const r = rect.left + rect.width + pad;
+    const b = rect.top + rect.height + pad;
+    return `polygon(evenodd, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, ${l}px ${t}px, ${r}px ${t}px, ${r}px ${b}px, ${l}px ${b}px, ${l}px ${t}px)`;
+  };
+
   const getTooltipStyle = () => {
     if (tourStep === 0 || !targetRect) {
       return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
@@ -621,7 +642,7 @@ export default function LandingScreen() {
       )}
 
       {/* ── TOP NAV ── */}
-      <div className={`fixed ${!state.storeSettings.isOpen ? 'top-8' : 'top-0'} w-full transition-all duration-300 ${!showNav && scrolled ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'} ${scrolled || view === 'menu' ? 'bg-[#431407]/95 border-b-4 border-[#d97706] backdrop-blur-md pb-4 pt-4 shadow-2xl' : 'bg-gradient-to-b from-black/60 to-transparent pb-10 pt-4'}`} style={{ zIndex: tourStep === 5 ? 142 : 50 }}>
+      <div className={`fixed ${!state.storeSettings.isOpen ? 'top-8' : 'top-0'} w-full transition-all duration-300 ${!showNav && scrolled ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'} ${scrolled || view === 'menu' ? 'bg-[#431407]/95 border-b-4 border-[#d97706] backdrop-blur-md pb-4 pt-4 shadow-2xl' : 'bg-gradient-to-b from-black/60 to-transparent pb-10 pt-4'}`} style={{ zIndex: tourStep === 8 ? 143 : 50 }}>
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
 
           {/* Left: Logos & Brand Pill */}
@@ -1278,7 +1299,7 @@ export default function LandingScreen() {
 
       {/* PUBLIC ORDER CONFIG MODAL */}
       {pendingPublicItem && (
-        <div className="fixed inset-0 flex justify-center sm:items-center sm:p-4 bg-black/60 backdrop-blur-md" style={{ zIndex: (tourStep === 3 || tourStep === 4) ? 142 : 80 }} onClick={() => { if (tourStep !== null) resetTour(); else setPendingPublicItem(null); }}>
+        <div className="fixed inset-0 flex justify-center sm:items-center sm:p-4 bg-black/60 backdrop-blur-md" style={{ zIndex: (tourStep !== null && tourStep >= 3 && tourStep <= 7) ? 142 : 80 }} onClick={() => { if (tourStep !== null) resetTour(); else setPendingPublicItem(null); }}>
           <div className="w-full h-full sm:h-auto sm:max-h-[85vh] sm:max-w-3xl sm:w-[90vw] lg:max-w-4xl bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col relative animate-slide-up sm:animate-none overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <button type="button" onClick={() => { if (tourStep !== null) resetTour(); else setPendingPublicItem(null); }} className="absolute top-4 right-4 p-2 rounded-full bg-black/25 text-white hover:bg-black/45 transition-all z-30 shadow-md backdrop-blur-sm"><X size={18} strokeWidth={3} /></button>
 
@@ -1452,7 +1473,7 @@ export default function LandingScreen() {
 
       {/* PUBLIC CART DRAWER */}
       {isPublicCartOpen && (
-        <div className="fixed inset-0 backdrop-blur-sm flex justify-end animate-fade-in" style={{ zIndex: tourStep === 6 ? 142 : 80, background: 'rgba(0,0,0,0.5)' }} onClick={() => { if (tourStep !== null) resetTour(); else setIsPublicCartOpen(false); }}>
+        <div className="fixed inset-0 backdrop-blur-sm flex justify-end animate-fade-in" style={{ zIndex: tourStep === 9 ? 142 : 80, background: 'rgba(0,0,0,0.5)' }} onClick={() => { if (tourStep !== null) resetTour(); else setIsPublicCartOpen(false); }}>
           <div className="w-full h-[100dvh] sm:h-[85vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-slide-up sm:animate-none" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
@@ -1600,7 +1621,7 @@ export default function LandingScreen() {
 
       {/* DELIVERY DETAILS MODAL */}
       {isDeliveryModalOpen && (
-        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center p-4 bg-black/60 animate-fade-in" style={{ zIndex: (tourStep === 7 || tourStep === 8) ? 142 : 85 }} onClick={() => { if (tourStep !== null) resetTour(); else setIsDeliveryModalOpen(false); }}>
+        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center p-4 bg-black/60 animate-fade-in" style={{ zIndex: (tourStep === 10 || tourStep === 11) ? 142 : 85 }} onClick={() => { if (tourStep !== null) resetTour(); else setIsDeliveryModalOpen(false); }}>
           <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl p-6 sm:p-8 relative overflow-hidden animate-scale-in flex flex-col gap-5" onClick={(e) => e.stopPropagation()}>
             <button type="button" onClick={() => { if (tourStep !== null) resetTour(); else setIsDeliveryModalOpen(false); }} className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all cursor-pointer"><X size={16} /></button>
             <div className="text-center pb-2 border-b border-gray-100">
@@ -1716,20 +1737,31 @@ export default function LandingScreen() {
       )}
 
       {/* INTERACTIVE USER GUIDE TOUR */}
-      {tourStep !== null && (
+      {tourStep !== null && tourStep > 0 && (
         <>
-          {/* Backdrop mask helper to block clicks and slightly dim background */}
-          <div className="fixed inset-0 z-[140] bg-black/35 backdrop-blur-[2px] pointer-events-auto cursor-pointer" onClick={resetTour} />
+          {/* Dimmed backdrop with a cutout hole so the highlighted element stays fully visible */}
+          {targetRect ? (
+            <div
+              className="fixed inset-0 z-[140] pointer-events-auto cursor-pointer"
+              style={{
+                background: 'rgba(0,0,0,0.7)',
+                clipPath: getSpotlightClipPath(targetRect),
+              }}
+              onClick={resetTour}
+            />
+          ) : (
+            <div className="fixed inset-0 z-[140] bg-black/70 pointer-events-auto cursor-pointer" onClick={resetTour} />
+          )}
 
           {/* Spotlight highlight border around targeted element */}
           {targetRect && (
             <div
-              className="fixed rounded-[1.5rem] border-[4px] pointer-events-none z-[145] animate-spotlight-pulse"
+              className="fixed rounded-[1.5rem] border-[4px] border-[#fbbf24] pointer-events-none z-[145] animate-spotlight-pulse"
               style={{
-                top: `${targetRect.top - 6}px`,
-                left: `${targetRect.left - 6}px`,
-                width: `${targetRect.width + 12}px`,
-                height: `${targetRect.height + 12}px`,
+                top: `${targetRect.top - 10}px`,
+                left: `${targetRect.left - 10}px`,
+                width: `${targetRect.width + 20}px`,
+                height: `${targetRect.height + 20}px`,
               }}
             />
           )}
@@ -2100,15 +2132,20 @@ export default function LandingScreen() {
         @keyframes spotlight-pulse {
           0%, 100% {
             border-color: #d97706;
-            box-shadow: 0 0 20px rgba(217,119,6,0.5), 0 0 0 9999px rgba(0,0,0,0.65);
+            box-shadow: 0 0 0 3px rgba(217,119,6,0.35), 0 0 25px rgba(217,119,6,0.9), 0 0 50px rgba(251,191,36,0.45);
           }
           50% {
             border-color: #fbbf24;
-            box-shadow: 0 0 35px rgba(251,191,36,0.85), 0 0 0 9999px rgba(0,0,0,0.65);
+            box-shadow: 0 0 0 5px rgba(251,191,36,0.5), 0 0 40px rgba(251,191,36,1), 0 0 70px rgba(217,119,6,0.6);
           }
         }
         .animate-spotlight-pulse {
           animation: spotlight-pulse 2s infinite ease-in-out;
+        }
+        .tour-spotlight-target {
+          position: relative;
+          z-index: 146 !important;
+          isolation: isolate;
         }
         .food-thumbnail {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
