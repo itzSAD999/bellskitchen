@@ -1324,8 +1324,8 @@ export default function LandingScreen() {
                           {(['S', 'M', 'L'] as const).filter(sz => pendingPublicItem.prices?.[sz] !== undefined).map(sz => (
                             <button key={sz} type="button" onClick={() => setPublicSize(sz)}
                               className={`flex-1 py-3 px-4 rounded-[1.5rem] text-sm font-black uppercase tracking-wider transition-all border-2 flex flex-col items-center justify-center leading-none bg-white ${publicSize === sz
-                                  ? 'bg-[#431407] text-[#ffefd4] border-[#d97706] shadow-xl scale-[1.03] ring-4 ring-[#d97706]/10'
-                                  : 'border-gray-200 text-gray-700 hover:border-[#d97706]/40'
+                                ? 'bg-[#431407] text-[#ffefd4] border-[#d97706] shadow-xl scale-[1.03] ring-4 ring-[#d97706]/10'
+                                : 'border-gray-200 text-gray-700 hover:border-[#d97706]/40'
                                 }`}>
                               <span className="text-xs font-black">{sz === 'S' ? 'Small' : sz === 'M' ? 'Medium' : 'Large'}</span>
                               <span className={`text-[10px] font-bold mt-1.5 ${publicSize === sz ? 'text-[#ffefd4]' : 'text-gray-400'}`}>¢{pendingPublicItem.prices?.[sz]}</span>
@@ -1342,8 +1342,8 @@ export default function LandingScreen() {
                           const count = publicAddons.filter((a: any) => a.id === addon.id).length;
                           return (
                             <div key={addon.id} className={`p-3.5 rounded-2xl border-2 transition-all flex items-center justify-between text-xs font-bold ${count > 0
-                                ? 'border-[#d97706] bg-[#fffaf2] shadow-sm'
-                                : 'border-gray-200 bg-white hover:border-[#d97706]/20 text-gray-600'
+                              ? 'border-[#d97706] bg-[#fffaf2] shadow-sm'
+                              : 'border-gray-200 bg-white hover:border-[#d97706]/20 text-gray-600'
                               }`}>
                               <div className="flex flex-col gap-0.5">
                                 <span className={`text-xs ${count > 0 ? 'text-[#431407] font-black' : 'text-gray-700'}`}>{addon.name}</span>
@@ -1427,8 +1427,8 @@ export default function LandingScreen() {
                       type="button"
                       onClick={handleAddPublicCart}
                       className={`flex-grow flex items-center justify-center py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg active:translate-y-0 ${addedFeedback
-                          ? 'bg-emerald-600 shadow-[0_5px_15px_rgba(16,185,129,0.4)]'
-                          : 'bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#d97706] hover:-translate-y-0.5'
+                        ? 'bg-emerald-600 shadow-[0_5px_15px_rgba(16,185,129,0.4)]'
+                        : 'bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#d97706] hover:-translate-y-0.5'
                         }`}
                     >
                       {addedFeedback ? '✓ Added to Order!' : 'Add to Order'}
@@ -1620,8 +1620,8 @@ export default function LandingScreen() {
                     type="button"
                     onClick={() => setOrderType('delivery')}
                     className={`flex-1 py-2 px-4 rounded-xl text-xs font-black tracking-wider transition-all border flex items-center justify-center gap-1.5 ${orderType === 'delivery'
-                        ? 'bg-[#431407] text-[#ffefd4] border-[#d97706] shadow-sm'
-                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                      ? 'bg-[#431407] text-[#ffefd4] border-[#d97706] shadow-sm'
+                      : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                       }`}
                   >
                     🏍️ Delivery
@@ -1630,8 +1630,8 @@ export default function LandingScreen() {
                     type="button"
                     onClick={() => setOrderType('pickup')}
                     className={`flex-1 py-2 px-4 rounded-xl text-xs font-black tracking-wider transition-all border flex items-center justify-center gap-1.5 ${orderType === 'pickup'
-                        ? 'bg-[#431407] text-[#ffefd4] border-[#d97706] shadow-sm'
-                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                      ? 'bg-[#431407] text-[#ffefd4] border-[#d97706] shadow-sm'
+                      : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                       }`}
                   >
                     🛍️ Self-Pickup
@@ -2032,9 +2032,9 @@ export default function LandingScreen() {
               <img src="/bell_mascot.png" alt="Bells Mascot" className="relative w-full h-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.9)] z-10" />
             </div>
 
-            <h2 className="text-3xl font-black italic mt-20 mb-2 text-[#fbbf24] drop-shadow-md uppercase tracking-wider animate-text-shimmer">You're a Pro!</h2>
+            <h2 className="text-3xl font-black italic mt-20 mb-2 text-[#fbbf24] drop-shadow-md uppercase tracking-wider animate-text-shimmer">CONGRATULATIONS!</h2>
             <p className="text-white/90 text-sm font-semibold leading-relaxed mb-8">
-              Congratulations! You've mastered the art of ordering at Bells Kitchen. Now it's time to satisfy those cravings!
+              You're now a Bells Kitchen Pro! It's time to satisfy those cravings.
             </p>
 
             <button onClick={() => setShowCelebration(false)} className="w-full bg-gradient-to-r from-[#d97706] to-[#fbbf24] hover:from-[#b45309] hover:to-[#f59e0b] text-[#431407] font-black text-sm py-4 px-6 rounded-full shadow-xl transition-all hover:scale-105 active:scale-95 uppercase tracking-widest cursor-pointer">
