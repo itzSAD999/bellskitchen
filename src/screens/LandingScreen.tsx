@@ -221,54 +221,61 @@ export default function LandingScreen() {
 
   useEffect(() => {
     if (tourStep === null) return;
+    
+    // Ensure Nav bar is visible during tour
+    setShowNav(true);
 
     // Synchronize modal, cart, details modal, and mock order data based on the active tour step
-    if (tourStep === 3 || tourStep === 4) {
+    if (tourStep >= 3 && tourStep <= 7) {
       const targetItem = jollofItems[0] || landingMenu[0];
       setPendingPublicItem(targetItem);
-      setPublicSize(targetItem.hasSizes ? (targetItem.prices.M ? 'M' : 'S') : 'M');
-      setPublicQty(1);
-      setPublicAddons([]);
+      // Mock live selections for a detailed demo
+      if (tourStep >= 3) {
+        setPublicSize(targetItem.hasSizes ? (targetItem.prices.L ? 'L' : 'M') : 'M');
+      } else {
+        setPublicSize(targetItem.hasSizes ? (targetItem.prices.M ? 'M' : 'S') : 'M');
+      }
+      if (tourStep >= 4) {
+        setPublicAddons(publicAddonOptions.slice(0, 2)); // Add Extra Chicken and Egg
+      } else {
+        setPublicAddons([]);
+      }
+      if (tourStep >= 5) {
+        setPublicQty(2);
+      } else {
+        setPublicQty(1);
+      }
       setIsPublicCartOpen(false);
       setIsDeliveryModalOpen(false);
-    } else if (tourStep === 5) {
+    } else if (tourStep === 8 || tourStep === 9) {
       setPendingPublicItem(null);
-      setIsPublicCartOpen(false);
+      setIsPublicCartOpen(tourStep === 9);
       setIsDeliveryModalOpen(false);
       const targetItem = jollofItems[0] || landingMenu[0];
+      const mockAddons = publicAddonOptions.slice(0, 2).map(a => ({ ...a, price: a.price }));
+      const unitPrice = (targetItem.prices.L || targetItem.prices.M || targetItem.prices.S || 40) + mockAddons.reduce((sum, a) => sum + a.price, 0);
       const tourCartItem = {
         cartItemId: 'tour-cart-item-id',
         item: targetItem,
-        size: 'M',
-        quantity: 1,
-        addons: [],
-        unitPrice: targetItem.prices.M || targetItem.prices.S || 40,
-        totalPrice: targetItem.prices.M || targetItem.prices.S || 40
+        size: 'L',
+        quantity: 2,
+        addons: mockAddons,
+        unitPrice: unitPrice,
+        totalPrice: unitPrice * 2
       };
       if (!publicCart.some((c: any) => c.cartItemId === 'tour-cart-item-id')) {
         setPublicCart((prev: any[]) => [...prev, tourCartItem]);
       }
-    } else if (tourStep === 6) {
-      setPendingPublicItem(null);
-      setIsPublicCartOpen(true);
-      setIsDeliveryModalOpen(false);
-      const targetItem = jollofItems[0] || landingMenu[0];
-      const tourCartItem = {
-        cartItemId: 'tour-cart-item-id',
-        item: targetItem,
-        size: 'M',
-        quantity: 1,
-        addons: [],
-        unitPrice: targetItem.prices.M || targetItem.prices.S || 40,
-        totalPrice: targetItem.prices.M || targetItem.prices.S || 40
-      };
-      if (!publicCart.some((c: any) => c.cartItemId === 'tour-cart-item-id')) {
-        setPublicCart((prev: any[]) => [...prev, tourCartItem]);
-      }
-    } else if (tourStep === 7 || tourStep === 8) {
+    } else if (tourStep === 10 || tourStep === 11) {
       setPendingPublicItem(null);
       setIsPublicCartOpen(false);
       setIsDeliveryModalOpen(true);
+      // Auto-fill form details to look like a live demo
+      setOrderType('delivery');
+      setCustomerName('Kwame Osei');
+      setCustomerPhone('0501234567');
+      setDeliveryLocation('No Weapon Hostel Annex, Room 24');
+      setSpecialNotes('Please make the chicken well done. Add extra shito!');
     } else {
       setPendingPublicItem(null);
       setIsPublicCartOpen(false);
@@ -290,14 +297,20 @@ export default function LandingScreen() {
     } else if (tourStep === 3) {
       activeTargetId = 'modal-size-selector';
     } else if (tourStep === 4) {
-      activeTargetId = 'modal-add-to-order-btn';
+      activeTargetId = 'modal-addons-selector';
     } else if (tourStep === 5) {
-      activeTargetId = 'nav-cart-btn';
+      activeTargetId = 'modal-qty-selector';
     } else if (tourStep === 6) {
-      activeTargetId = 'cart-whatsapp-btn';
+      activeTargetId = 'modal-price-display';
     } else if (tourStep === 7) {
-      activeTargetId = 'checkout-details-modal-form';
+      activeTargetId = 'modal-add-to-order-btn';
     } else if (tourStep === 8) {
+      activeTargetId = 'nav-cart-btn';
+    } else if (tourStep === 9) {
+      activeTargetId = 'cart-whatsapp-btn';
+    } else if (tourStep === 10) {
+      activeTargetId = 'checkout-details-modal-form';
+    } else if (tourStep === 11) {
       activeTargetId = 'send-order-whatsapp-btn';
     }
 
@@ -322,6 +335,9 @@ export default function LandingScreen() {
       if (element) {
         if (
           activeTargetId !== 'modal-size-selector' && 
+          activeTargetId !== 'modal-addons-selector' && 
+          activeTargetId !== 'modal-qty-selector' && 
+          activeTargetId !== 'modal-price-display' && 
           activeTargetId !== 'modal-add-to-order-btn' && 
           activeTargetId !== 'cart-whatsapp-btn' && 
           activeTargetId !== 'checkout-details-modal-form' &&
@@ -388,16 +404,20 @@ export default function LandingScreen() {
       setScrolled(currentScrollY > 20);
       
       // Hide nav bar when scrolling down past 100px, show when scrolling up
-      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        setShowNav(false);
-      } else if (currentScrollY < lastScrollY.current) {
+      if (tourStep === null) {
+        if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+          setShowNav(false);
+        } else if (currentScrollY < lastScrollY.current) {
+          setShowNav(true);
+        }
+      } else {
         setShowNav(true);
       }
       lastScrollY.current = currentScrollY;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [jollofItems.length, friedItems.length, bankuItems.length]);
+  }, [jollofItems.length, friedItems.length, bankuItems.length, tourStep]);
 
   /* ── Scroll Animations Observer ── */
   useEffect(() => {
@@ -527,6 +547,55 @@ export default function LandingScreen() {
       else { setError('Incorrect credentials. Unauthorized access.'); }
       setLoading(false);
     }, 800);
+  };
+
+  const getTooltipStyle = () => {
+    if (tourStep === 0 || !targetRect) {
+      return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+    }
+
+    const h = typeof window !== 'undefined' ? window.innerHeight : 800;
+    const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    
+    const buffer = 24;
+    const tooltipWidth = 320;
+    const tooltipHeight = 280;
+
+    const spaceAbove = targetRect.top;
+    const spaceBelow = h - targetRect.bottom;
+    const spaceLeft = targetRect.left;
+    const spaceRight = w - targetRect.right;
+    
+    // Evaluate orientation based on available space
+    if (Math.max(spaceAbove, spaceBelow) >= tooltipHeight || Math.max(spaceAbove, spaceBelow) >= Math.max(spaceLeft, spaceRight)) {
+      if (spaceBelow >= spaceAbove) {
+        return {
+          top: `${Math.min(targetRect.bottom + buffer, h - tooltipHeight - 10)}px`,
+          left: '50%',
+          transform: 'translateX(-50%)',
+        };
+      } else {
+        return {
+          bottom: `${Math.min(h - targetRect.top + buffer, h - tooltipHeight - 10)}px`,
+          left: '50%',
+          transform: 'translateX(-50%)',
+        };
+      }
+    } else {
+      if (spaceRight >= spaceLeft) {
+        return {
+          top: '50%',
+          left: `${Math.min(targetRect.right + buffer, w - tooltipWidth - 10)}px`,
+          transform: 'translateY(-50%)',
+        };
+      } else {
+        return {
+          top: '50%',
+          right: `${Math.min(w - targetRect.left + buffer, w - tooltipWidth - 10)}px`,
+          transform: 'translateY(-50%)',
+        };
+      }
+    }
   };
 
   return (
@@ -887,7 +956,7 @@ export default function LandingScreen() {
         
         {/* Timeline Branch Selector */}
         <div className="flex items-center gap-4 mb-8 relative">
-           <button className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm z-10 hover:bg-gray-50 flex-shrink-0"><ChevronLeft size={16}/></button>
+           <button onClick={() => { const idx = branches.indexOf(selectedBranch); setSelectedBranch(branches[idx > 0 ? idx - 1 : branches.length - 1]); }} className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm z-10 hover:bg-gray-50 flex-shrink-0"><ChevronLeft size={16}/></button>
            
            <div className="absolute left-[3rem] right-[3rem] h-0 border-t-2 border-dashed border-gray-300 top-1/2 -translate-y-1/2 z-0" />
 
@@ -906,7 +975,7 @@ export default function LandingScreen() {
              })}
            </div>
 
-           <button className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm z-10 hover:bg-gray-50 flex-shrink-0"><ChevronRight size={16}/></button>
+           <button onClick={() => { const idx = branches.indexOf(selectedBranch); setSelectedBranch(branches[idx < branches.length - 1 ? idx + 1 : 0]); }} className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm z-10 hover:bg-gray-50 flex-shrink-0"><ChevronRight size={16}/></button>
         </div>
 
         {/* Map & Details */}
@@ -1321,11 +1390,11 @@ export default function LandingScreen() {
                 {/* Footer Subtotal & Action buttons inside right side */}
                 <div className="p-6 border-t border-gray-100 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-10 relative flex-shrink-0">
                   <div className="flex items-center justify-between mb-4">
-                    <div>
+                    <div id="modal-price-display">
                       <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Subtotal</p>
                       <p className="text-2xl font-black text-gray-900 mt-0.5">GH₵{(getPublicItemPrice(pendingPublicItem, publicSize, publicAddons) * publicQty).toFixed(2)}</p>
                     </div>
-                    <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-full p-1.5 shadow-sm">
+                    <div id="modal-qty-selector" className="flex items-center gap-3 bg-white border border-gray-200 rounded-full p-1.5 shadow-sm">
                       <button type="button" onClick={() => setPublicQty(Math.max(1, publicQty - 1))} className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-full font-bold transition-all"><Minus size={14} strokeWidth={2.5} /></button>
                       <input
                         type="number"
@@ -1668,19 +1737,7 @@ export default function LandingScreen() {
           {/* Floating interactive tooltip card */}
           <div 
             className="fixed bg-[#431407]/95 border-2 border-[#d97706]/40 text-white rounded-[2rem] p-6 w-[320px] shadow-[0_20px_50px_rgba(0,0,0,0.85)] z-[150] transition-all duration-500 flex flex-col pointer-events-auto animate-scale-in"
-            style={
-              tourStep === 0
-                ? {
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                  }
-                : {
-                    bottom: '24px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                  }
-            }
+            style={getTooltipStyle()}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Background glowing blobs */}
@@ -1691,11 +1748,11 @@ export default function LandingScreen() {
             <div className="flex justify-between items-center mb-5 relative z-10">
               <div className="flex flex-col items-start gap-1">
                 <span className="text-[9px] bg-[#d97706]/35 border border-[#d97706]/50 px-2.5 py-1 rounded-full font-black uppercase tracking-wider text-[#ffefd4]">
-                  Guide: Step {tourStep} of 8
+                  Guide: Step {tourStep} of 10
                 </span>
                 {/* Visual Level Pills */}
                 <div className="flex gap-1 mt-1.5 pl-1">
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map(step => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(step => (
                     <div key={step} className={`w-2 h-1.5 rounded-full transition-all ${tourStep >= step ? 'bg-[#d97706] w-4' : 'bg-white/20'}`} />
                   ))}
                 </div>
@@ -1754,17 +1811,13 @@ export default function LandingScreen() {
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
                   <Plus size={28} />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">3. Customize Tray</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">3. Size Selection</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  We've automatically opened the customization modal! Select your size (S, M, L) and choose premium extra sides.
+                  Select your preferred portion size (S, M, L). We've automatically selected Large for this demo!
                 </p>
                 <div className="flex gap-2 w-full">
-                  <button onClick={() => setTourStep(2)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
-                    Back
-                  </button>
-                  <button onClick={() => setTourStep(4)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
-                    Next
-                  </button>
+                  <button onClick={() => setTourStep(2)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">Back</button>
+                  <button onClick={() => setTourStep(4)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">Next</button>
                 </div>
               </div>
             )}
@@ -1774,17 +1827,13 @@ export default function LandingScreen() {
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md rotate-3">
                   <Plus size={28} className="-rotate-12" />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">4. Add to Cart Plate</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">4. Add Premium Extras</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  Tap 'Add to Order' inside the configuration tray to save your customized details and place it in your shopping tray.
+                  Customize your meal with add-ons. We've added Extra Chicken and an Egg to your tray!
                 </p>
                 <div className="flex gap-2 w-full">
-                  <button onClick={() => setTourStep(3)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
-                    Back
-                  </button>
-                  <button onClick={() => setTourStep(5)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
-                    Next
-                  </button>
+                  <button onClick={() => setTourStep(3)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">Back</button>
+                  <button onClick={() => setTourStep(5)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">Next</button>
                 </div>
               </div>
             )}
@@ -1792,19 +1841,15 @@ export default function LandingScreen() {
             {tourStep === 5 && (
               <div className="flex flex-col items-center text-center relative z-10">
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
-                  <ShoppingBag size={28} />
+                  <Plus size={28} />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">5. Added to Plate</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">5. Adjust Quantity</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  Perfect! The Jollof Rice is added to your order plate. See the shopping cart icon badge update in the top navigation bar.
+                  Ordering for friends? Use the quantity selector to adjust your order. We've bumped it up to 2.
                 </p>
                 <div className="flex gap-2 w-full">
-                  <button onClick={() => setTourStep(4)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
-                    Back
-                  </button>
-                  <button onClick={() => setTourStep(6)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
-                    Next
-                  </button>
+                  <button onClick={() => setTourStep(4)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">Back</button>
+                  <button onClick={() => setTourStep(6)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">Next</button>
                 </div>
               </div>
             )}
@@ -1812,19 +1857,15 @@ export default function LandingScreen() {
             {tourStep === 6 && (
               <div className="flex flex-col items-center text-center relative z-10">
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md rotate-3">
-                  <ShoppingBag size={28} className="-rotate-12" />
+                  <span className="text-xl font-black">₵</span>
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">6. Review Cart Plate</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">6. Price Subtotal</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  We've opened the cart drawer! Review your selected items, see the free chef's shito progress milestone, and tap 'Complete via WhatsApp'.
+                  Notice how the subtotal price dynamically calculates your base size and all premium add-ons in real-time.
                 </p>
                 <div className="flex gap-2 w-full">
-                  <button onClick={() => setTourStep(5)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
-                    Back
-                  </button>
-                  <button onClick={() => setTourStep(7)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
-                    Next
-                  </button>
+                  <button onClick={() => setTourStep(5)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">Back</button>
+                  <button onClick={() => setTourStep(7)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">Next</button>
                 </div>
               </div>
             )}
@@ -1832,19 +1873,15 @@ export default function LandingScreen() {
             {tourStep === 7 && (
               <div className="flex flex-col items-center text-center relative z-10">
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
-                  <MapPin size={28} />
+                  <Plus size={28} className="-rotate-12" />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">7. Fulfillment Form</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">7. Add to Plate</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  We've opened the checkout form! Enter your name, phone number, and choose between Delivery or Self-Pickup.
+                  Tap 'Add to Order' inside the configuration tray to save your customized details and place it in your shopping tray.
                 </p>
                 <div className="flex gap-2 w-full">
-                  <button onClick={() => setTourStep(6)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
-                    Back
-                  </button>
-                  <button onClick={() => setTourStep(8)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
-                    Next
-                  </button>
+                  <button onClick={() => setTourStep(6)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">Back</button>
+                  <button onClick={() => setTourStep(8)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">Next</button>
                 </div>
               </div>
             )}
@@ -1852,19 +1889,63 @@ export default function LandingScreen() {
             {tourStep === 8 && (
               <div className="flex flex-col items-center text-center relative z-10">
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md rotate-3">
+                  <ShoppingBag size={28} />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">8. Added to Plate</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  Perfect! The Jollof Rice is added to your order plate. See the shopping cart icon badge update in the top navigation bar.
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(7)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">Back</button>
+                  <button onClick={() => setTourStep(9)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">Next</button>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 9 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
+                  <ShoppingBag size={28} className="-rotate-12" />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">9. Review Cart Plate</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  We've opened the cart drawer! Review your selected items, see the free chef's shito progress milestone, and tap 'Complete via WhatsApp'.
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(8)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">Back</button>
+                  <button onClick={() => setTourStep(10)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">Next</button>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 10 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md rotate-3">
+                  <MapPin size={28} />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">10. Fulfillment Form</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  We've opened the checkout form! Enter your name, phone number, and choose between Delivery or Self-Pickup.
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(9)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">Back</button>
+                  <button onClick={() => setTourStep(11)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">Next</button>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 11 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
                   <Send size={28} />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">8. Complete Order</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">11. Complete Order</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
                   Tap 'Send Order via WhatsApp' to transmit your structured ticket receipt directly to our kitchen cashier. You're done!
                 </p>
                 <div className="flex gap-2 w-full">
-                  <button onClick={() => setTourStep(7)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
-                    Back
-                  </button>
-                  <button onClick={handleFinishTour} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
-                    Finish & Order
-                  </button>
+                  <button onClick={() => setTourStep(10)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">Back</button>
+                  <button onClick={handleFinishTour} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">Finish & Order</button>
                 </div>
               </div>
             )}
