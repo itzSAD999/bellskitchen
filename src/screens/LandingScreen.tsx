@@ -2067,7 +2067,7 @@ export default function LandingScreen() {
           100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
         .animate-mascot-pop {
-          animation: mascot-pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+          animation: mascot-pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, float 4s ease-in-out infinite 0.8s;
         }
         @keyframes sunburst-spin {
           0% { transform: rotate(0deg) scale(0.8); opacity: 0.5; }
