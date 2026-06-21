@@ -188,6 +188,7 @@ export default function LandingScreen() {
   const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
   const [pendingPublicItem, setPendingPublicItem] = useState<any | null>(null);
   const [tourStep, setTourStep] = useState<number | null>(null);
+  const [showCelebration, setShowCelebration] = useState(false);
   const [targetRect, setTargetRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
 
   const [publicSize, setPublicSize] = useState<'S' | 'M' | 'L'>('M');
@@ -217,6 +218,7 @@ export default function LandingScreen() {
   const handleFinishTour = () => {
     localStorage.setItem('bells_tour_completed', 'true');
     resetTour();
+    setShowCelebration(true);
   };
 
   useEffect(() => {
@@ -561,16 +563,19 @@ export default function LandingScreen() {
     const tooltipWidth = 320;
     const tooltipHeight = 280;
 
+    const targetBottom = targetRect.top + targetRect.height;
+    const targetRight = targetRect.left + targetRect.width;
+
     const spaceAbove = targetRect.top;
-    const spaceBelow = h - targetRect.bottom;
+    const spaceBelow = h - targetBottom;
     const spaceLeft = targetRect.left;
-    const spaceRight = w - targetRect.right;
+    const spaceRight = w - targetRight;
     
     // Evaluate orientation based on available space
     if (Math.max(spaceAbove, spaceBelow) >= tooltipHeight || Math.max(spaceAbove, spaceBelow) >= Math.max(spaceLeft, spaceRight)) {
       if (spaceBelow >= spaceAbove) {
         return {
-          top: `${Math.min(targetRect.bottom + buffer, h - tooltipHeight - 10)}px`,
+          top: `${Math.min(targetBottom + buffer, h - tooltipHeight - 10)}px`,
           left: '50%',
           transform: 'translateX(-50%)',
         };
@@ -585,7 +590,7 @@ export default function LandingScreen() {
       if (spaceRight >= spaceLeft) {
         return {
           top: '50%',
-          left: `${Math.min(targetRect.right + buffer, w - tooltipWidth - 10)}px`,
+          left: `${Math.min(targetRight + buffer, w - tooltipWidth - 10)}px`,
           transform: 'translateY(-50%)',
         };
       } else {
@@ -2004,10 +2009,56 @@ export default function LandingScreen() {
         </button>
       )}
 
+      {/* CELEBRATION MODAL */}
+      {showCelebration && (
+        <div className="fixed inset-0 z-[250] flex items-center justify-center bg-black/80 backdrop-blur-sm pointer-events-auto">
+          {/* Confetti simulation */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {[...Array(40)].map((_, i) => (
+              <div 
+                key={i} 
+                className="absolute bg-amber-500 rounded-sm opacity-90 animate-confetti"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `-10%`,
+                  width: `${Math.random() * 10 + 5}px`,
+                  height: `${Math.random() * 20 + 10}px`,
+                  backgroundColor: ['#fbbf24', '#f59e0b', '#d97706', '#ef4444', '#10b981', '#3b82f6'][Math.floor(Math.random() * 6)],
+                  animationDelay: `${Math.random() * 3}s`,
+                  animationDuration: `${Math.random() * 3 + 2}s`
+                }}
+              />
+            ))}
+          </div>
+
+          <div className="bg-[#431407]/95 border-4 border-[#fbbf24] text-white rounded-[2rem] p-8 max-w-sm w-[90%] shadow-[0_0_80px_rgba(251,191,36,0.6)] relative flex flex-col items-center text-center animate-scale-in z-10">
+            <div className="absolute -top-24 w-48 h-48">
+              <img src="/bell_mascot.png" alt="Bells Mascot" className="w-full h-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] animate-float" />
+            </div>
+            
+            <h2 className="text-3xl font-black italic mt-20 mb-2 text-[#fbbf24] drop-shadow-md uppercase tracking-wider">You're a Pro!</h2>
+            <p className="text-white/90 text-sm font-semibold leading-relaxed mb-8">
+              Congratulations! You've mastered the art of ordering at Bells Kitchen. Now it's time to satisfy those cravings!
+            </p>
+            
+            <button onClick={() => setShowCelebration(false)} className="w-full bg-gradient-to-r from-[#d97706] to-[#fbbf24] hover:from-[#b45309] hover:to-[#f59e0b] text-[#431407] font-black text-sm py-4 px-6 rounded-full shadow-xl transition-all hover:scale-105 active:scale-95 uppercase tracking-widest cursor-pointer">
+              Start Ordering!
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Hide scrollbars class addition to head */}
       <style>{`
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes confetti {
+          0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+        .animate-confetti {
+          animation: confetti linear forwards;
+        }
          .scroll-anim {
           opacity: 0;
           transform: translateY(100px) scale(0.92);
