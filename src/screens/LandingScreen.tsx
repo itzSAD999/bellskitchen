@@ -194,7 +194,7 @@ export default function LandingScreen() {
 
     const updateRect = () => {
       let targetId = '';
-      if (tourStep === 1) targetId = 'our-menu';
+      if (tourStep === 1) targetId = 'jollof-slider';
       else if (tourStep === 2) targetId = 'first-jollof-item';
       else if (tourStep === 3) targetId = 'nav-cart-btn';
 
@@ -211,7 +211,7 @@ export default function LandingScreen() {
     };
 
     let targetId = '';
-    if (tourStep === 1) targetId = 'our-menu';
+    if (tourStep === 1) targetId = 'jollof-slider';
     else if (tourStep === 2) targetId = 'first-jollof-item';
     else if (tourStep === 3) targetId = 'nav-cart-btn';
 
@@ -283,12 +283,6 @@ export default function LandingScreen() {
         setShowNav(true);
       }
       lastScrollY.current = currentScrollY;
-      
-      // Auto-toggle images as user scrolls down, ensuring scroll position index is non-negative
-      const scrubY = Math.max(0, currentScrollY);
-      if (jollofItems.length > 0) setJollofIndex(Math.floor(scrubY / 400) % jollofItems.length);
-      if (friedItems.length > 0) setFriedIndex(Math.floor(scrubY / 400) % friedItems.length);
-      if (bankuItems.length > 0) setBankuIndex(Math.floor(scrubY / 400) % bankuItems.length);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -561,7 +555,7 @@ export default function LandingScreen() {
         {/* Right Side: Slider & Details */}
         <div className="w-full lg:w-[70%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl group bg-amber-100 aspect-[16/7] cursor-pointer" onClick={() => { if( featuredJollof.available) setPendingPublicItem(featuredJollof); }}>
+          <div id="jollof-slider" className="relative rounded-3xl overflow-hidden shadow-2xl group bg-amber-100 aspect-[16/7] cursor-pointer" onClick={() => { if( featuredJollof.available) setPendingPublicItem(featuredJollof); }}>
             <img src={featuredJollof.imageUrl} alt={featuredJollof.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             {/* Arrows */}
             <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p > 0 ? p - 1 : jollofItems.length - 1)); }} className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
@@ -605,7 +599,7 @@ export default function LandingScreen() {
                       ¢{item.prices.S}
                     </div>
                   </div>
-                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors truncate ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -674,7 +668,7 @@ export default function LandingScreen() {
                       ¢{item.prices.S}
                     </div>
                   </div>
-                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors truncate ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -747,7 +741,7 @@ export default function LandingScreen() {
                       ¢{item.prices.S}
                     </div>
                   </div>
-                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors truncate ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -1649,6 +1643,20 @@ export default function LandingScreen() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* FLOATING TOUR GUIDE BUTTON */}
+      {tourStep === null && (
+        <button 
+          onClick={() => setTourStep(0)} 
+          className="fixed bottom-24 right-6 lg:bottom-8 lg:right-8 z-40 bg-[#d97706] hover:bg-[#b45309] text-white rounded-full p-4 shadow-[0_8px_25px_rgba(217,119,6,0.5)] hover:scale-110 active:scale-95 transition-all flex items-center justify-center group pointer-events-auto"
+          title="Start User Guide"
+        >
+          <HelpCircle size={22} className="animate-pulse" />
+          <span className="max-w-0 overflow-hidden group-hover:max-w-[100px] transition-all duration-300 ease-out whitespace-nowrap text-xs font-black tracking-wider uppercase ml-0 group-hover:ml-2">
+            Guide
+          </span>
+        </button>
       )}
 
       {/* Hide scrollbars class addition to head */}
