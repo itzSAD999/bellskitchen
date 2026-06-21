@@ -233,7 +233,7 @@ export default function LandingScreen() {
       setIsDeliveryModalOpen(false);
     } else if (tourStep === 5) {
       setPendingPublicItem(null);
-      setIsPublicCartOpen(true);
+      setIsPublicCartOpen(false);
       setIsDeliveryModalOpen(false);
       const targetItem = jollofItems[0] || landingMenu[0];
       const tourCartItem = {
@@ -249,6 +249,23 @@ export default function LandingScreen() {
         setPublicCart((prev: any[]) => [...prev, tourCartItem]);
       }
     } else if (tourStep === 6) {
+      setPendingPublicItem(null);
+      setIsPublicCartOpen(true);
+      setIsDeliveryModalOpen(false);
+      const targetItem = jollofItems[0] || landingMenu[0];
+      const tourCartItem = {
+        cartItemId: 'tour-cart-item-id',
+        item: targetItem,
+        size: 'M',
+        quantity: 1,
+        addons: [],
+        unitPrice: targetItem.prices.M || targetItem.prices.S || 40,
+        totalPrice: targetItem.prices.M || targetItem.prices.S || 40
+      };
+      if (!publicCart.some((c: any) => c.cartItemId === 'tour-cart-item-id')) {
+        setPublicCart((prev: any[]) => [...prev, tourCartItem]);
+      }
+    } else if (tourStep === 7 || tourStep === 8) {
       setPendingPublicItem(null);
       setIsPublicCartOpen(false);
       setIsDeliveryModalOpen(true);
@@ -275,9 +292,13 @@ export default function LandingScreen() {
     } else if (tourStep === 4) {
       activeTargetId = 'modal-add-to-order-btn';
     } else if (tourStep === 5) {
-      activeTargetId = 'cart-whatsapp-btn';
+      activeTargetId = 'nav-cart-btn';
     } else if (tourStep === 6) {
+      activeTargetId = 'cart-whatsapp-btn';
+    } else if (tourStep === 7) {
       activeTargetId = 'checkout-details-modal-form';
+    } else if (tourStep === 8) {
+      activeTargetId = 'send-order-whatsapp-btn';
     }
 
     const updateRect = () => {
@@ -303,7 +324,8 @@ export default function LandingScreen() {
           activeTargetId !== 'modal-size-selector' && 
           activeTargetId !== 'modal-add-to-order-btn' && 
           activeTargetId !== 'cart-whatsapp-btn' && 
-          activeTargetId !== 'checkout-details-modal-form'
+          activeTargetId !== 'checkout-details-modal-form' &&
+          activeTargetId !== 'send-order-whatsapp-btn'
         ) {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -525,7 +547,7 @@ export default function LandingScreen() {
       )}
 
       {/* ── TOP NAV ── */}
-      <div className={`fixed ${!state.storeSettings.isOpen ? 'top-8' : 'top-0'} w-full z-50 transition-all duration-300 ${!showNav && scrolled ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'} ${scrolled || view === 'menu' ? 'bg-[#431407]/95 border-b-4 border-[#d97706] backdrop-blur-md pb-4 pt-4 shadow-2xl' : 'bg-gradient-to-b from-black/60 to-transparent pb-10 pt-4'}`}>
+      <div className={`fixed ${!state.storeSettings.isOpen ? 'top-8' : 'top-0'} w-full transition-all duration-300 ${!showNav && scrolled ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'} ${scrolled || view === 'menu' ? 'bg-[#431407]/95 border-b-4 border-[#d97706] backdrop-blur-md pb-4 pt-4 shadow-2xl' : 'bg-gradient-to-b from-black/60 to-transparent pb-10 pt-4'}`} style={{ zIndex: tourStep === 5 ? 142 : 50 }}>
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           
           {/* Left: Logos & Brand Pill */}
@@ -1359,7 +1381,7 @@ export default function LandingScreen() {
 
       {/* PUBLIC CART DRAWER */}
       {isPublicCartOpen && (
-        <div className="fixed inset-0 backdrop-blur-sm flex justify-end animate-fade-in" style={{ zIndex: tourStep === 5 ? 142 : 80, background: 'rgba(0,0,0,0.5)' }} onClick={() => { if (tourStep !== null) resetTour(); else setIsPublicCartOpen(false); }}>
+        <div className="fixed inset-0 backdrop-blur-sm flex justify-end animate-fade-in" style={{ zIndex: tourStep === 6 ? 142 : 80, background: 'rgba(0,0,0,0.5)' }} onClick={() => { if (tourStep !== null) resetTour(); else setIsPublicCartOpen(false); }}>
           <div className="w-full h-[100dvh] sm:h-[85vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-slide-up sm:animate-none" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
@@ -1507,7 +1529,7 @@ export default function LandingScreen() {
 
       {/* DELIVERY DETAILS MODAL */}
       {isDeliveryModalOpen && (
-        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center p-4 bg-black/60 animate-fade-in" style={{ zIndex: tourStep === 6 ? 142 : 85 }} onClick={() => { if (tourStep !== null) resetTour(); else setIsDeliveryModalOpen(false); }}>
+        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center p-4 bg-black/60 animate-fade-in" style={{ zIndex: (tourStep === 7 || tourStep === 8) ? 142 : 85 }} onClick={() => { if (tourStep !== null) resetTour(); else setIsDeliveryModalOpen(false); }}>
           <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl p-6 sm:p-8 relative overflow-hidden animate-scale-in flex flex-col gap-5" onClick={(e) => e.stopPropagation()}>
             <button type="button" onClick={() => { if (tourStep !== null) resetTour(); else setIsDeliveryModalOpen(false); }} className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all cursor-pointer"><X size={16} /></button>
             <div className="text-center pb-2 border-b border-gray-100">
@@ -1669,11 +1691,11 @@ export default function LandingScreen() {
             <div className="flex justify-between items-center mb-5 relative z-10">
               <div className="flex flex-col items-start gap-1">
                 <span className="text-[9px] bg-[#d97706]/35 border border-[#d97706]/50 px-2.5 py-1 rounded-full font-black uppercase tracking-wider text-[#ffefd4]">
-                  Guide: Step {tourStep} of 6
+                  Guide: Step {tourStep} of 8
                 </span>
                 {/* Visual Level Pills */}
                 <div className="flex gap-1 mt-1.5 pl-1">
-                  {[1, 2, 3, 4, 5, 6].map(step => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map(step => (
                     <div key={step} className={`w-2 h-1.5 rounded-full transition-all ${tourStep >= step ? 'bg-[#d97706] w-4' : 'bg-white/20'}`} />
                   ))}
                 </div>
@@ -1772,9 +1794,9 @@ export default function LandingScreen() {
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
                   <ShoppingBag size={28} />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">5. Review Order Cart</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">5. Added to Plate</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  We've automatically opened the order cart drawer! Review receipt details and click 'Complete via WhatsApp'.
+                  Perfect! The Jollof Rice is added to your order plate. See the shopping cart icon badge update in the top navigation bar.
                 </p>
                 <div className="flex gap-2 w-full">
                   <button onClick={() => setTourStep(4)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
@@ -1790,14 +1812,54 @@ export default function LandingScreen() {
             {tourStep === 6 && (
               <div className="flex flex-col items-center text-center relative z-10">
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md rotate-3">
-                  <MapPin size={28} />
+                  <ShoppingBag size={28} className="-rotate-12" />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">6. Pickup / Delivery</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">6. Review Cart Plate</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  Select Delivery or Self-Pickup, specify your hostel or pickup outlet, and submit your order securely to WhatsApp!
+                  We've opened the cart drawer! Review your selected items, see the free chef's shito progress milestone, and tap 'Complete via WhatsApp'.
                 </p>
                 <div className="flex gap-2 w-full">
                   <button onClick={() => setTourStep(5)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
+                    Back
+                  </button>
+                  <button onClick={() => setTourStep(7)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 7 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
+                  <MapPin size={28} />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">7. Fulfillment Form</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  We've opened the checkout form! Enter your name, phone number, and choose between Delivery or Self-Pickup.
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(6)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
+                    Back
+                  </button>
+                  <button onClick={() => setTourStep(8)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 8 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md rotate-3">
+                  <Send size={28} />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">8. Complete Order</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  Tap 'Send Order via WhatsApp' to transmit your structured ticket receipt directly to our kitchen cashier. You're done!
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(7)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
                     Back
                   </button>
                   <button onClick={handleFinishTour} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
@@ -1832,7 +1894,7 @@ export default function LandingScreen() {
               </div>
               <h3 className="text-2xl font-black italic mb-3 text-white">Welcome to Bells Kitchen!</h3>
               <p className="text-white/80 text-sm font-semibold leading-relaxed mb-8">
-                Let's take a quick 30-second live spotlight tour to show you how to order the most delicious, premium Jollof and Fried Rice in Kumasi.
+                Let's take a quick 45-second live spotlight tour to show you how to order the most delicious, premium Jollof and Fried Rice in Kumasi.
               </p>
               <div className="flex gap-3 w-full">
                 <button onClick={resetTour} className="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-black text-xs py-3 px-6 rounded-full transition-colors cursor-pointer">
