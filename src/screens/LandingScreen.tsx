@@ -137,7 +137,14 @@ const CategorySlider = ({ id, categoryName, items, isOpen, onOrder, disableScrol
         </div>
 
         <div className="mt-16 pt-4 border-t border-gray-200/60">
-          <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
+          <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar" onScroll={(e) => {
+            const target = e.target as HTMLDivElement;
+            const itemWidth = 112 + 24;
+            const newIndex = Math.round(target.scrollLeft / itemWidth);
+            if (newIndex >= 0 && newIndex < items.length) {
+              setIndex(newIndex);
+            }
+          }}>
             {items.map((item, i) => (
               <div key={item.id} onClick={() => {
                 if (i === index) {
@@ -795,7 +802,14 @@ export default function LandingScreen() {
               {/* Sub Items */}
               <div className="mt-10 pt-6 border-t border-gray-200/60">
                 <h4 className="text-xl font-black italic mb-6 text-[#343a40]">Our Signature Jollofs</h4>
-                <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar">
+                <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar" onScroll={(e) => {
+                  const target = e.target as HTMLDivElement;
+                  const itemWidth = 96 + 16;
+                  const newIndex = Math.round(target.scrollLeft / itemWidth);
+                  if (newIndex >= 0 && newIndex < jollofItems.length) {
+                    setJollofIndex(newIndex);
+                  }
+                }}>
                   {jollofItems.map((item, i) => (
                     <div key={item.id} id={i === 0 ? "first-jollof-item" : undefined} onClick={() => { setJollofIndex(i); if (item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
                       <div className="relative">
@@ -864,7 +878,14 @@ export default function LandingScreen() {
               {/* Sub Items */}
               <div className="mt-10 pt-6 border-t border-gray-200/60">
                 <h4 className="text-xl font-black italic mb-6 text-[#343a40]">Our Signature Banku</h4>
-                <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar">
+                <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar" onScroll={(e) => {
+                  const target = e.target as HTMLDivElement;
+                  const itemWidth = 96 + 16;
+                  const newIndex = Math.round(target.scrollLeft / itemWidth);
+                  if (newIndex >= 0 && newIndex < bankuItems.length) {
+                    setBankuIndex(newIndex);
+                  }
+                }}>
                   {bankuItems.map((item, i) => (
                     <div key={item.id} onClick={() => { setBankuIndex(i); if (item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
                       <div className="relative">
@@ -937,7 +958,14 @@ export default function LandingScreen() {
               {/* Sub Items */}
               <div className="mt-10 pt-6 border-t border-gray-200/60">
                 <h4 className="text-xl font-black italic mb-6 text-[#343a40]">Our Signature Fried Rice</h4>
-                <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar">
+                <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar" onScroll={(e) => {
+                  const target = e.target as HTMLDivElement;
+                  const itemWidth = 96 + 16;
+                  const newIndex = Math.round(target.scrollLeft / itemWidth);
+                  if (newIndex >= 0 && newIndex < friedItems.length) {
+                    setFriedIndex(newIndex);
+                  }
+                }}>
                   {friedItems.map((item, i) => (
                     <div key={item.id} onClick={() => { setFriedIndex(i); if (item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
                       <div className="relative">
