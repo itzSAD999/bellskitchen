@@ -2032,11 +2032,12 @@ export default function LandingScreen() {
           </div>
 
           <div className="bg-[#431407]/95 border-4 border-[#fbbf24] text-white rounded-[2rem] p-8 max-w-sm w-[90%] shadow-[0_0_80px_rgba(251,191,36,0.6)] relative flex flex-col items-center text-center animate-scale-in z-10">
-            <div className="absolute -top-24 w-48 h-48">
-              <img src="/bell_mascot.png" alt="Bells Mascot" className="w-full h-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] animate-float" />
+            <div className="absolute -top-28 w-56 h-56 animate-mascot-pop flex items-center justify-center">
+              <div className="absolute inset-0 bg-yellow-400/20 rounded-full blur-2xl animate-sunburst-spin pointer-events-none" />
+              <img src="/bell_mascot.png" alt="Bells Mascot" className="relative w-full h-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.9)] z-10" />
             </div>
             
-            <h2 className="text-3xl font-black italic mt-20 mb-2 text-[#fbbf24] drop-shadow-md uppercase tracking-wider">You're a Pro!</h2>
+            <h2 className="text-3xl font-black italic mt-20 mb-2 text-[#fbbf24] drop-shadow-md uppercase tracking-wider animate-text-shimmer">You're a Pro!</h2>
             <p className="text-white/90 text-sm font-semibold leading-relaxed mb-8">
               Congratulations! You've mastered the art of ordering at Bells Kitchen. Now it's time to satisfy those cravings!
             </p>
@@ -2058,6 +2059,31 @@ export default function LandingScreen() {
         }
         .animate-confetti {
           animation: confetti linear forwards;
+        }
+        @keyframes mascot-pop {
+          0% { transform: scale(0) rotate(-20deg) translateY(50px); opacity: 0; }
+          60% { transform: scale(1.2) rotate(10deg) translateY(-10px); opacity: 1; }
+          80% { transform: scale(0.9) rotate(-5deg); opacity: 1; }
+          100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .animate-mascot-pop {
+          animation: mascot-pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes sunburst-spin {
+          0% { transform: rotate(0deg) scale(0.8); opacity: 0.5; }
+          50% { transform: rotate(180deg) scale(1.2); opacity: 0.8; }
+          100% { transform: rotate(360deg) scale(0.8); opacity: 0.5; }
+        }
+        .animate-sunburst-spin {
+          animation: sunburst-spin 8s linear infinite;
+        }
+        @keyframes text-shimmer {
+          0% { text-shadow: 0 0 10px rgba(251,191,36,0.2); transform: scale(1); }
+          50% { text-shadow: 0 0 30px rgba(251,191,36,0.8), 0 0 10px #fff; transform: scale(1.05); }
+          100% { text-shadow: 0 0 10px rgba(251,191,36,0.2); transform: scale(1); }
+        }
+        .animate-text-shimmer {
+          animation: text-shimmer 2s ease-in-out infinite;
         }
          .scroll-anim {
           opacity: 0;
