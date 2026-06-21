@@ -86,24 +86,24 @@ const CategorySlider = ({ categoryName, items, isOpen, onOrder, disableScrollSpy
   return (
     <div ref={containerRef} className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center border-t border-gray-200/50 mt-8">
       {/* Brand Identity */}
-      <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
-        <div className="flex items-center gap-6">
-          <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center -rotate-[10deg] shadow-[0_15px_30px_rgba(67,20,7,0.3)] border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
-             <div className="w-12 h-6 bg-white/20 rounded-md mb-2 flex items-center justify-center"><Flame size={16} className="text-white"/></div>
-             <span className="font-black text-xs text-center leading-tight">BELLS<br/>{categoryName.split(' ')[0]}</span>
+      <div className="w-full lg:w-[40%] flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
+        <div className="flex items-center gap-4">
+          <div className="bg-[#431407] text-white rounded-[1.5rem] w-24 h-24 flex flex-col items-center justify-center -rotate-[10deg] shadow-[0_15px_30px_rgba(67,20,7,0.3)] border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
+             <div className="w-10 h-5 bg-white/20 rounded-md mb-2 flex items-center justify-center"><Flame size={14} className="text-white"/></div>
+             <span className="font-black text-[10px] text-center leading-tight">BELLS<br/>{categoryName.split(' ')[0]}</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-1">CATEGORY</span>
-            <h2 className="text-2xl font-black text-gray-800 leading-none tracking-tight">{categoryName.toUpperCase()}</h2>
-            <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[15px] border-t-[#431407] mt-1" />
+            <span className="text-[9px] font-bold text-gray-400 tracking-widest uppercase mb-1">CATEGORY</span>
+            <h2 className="text-xl font-black text-gray-800 leading-none tracking-tight">{categoryName.toUpperCase()}</h2>
+            <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[12px] border-t-[#431407] mt-1" />
           </div>
         </div>
-        <h2 className="text-[2.75rem] font-black mt-12 italic text-[#343a40] tracking-tighter leading-none">Bells {categoryName}</h2>
+        <h2 className="text-4xl font-black mt-8 italic text-[#343a40] tracking-tighter leading-none">Bells {categoryName}</h2>
       </div>
 
       {/* Slider */}
-      <div className="w-full lg:w-[65%]">
-        <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9]">
+      <div className="w-full lg:w-[60%]">
+        <div className="relative rounded-[2rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[16/7]">
           <img src={featured.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={featured.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer" onClick={() => { if(isOpen && featured.available) onOrder(featured); }} />
           {!featured.available && (
              <div className="absolute inset-0 bg-black/60 z-20 flex items-center justify-center">
@@ -143,9 +143,9 @@ const CategorySlider = ({ categoryName, items, isOpen, onOrder, disableScrollSpy
                 } else {
                   setIndex(i);
                 }
-              }} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
-                <img src={item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === index ? 'border-[#d97706]' : 'border-white'} ${!item.available ? 'opacity-50 grayscale' : ''}`} />
-                <div className={`text-white text-[10px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === index ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+              }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                <img src={item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.name} className={`w-[80px] h-[80px] rounded-full object-cover shadow-lg border-[4px] transition-all duration-300 group-hover:shadow-2xl ${i === index ? 'border-[#d97706]' : 'border-white'} ${!item.available ? 'opacity-50 grayscale' : ''}`} />
+                <div className={`text-white text-[9px] font-black py-2 px-2 rounded-xl mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === index ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                    {item.name}
                 </div>
               </div>
@@ -196,9 +196,9 @@ export default function LandingScreen() {
   const [jollofIndex, setJollofIndex] = useState(0);
   const [friedIndex, setFriedIndex] = useState(0);
   const [bankuIndex, setBankuIndex] = useState(0);
-  const jollofItems = landingMenu.filter(m => m.category === 'jollof');
-  const friedItems = landingMenu.filter(m => m.category === 'fried');
-  const bankuItems = landingMenu.filter(m => m.category === 'banku');
+  const jollofItems = landingMenu.filter(m => m.name.toLowerCase().includes('jollof'));
+  const friedItems = landingMenu.filter(m => m.name.toLowerCase().includes('fried rice') || m.name.toLowerCase().includes('assorted'));
+  const bankuItems = landingMenu.filter(m => m.name.toLowerCase().includes('banku') || m.name.toLowerCase().includes('tilapia'));
   const featuredJollof = jollofItems[jollofIndex] || jollofItems[0];
   const featuredFried = friedItems[friedIndex] || friedItems[0];
   const featuredBanku = bankuItems[bankuIndex] || bankuItems[0];
@@ -315,7 +315,7 @@ export default function LandingScreen() {
     
     msg += `\n*Total:* GH₵ ${total.toFixed(2)}`;
     
-    window.open(`https://wa.me/233505201685?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/233547461247?text=${encodeURIComponent(msg)}`, '_blank');
     
     // Clean up
     setPublicCart([]);
@@ -445,10 +445,10 @@ export default function LandingScreen() {
            
            <div className="relative pt-6 pb-6">
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#d97706]/40 blur-[100px] rounded-full pointer-events-none"/>
-             <h1 className="text-white text-5xl md:text-7xl lg:text-[7rem] font-black mb-8 tracking-tighter leading-[1.05] relative z-10 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
+             <h1 className="text-white text-4xl md:text-6xl lg:text-[4.5rem] font-black mb-6 tracking-tight leading-[1.1] relative z-10 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
                 Redefining <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffefd4] to-[#d97706] italic drop-shadow-[0_5px_15px_rgba(217,119,6,0.5)]">Everyday</span> Meals.
              </h1>
-             <p className="text-white/90 text-lg md:text-2xl font-semibold leading-relaxed mb-12 max-w-2xl mx-auto relative z-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+             <p className="text-white/90 text-base md:text-lg font-medium leading-relaxed mb-10 max-w-2xl mx-auto relative z-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                 Experience the finest Jollof and Fried Rice, delivered hot in our signature premium packaging. <span className="text-[#ffefd4]">True flavors of Kumasi.</span>
              </p>
              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10">
@@ -464,28 +464,21 @@ export default function LandingScreen() {
       </div>
 
       {/* ── JOLLOF MENU SECTION ── */}
-      <div className="max-w-7xl mx-auto px-4 py-24 flex flex-col lg:flex-row gap-12 items-center scroll-anim" id="our-menu">
+      <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center scroll-anim" id="our-menu">
         {/* Left Side: Brand Identity */}
-        <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
+        <div className="w-full lg:w-[40%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
           <div className="flex items-center gap-6">
-            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
-               <div className="w-12 h-6 bg-white/20 rounded-md mb-2 flex items-center justify-center"><Flame size={16} className="text-white"/></div>
-               <span className="font-black text-xs">BELLS BOX</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-1">ESTD 2018</span>
-              <h2 className="text-3xl font-black text-gray-800 leading-none">BELLS</h2>
-              <div className="text-[#431407] text-3xl font-black">RICE</div>
-              <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[15px] border-t-[#431407] mt-1" />
+            <div className="bg-[#431407] text-white rounded-[2rem] w-24 h-24 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-4 border-white">
+               <span className="font-black text-[10px]">BELLS</span>
             </div>
           </div>
-          <h2 className="text-[2.75rem] font-black mt-12 italic text-[#343a40] tracking-tighter">Bells Jollof Menu</h2>
+          <h2 className="text-3xl lg:text-4xl font-black mt-6 italic text-[#343a40] tracking-tight leading-none">Bells Jollof</h2>
         </div>
 
         {/* Right Side: Slider & Details */}
-        <div className="w-full lg:w-[65%]">
+        <div className="w-full lg:w-[60%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if(state.storeSettings.isOpen && featuredJollof.available) setPendingPublicItem(featuredJollof); }}>
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if( featuredJollof.available) setPendingPublicItem(featuredJollof); }}>
             <img src={featuredJollof.imageUrl} alt={featuredJollof.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             {/* Arrows */}
             <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p > 0 ? p - 1 : jollofItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
@@ -520,11 +513,11 @@ export default function LandingScreen() {
           {/* Sub Items */}
           <div className="mt-16 pt-4 border-t border-gray-200/60">
             <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Jollofs</h4>
-            <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
+            <div className="flex gap-4 overflow-x-auto pb-4 pt-2 hide-scrollbar">
               {jollofItems.map((item, i) => (
-                <div key={item.id} onClick={() => { setJollofIndex(i); if(state.storeSettings.isOpen && item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
-                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
-                  <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                <div key={item.id} onClick={() => { setJollofIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                  <img src={item.imageUrl} alt={item.name} className={`w-[80px] h-[80px] rounded-full object-cover shadow-lg border-[4px] transition-all duration-300 group-hover:shadow-2xl ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                  <div className={`text-white text-[9px] font-black py-2 px-2 rounded-xl mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -535,28 +528,21 @@ export default function LandingScreen() {
       </div>
 
       {/* ── BANKU MENU SECTION ── */}
-      <div className="max-w-7xl mx-auto px-4 py-24 flex flex-col lg:flex-row gap-12 items-center scroll-anim" id="banku-menu">
+      <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center scroll-anim" id="banku-menu">
         {/* Left Side: Brand Identity */}
-        <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
+        <div className="w-full lg:w-[40%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
           <div className="flex items-center gap-6">
-            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
-               <div className="w-12 h-6 bg-white/20 rounded-md mb-2 flex items-center justify-center"><Flame size={16} className="text-white"/></div>
-               <span className="font-black text-xs text-center">BELLS<br/>LOCAL</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-1">ESTD 2018</span>
-              <h2 className="text-3xl font-black text-gray-800 leading-none tracking-tight">BELLS</h2>
-              <div className="text-[#431407] text-3xl font-black tracking-tight">BANKU</div>
-              <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[15px] border-t-[#431407] mt-1" />
+            <div className="bg-[#431407] text-white rounded-[2rem] w-24 h-24 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-4 border-white">
+               <span className="font-black text-[10px] text-center">BELLS<br/>LOCAL</span>
             </div>
           </div>
-          <h2 className="text-[2.75rem] font-black mt-12 italic text-[#343a40] tracking-tighter leading-none">Bells Banku &amp; Tilapia</h2>
+          <h2 className="text-3xl lg:text-4xl font-black mt-6 italic text-[#343a40] tracking-tight leading-none">Bells Banku</h2>
         </div>
 
         {/* Right Side: Slider & Details */}
-        <div className="w-full lg:w-[65%]">
+        <div className="w-full lg:w-[60%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if(state.storeSettings.isOpen && featuredBanku.available) setPendingPublicItem(featuredBanku); }}>
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if( featuredBanku.available) setPendingPublicItem(featuredBanku); }}>
             <img src={featuredBanku.imageUrl} alt={featuredBanku.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             {/* Arrows */}
             <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p > 0 ? p - 1 : bankuItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
@@ -591,11 +577,11 @@ export default function LandingScreen() {
           {/* Sub Items */}
           <div className="mt-16 pt-4 border-t border-gray-200/60">
             <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Banku</h4>
-            <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
+            <div className="flex gap-4 overflow-x-auto pb-4 pt-2 hide-scrollbar">
               {bankuItems.map((item, i) => (
-                <div key={item.id} onClick={() => { setBankuIndex(i); if(state.storeSettings.isOpen && item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
-                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
-                  <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                <div key={item.id} onClick={() => { setBankuIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                  <img src={item.imageUrl} alt={item.name} className={`w-[80px] h-[80px] rounded-full object-cover shadow-lg border-[4px] transition-all duration-300 group-hover:shadow-2xl ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                  <div className={`text-white text-[9px] font-black py-2 px-2 rounded-xl mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -626,7 +612,7 @@ export default function LandingScreen() {
         {/* Right Side: Slider & Details */}
         <div className="w-full lg:w-[65%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if(state.storeSettings.isOpen && featuredFried.available) setPendingPublicItem(featuredFried); }}>
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if( featuredFried.available) setPendingPublicItem(featuredFried); }}>
             <img src={featuredFried.imageUrl} alt={featuredFried.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             <button onClick={(e) => { e.stopPropagation(); setFriedIndex((p) => (p > 0 ? p - 1 : friedItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
             <button onClick={(e) => { e.stopPropagation(); setFriedIndex((p) => (p < friedItems.length - 1 ? p + 1 : 0)); }} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
@@ -659,11 +645,11 @@ export default function LandingScreen() {
           {/* Sub Items */}
           <div className="mt-16 pt-4 border-t border-gray-200/60">
             <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Fried Rice</h4>
-            <div className="flex gap-6 overflow-x-auto pb-6 pt-2 hide-scrollbar">
+            <div className="flex gap-4 overflow-x-auto pb-4 pt-2 hide-scrollbar">
               {friedItems.map((item, i) => (
-                <div key={item.id} onClick={() => { setFriedIndex(i); if(state.storeSettings.isOpen && item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-36 cursor-pointer group hover:scale-110 transition-transform duration-300">
-                  <img src={item.imageUrl} alt={item.name} className={`w-[110px] h-[110px] rounded-full object-cover shadow-lg border-[5px] transition-all duration-300 group-hover:shadow-2xl ${i === friedIndex ? 'border-[#d97706]' : 'border-white'}`} />
-                  <div className={`text-white text-[11px] font-black py-3 px-3 rounded-2xl mt-[-15px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                <div key={item.id} onClick={() => { setFriedIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                  <img src={item.imageUrl} alt={item.name} className={`w-[80px] h-[80px] rounded-full object-cover shadow-lg border-[4px] transition-all duration-300 group-hover:shadow-2xl ${i === friedIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                  <div className={`text-white text-[9px] font-black py-2 px-2 rounded-xl mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -951,7 +937,7 @@ export default function LandingScreen() {
               <h4 className="text-[#d97706] font-black text-lg mb-6 uppercase tracking-wider">Contact Us</h4>
               <ul className="space-y-4">
                 <li className="flex items-center gap-3 hover:text-white transition-colors cursor-pointer"><Mail size={16} className="text-[#d97706]" /> info@bellskitchen.com</li>
-                <li className="flex items-center gap-3 hover:text-white transition-colors cursor-pointer"><Flame size={16} className="text-[#d97706]" /> +233 505 201 685</li>
+                <li className="flex items-center gap-3 hover:text-white transition-colors cursor-pointer"><Flame size={16} className="text-[#d97706]" /> +233 547 461 247</li>
                 <li className="flex items-start gap-3 mt-4 text-white/50 text-xs leading-relaxed border-t border-white/10 pt-4">
                   Bells Kitchen HQ<br/>
                   Opposite No Weapon Hostel Annex<br/>

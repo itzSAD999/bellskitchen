@@ -35,7 +35,7 @@ export default function AddonSheet() {
       setAddonQuantities({});
       setBundleQuantity(1);
     }
-  }, [pending?.cartItemId, state.cart]);
+  }, [pending, state.cart]);
 
   if (!pending) return null;
 

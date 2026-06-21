@@ -35,6 +35,8 @@ function mapOrder(row: Record<string, unknown>): Order {
     paystackRef:   row.paystack_ref as string | undefined,
     platformFee:   row.platform_fee ? Number(row.platform_fee) : undefined,
     vendorAmount:  row.vendor_amount ? Number(row.vendor_amount) : undefined,
+    source:        row.source as 'in_person' | 'online',
+    printed:       row.printed as boolean,
     createdAt:     row.created_at as string,
   };
 }

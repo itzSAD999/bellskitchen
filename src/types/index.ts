@@ -30,6 +30,8 @@ export interface BundleItem {
   size:        'S' | 'M' | 'L';
   basePrice:   number;
   addons:      AddOn[];         // 0 or more, never standalone
+  instructions?: string;        // Special instructions for the kitchen
+  imageUrl?:   string;
   bundleTotal: number;          // basePrice + sum(addon.price)
   quantity:    number;          // number of this bundle ordered
 }
@@ -44,6 +46,8 @@ export interface Order {
   paystackRef?:  string;        // Phase 2
   platformFee?:  number;        // Phase 2 — 1% cut
   vendorAmount?: number;        // Phase 2 — total minus 1%
+  source?:       'in_person' | 'online'; // Phase 3
+  printed?:      boolean;       // Phase 3
   createdAt:     string;
 }
 
@@ -68,6 +72,7 @@ export interface StoreSettings {
   isOpen: boolean;
   deliveryFee: number;
   taxRate: number; // percentage
+  paystackPublicKey?: string;
 }
 
 export interface AppState {
