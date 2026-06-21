@@ -168,6 +168,68 @@ export default function LandingScreen() {
   const [isPublicCartOpen, setIsPublicCartOpen] = useState(false);
   const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
   const [pendingPublicItem, setPendingPublicItem] = useState<any | null>(null);
+  const [tourStep, setTourStep] = useState<number | null>(null);
+  const [targetRect, setTargetRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
+
+  useEffect(() => {
+    const hasSeenTour = localStorage.getItem('bells_tour_completed');
+    if (!hasSeenTour) {
+      const timer = setTimeout(() => {
+        setTourStep(0);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleFinishTour = () => {
+    localStorage.setItem('bells_tour_completed', 'true');
+    setTourStep(null);
+  };
+
+  useEffect(() => {
+    if (tourStep === null || tourStep === 0) {
+      setTargetRect(null);
+      return;
+    }
+
+    const updateRect = () => {
+      let targetId = '';
+      if (tourStep === 1) targetId = 'our-menu';
+      else if (tourStep === 2) targetId = 'first-jollof-item';
+      else if (tourStep === 3) targetId = 'nav-cart-btn';
+
+      const element = document.getElementById(targetId);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        setTargetRect({
+          top: rect.top + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width,
+          height: rect.height,
+        });
+      }
+    };
+
+    let targetId = '';
+    if (tourStep === 1) targetId = 'our-menu';
+    else if (tourStep === 2) targetId = 'first-jollof-item';
+    else if (tourStep === 3) targetId = 'nav-cart-btn';
+
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Wait for scroll transition to finish
+      const timer = setTimeout(updateRect, 500);
+      window.addEventListener('resize', updateRect);
+      window.addEventListener('scroll', updateRect);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('resize', updateRect);
+        window.removeEventListener('scroll', updateRect);
+      };
+    }
+  }, [tourStep]);
+
   const [publicSize, setPublicSize] = useState<'S' | 'M' | 'L'>('M');
   const [publicQty, setPublicQty] = useState<number>(1);
   const [publicAddons, setPublicAddons] = useState<any[]>([]);
@@ -278,42 +340,62 @@ export default function LandingScreen() {
   };
 
   const handleWhatsAppSubmit = () => {
-    if (!customerName.trim() || !deliveryLocation.trim()) {
-      setToastMessage("Please enter Name and Delivery Location!");
+    if (!customerName.trim() || !customerPhone.trim() || !deliveryLocation.trim()) {
+      setToastMessage("Please enter Name, Phone Number, and Delivery Location!");
       setTimeout(() => setToastMessage(''), 3000);
       return;
     }
 
     const total = publicCart.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
     
-    // Construct premium WhatsApp message
-    let msg = `🔔 *New Web Order* 🔔\n\n`;
-    msg += `👤 *Customer:* ${customerName.trim()}\n`;
-    if (customerPhone.trim()) msg += `📞 *Phone:* ${customerPhone.trim()}\n`;
-    msg += `📍 *Delivery:* ${deliveryLocation.trim()}\n`;
-    if (specialNotes.trim()) msg += `📝 *Notes:* ${specialNotes.trim()}\n`;
-    
-    if (total >= 100) {
-      msg += `🎁 *Promo:* Free Spicy Shito Jar Unlocked! 🌶️\n`;
+    // Construct premium ticket-style WhatsApp message
+    let msg = `=============================\n`;
+    msg +=    `       🔔 NEW WEB ORDER 🔔      \n`;
+    msg +=    `=============================\n\n`;
+    msg +=    `👤 *Customer:* ${customerName.trim()}\n`;
+    msg +=    `📞 *Phone:* ${customerPhone.trim()}\n`;
+    msg +=    `📍 *Delivery:* ${deliveryLocation.trim()}\n`;
+    if (specialNotes.trim()) {
+      msg +=  `📝 *Notes:* ${specialNotes.trim()}\n`;
     }
+    msg +=    `\n=============================\n`;
+    msg +=    `🛒 *TICKET RECEIPT:*\n`;
+    msg +=    `-----------------------------\n`;
     
-    msg += `\n🛒 *Items Ordered:*\n`;
-    
-    publicCart.forEach((item: any) => {
-      msg += `• ${item.quantity}x ${item.item.name} (${item.size})\n`;
-      if (item.addons.length > 0) {
-        const addonCounts: Record<string, number> = {};
+    publicCart.forEach((item: any, idx: number) => {
+      const basePrice = item.item.hasSizes ? (item.item.prices[item.size] || 0) : (item.item.prices.fixed || 0);
+      msg += `*${item.quantity}x ${item.item.name} (${item.size})*\n`;
+      msg += `  Rate: GH₵ ${basePrice.toFixed(2)}\n`;
+      
+      if (item.addons && item.addons.length > 0) {
+        const addonCounts: Record<string, { qty: number, price: number }> = {};
         item.addons.forEach((a: any) => {
-          addonCounts[a.name] = (addonCounts[a.name] ?? 0) + 1;
+          if (!addonCounts[a.name]) {
+            addonCounts[a.name] = { qty: 0, price: a.price };
+          }
+          addonCounts[a.name].qty += 1;
         });
-        const addonStr = Object.entries(addonCounts)
-          .map(([name, qty]) => `${name}${qty > 1 ? ` (x${qty})` : ''}`)
-          .join(', ');
-        msg += `  Add-ons: ${addonStr}\n`;
+        
+        msg += `  Add-ons:\n`;
+        Object.entries(addonCounts).forEach(([name, data]) => {
+          msg += `  + ${data.qty}x ${name} (GH₵ ${(data.price * data.qty).toFixed(2)})\n`;
+        });
+      }
+      
+      msg += `  *Subtotal:* GH₵ ${item.totalPrice.toFixed(2)}\n`;
+      if (idx < publicCart.length - 1) {
+        msg += `-----------------------------\n`;
       }
     });
     
-    msg += `\n*Total:* GH₵ ${total.toFixed(2)}`;
+    msg +=    `=============================\n`;
+    if (total >= 100) {
+      msg +=  `🎁 *Promo:* Free Spicy Shito Jar Unlocked! 🌶️\n`;
+      msg +=  `=============================\n`;
+    }
+    msg +=    `*TOTAL PAYABLE:* GH₵ ${total.toFixed(2)}\n`;
+    msg +=    `=============================\n\n`;
+    msg +=    `Thank you for ordering with Bells Kitchen! 👩‍🍳`;
     
     window.open(`https://wa.me/233547461247?text=${encodeURIComponent(msg)}`, '_blank');
     
@@ -343,7 +425,7 @@ export default function LandingScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] font-sans text-gray-800 pb-24 lg:pb-0" style={{ backgroundImage: bgPattern, backgroundAttachment: 'fixed' }}>
+    <div className="relative min-h-screen bg-[#f8f9fa] font-sans text-gray-800 pb-24 lg:pb-0" style={{ backgroundImage: bgPattern, backgroundAttachment: 'fixed' }}>
       
       {/* ── TOAST NOTIFICATION ── */}
       <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 pointer-events-none flex items-center justify-center ${toastMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
@@ -375,10 +457,11 @@ export default function LandingScreen() {
           </div>
 
           {/* Center: Nav Links */}
-          <div className="hidden lg:flex items-center gap-8 bg-white/10 backdrop-blur-md border border-white/10 shadow-inner rounded-full px-8 py-2.5">
+          <div className="hidden lg:flex items-center gap-6 bg-white/10 backdrop-blur-md border border-white/10 shadow-inner rounded-full px-6 py-2.5">
             <NavItem icon={<Home/>} label="Home" active={view === 'home'} onClick={() => { setView('home'); window.scrollTo({top: 0, behavior: 'smooth'}); }} />
             <NavItem icon={<MenuIcon/>} label="OUR MENU" active={view === 'menu'} onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} />
             <NavItem icon={<Store/>} label="Outlets" onClick={() => { setView('home'); setTimeout(() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' }), 100); }} />
+            <NavItem icon={<HelpCircle/>} label="Guide" onClick={() => setTourStep(0)} />
           </div>
 
           {/* Right: Order Now Button & Login */}
@@ -391,7 +474,7 @@ export default function LandingScreen() {
                 {state.storeSettings.isOpen ? 'Order Now' : 'Closed'}
               </span>
             </button>
-            <button onClick={() => setIsPublicCartOpen(true)} className="relative w-10 h-10 bg-white hover:bg-gray-50 rounded-full flex items-center justify-center text-gray-900 shadow-lg transition-all hover:scale-110 group">
+            <button id="nav-cart-btn" onClick={() => setIsPublicCartOpen(true)} className="relative w-10 h-10 bg-white hover:bg-gray-50 rounded-full flex items-center justify-center text-gray-900 shadow-lg transition-all hover:scale-110 group">
                <ShoppingBag size={18} className="group-hover:text-[#d97706] transition-colors" />
                {publicCart.length > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#d97706] text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm">{publicCart.length}</span>}
             </button>
@@ -424,7 +507,7 @@ export default function LandingScreen() {
       {view === 'home' && (
       <>
         {/* ── MASSIVE HERO SECTION ── */}
-      <div className="relative w-full min-h-[75vh] flex items-center justify-center overflow-hidden mt-0" id="home">
+      <div className="relative w-full min-h-[85vh] flex items-center justify-center overflow-hidden mt-0" id="home">
         {/* Background Image & Overlay */}
         <div className="absolute inset-0 w-full h-full bg-black pointer-events-none">
            <img src="https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&q=80&w=2000" alt="Delicious Food Background" className="w-full h-full object-cover opacity-60 scale-105 animate-[slow-zoom_20s_ease-in-out_infinite_alternate] pointer-events-none" />
@@ -445,17 +528,17 @@ export default function LandingScreen() {
            
            <div className="relative pt-4 pb-4">
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#d97706]/40 blur-[80px] rounded-full pointer-events-none"/>
-             <h1 className="text-white text-3xl md:text-5xl lg:text-[3.5rem] font-black mb-4 tracking-tight leading-[1.1] relative z-10 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
+             <h1 className="text-white text-4xl md:text-6xl lg:text-[4.2rem] font-black mb-6 tracking-tight leading-[1.1] relative z-10 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
                 Redefining <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffefd4] to-[#d97706] italic drop-shadow-[0_4px_10px_rgba(217,119,6,0.5)]">Everyday</span> Meals.
              </h1>
-             <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed mb-6 max-w-xl mx-auto relative z-10 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+             <p className="text-white/90 text-base md:text-lg font-medium leading-relaxed mb-8 max-w-2xl mx-auto relative z-10 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                 Experience the finest Jollof and Fried Rice, delivered hot in our signature premium packaging. <span className="text-[#ffefd4]">True flavors of Kumasi.</span>
              </p>
              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-                <button disabled={!state.storeSettings.isOpen} onClick={() => setView('menu')} className="w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed hover-sweep text-white font-black text-xs tracking-wider py-3 px-8 rounded-full shadow-[0_8px_20px_rgba(217,119,6,0.3)] hover:shadow-[0_12px_30px_rgba(217,119,6,0.5)] hover:-translate-y-0.5 hover:scale-105 transition-all">
+                <button disabled={!state.storeSettings.isOpen} onClick={() => setView('menu')} className="w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed hover-sweep text-white font-black text-xs tracking-wider py-4 px-10 rounded-full shadow-[0_8px_20px_rgba(217,119,6,0.3)] hover:shadow-[0_12px_30px_rgba(217,119,6,0.5)] hover:-translate-y-0.5 hover:scale-105 transition-all">
                   {state.storeSettings.isOpen ? 'EXPLORE MENU' : 'STORE CLOSED'}
                 </button>
-                <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-black text-xs tracking-wider py-3 px-8 rounded-full hover:bg-white hover:text-[#431407] hover:border-white transition-all shadow-lg hover:-translate-y-0.5 hover:scale-105">
+                <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-black text-xs tracking-wider py-4 px-10 rounded-full hover:bg-white hover:text-[#431407] hover:border-white transition-all shadow-lg hover:-translate-y-0.5 hover:scale-105">
                   FIND US
                 </button>
              </div>
@@ -464,25 +547,25 @@ export default function LandingScreen() {
       </div>
 
       {/* ── JOLLOF MENU SECTION ── */}
-      <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-8 items-center scroll-anim" id="our-menu">
+      <div className="max-w-6xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-10 items-center scroll-anim" id="our-menu">
         {/* Left Side: Brand Identity */}
-        <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
+        <div className="w-full lg:w-[30%] flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
           <div className="flex items-center gap-4">
-            <div className="bg-[#431407] text-white rounded-2xl w-16 h-16 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-2 border-white">
-               <span className="font-black text-[9px]">BELLS</span>
+            <div className="bg-[#431407] text-white rounded-2xl w-20 h-20 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-2 border-white shadow-lg">
+               <span className="font-black text-xs">BELLS</span>
             </div>
           </div>
-          <h2 className="text-2xl lg:text-3xl font-black mt-4 italic text-[#343a40] tracking-tight leading-none">Bells Jollof</h2>
+          <h2 className="text-3xl lg:text-4xl font-black mt-4 italic text-[#343a40] tracking-tight leading-none">Bells Jollof</h2>
         </div>
 
         {/* Right Side: Slider & Details */}
-        <div className="w-full lg:w-[65%]">
+        <div className="w-full lg:w-[70%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/8] cursor-pointer" onClick={() => { if( featuredJollof.available) setPendingPublicItem(featuredJollof); }}>
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl group bg-amber-100 aspect-[16/7] cursor-pointer" onClick={() => { if( featuredJollof.available) setPendingPublicItem(featuredJollof); }}>
             <img src={featuredJollof.imageUrl} alt={featuredJollof.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             {/* Arrows */}
-            <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p > 0 ? p - 1 : jollofItems.length - 1)); }} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={20}/></button>
-            <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p < jollofItems.length - 1 ? p + 1 : 0)); }} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={20}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p > 0 ? p - 1 : jollofItems.length - 1)); }} className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p < jollofItems.length - 1 ? p + 1 : 0)); }} className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
             {/* Dots */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
               {jollofItems.map((_, i) => (
@@ -492,32 +575,37 @@ export default function LandingScreen() {
           </div>
 
           {/* Details */}
-          <div className="mt-5 flex flex-col items-start max-w-xl">
-            <h3 className="text-2xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
-              {featuredJollof.name} <ArrowUpRight size={18} strokeWidth={3} />
+          <div className="mt-6 flex flex-col items-start max-w-xl">
+            <h3 className="text-3xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
+              {featuredJollof.name} <ArrowUpRight size={20} strokeWidth={3} />
             </h3>
-            <p className="text-[#6c757d] mt-2 leading-relaxed font-semibold text-sm">
+            <p className="text-[#6c757d] mt-2.5 leading-relaxed font-semibold text-base">
               {featuredJollof.description}
             </p>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-4">
-              <button disabled={!featuredJollof.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredJollof)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-xs tracking-wider py-2.5 px-8 rounded-full shadow-[0_8px_16px_rgba(217,119,6,0.2)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-5">
+              <button disabled={!featuredJollof.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredJollof)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-xs tracking-wider py-3 px-10 rounded-full shadow-[0_8px_16px_rgba(217,119,6,0.2)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
                 {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
-                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-0.5">Starting From</span>
-                <span className="text-xl font-black text-gray-900 leading-none">¢{featuredJollof.hasSizes ? (featuredJollof.prices.S || featuredJollof.prices.M) : (featuredJollof.prices as any).fixed}</span>
+                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
+                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredJollof.hasSizes ? (featuredJollof.prices.S || featuredJollof.prices.M) : (featuredJollof.prices as any).fixed}</span>
               </div>
             </div>
           </div>
 
           {/* Sub Items */}
-          <div className="mt-8 pt-4 border-t border-gray-200/60">
-            <h4 className="text-lg font-black italic mb-4 text-[#343a40]">Our Signature Jollofs</h4>
-            <div className="flex gap-3 overflow-x-auto pb-3 pt-1 hide-scrollbar">
+          <div className="mt-10 pt-6 border-t border-gray-200/60">
+            <h4 className="text-xl font-black italic mb-6 text-[#343a40]">Our Signature Jollofs</h4>
+            <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar">
               {jollofItems.map((item, i) => (
-                <div key={item.id} onClick={() => { setJollofIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-20 cursor-pointer group hover:scale-110 transition-transform duration-300">
-                  <img src={item.imageUrl} alt={item.name} className={`w-14 h-14 rounded-full object-cover shadow-lg border-[3px] transition-all duration-300 group-hover:shadow-2xl ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
-                  <div className={`text-white text-[8px] font-black py-1 px-1.5 rounded-lg mt-[-8px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                <div key={item.id} id={i === 0 ? "first-jollof-item" : undefined} onClick={() => { setJollofIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                  <div className="relative">
+                    <img src={item.imageUrl} alt={item.name} className={`w-[72px] h-[72px] rounded-full object-cover shadow-lg border-[3px] transition-all duration-300 group-hover:shadow-2xl ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                    <div className="absolute -top-1.5 -right-1.5 bg-[#d97706] text-white font-black text-[9px] px-2 py-0.5 rounded-full shadow border border-white">
+                      ¢{item.prices.S}
+                    </div>
+                  </div>
+                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -528,25 +616,25 @@ export default function LandingScreen() {
       </div>
 
       {/* ── BANKU MENU SECTION ── */}
-      <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-8 items-center scroll-anim" id="banku-menu">
+      <div className="max-w-6xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-10 items-center scroll-anim" id="banku-menu">
         {/* Left Side: Brand Identity */}
-        <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
+        <div className="w-full lg:w-[30%] flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
           <div className="flex items-center gap-4">
-            <div className="bg-[#431407] text-white rounded-2xl w-16 h-16 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-2 border-white">
-               <span className="font-black text-[9px] text-center">BELLS<br/>LOCAL</span>
+            <div className="bg-[#431407] text-white rounded-2xl w-20 h-20 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-2 border-white shadow-lg">
+               <span className="font-black text-xs text-center">BELLS<br/>LOCAL</span>
             </div>
           </div>
-          <h2 className="text-2xl lg:text-3xl font-black mt-4 italic text-[#343a40] tracking-tight leading-none">Bells Banku</h2>
+          <h2 className="text-3xl lg:text-4xl font-black mt-4 italic text-[#343a40] tracking-tight leading-none">Bells Banku</h2>
         </div>
 
         {/* Right Side: Slider & Details */}
-        <div className="w-full lg:w-[65%]">
+        <div className="w-full lg:w-[70%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/8] cursor-pointer" onClick={() => { if( featuredBanku.available) setPendingPublicItem(featuredBanku); }}>
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl group bg-amber-100 aspect-[16/7] cursor-pointer" onClick={() => { if( featuredBanku.available) setPendingPublicItem(featuredBanku); }}>
             <img src={featuredBanku.imageUrl} alt={featuredBanku.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             {/* Arrows */}
-            <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p > 0 ? p - 1 : bankuItems.length - 1)); }} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={20}/></button>
-            <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p < bankuItems.length - 1 ? p + 1 : 0)); }} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={20}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p > 0 ? p - 1 : bankuItems.length - 1)); }} className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p < bankuItems.length - 1 ? p + 1 : 0)); }} className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
             {/* Dots */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
               {bankuItems.map((_, i) => (
@@ -556,32 +644,37 @@ export default function LandingScreen() {
           </div>
 
           {/* Details */}
-          <div className="mt-5 flex flex-col items-start max-w-xl">
-            <h3 className="text-2xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
-              {featuredBanku.name} <ArrowUpRight size={18} strokeWidth={3} />
+          <div className="mt-6 flex flex-col items-start max-w-xl">
+            <h3 className="text-3xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
+              {featuredBanku.name} <ArrowUpRight size={20} strokeWidth={3} />
             </h3>
-            <p className="text-[#6c757d] mt-2 leading-relaxed font-semibold text-sm">
+            <p className="text-[#6c757d] mt-2.5 leading-relaxed font-semibold text-base">
               {featuredBanku.description}
             </p>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-4">
-              <button disabled={!featuredBanku.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredBanku)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-xs tracking-wider py-2.5 px-8 rounded-full shadow-[0_8px_16px_rgba(217,119,6,0.2)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-5">
+              <button disabled={!featuredBanku.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredBanku)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-xs tracking-wider py-3 px-10 rounded-full shadow-[0_8px_16px_rgba(217,119,6,0.2)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
                 {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
-                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-0.5">Starting From</span>
-                <span className="text-xl font-black text-gray-900 leading-none">¢{featuredBanku.hasSizes ? (featuredBanku.prices.S || featuredBanku.prices.M) : (featuredBanku.prices as any).fixed}</span>
+                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
+                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredBanku.hasSizes ? (featuredBanku.prices.S || featuredBanku.prices.M) : (featuredBanku.prices as any).fixed}</span>
               </div>
             </div>
           </div>
 
           {/* Sub Items */}
-          <div className="mt-8 pt-4 border-t border-gray-200/60">
-            <h4 className="text-lg font-black italic mb-4 text-[#343a40]">Our Signature Banku</h4>
-            <div className="flex gap-3 overflow-x-auto pb-3 pt-1 hide-scrollbar">
+          <div className="mt-10 pt-6 border-t border-gray-200/60">
+            <h4 className="text-xl font-black italic mb-6 text-[#343a40]">Our Signature Banku</h4>
+            <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar">
               {bankuItems.map((item, i) => (
-                <div key={item.id} onClick={() => { setBankuIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-20 cursor-pointer group hover:scale-110 transition-transform duration-300">
-                  <img src={item.imageUrl} alt={item.name} className={`w-14 h-14 rounded-full object-cover shadow-lg border-[3px] transition-all duration-300 group-hover:shadow-2xl ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
-                  <div className={`text-white text-[8px] font-black py-1 px-1.5 rounded-lg mt-[-8px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                <div key={item.id} onClick={() => { setBankuIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                  <div className="relative">
+                    <img src={item.imageUrl} alt={item.name} className={`w-[72px] h-[72px] rounded-full object-cover shadow-lg border-[3px] transition-all duration-300 group-hover:shadow-2xl ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                    <div className="absolute -top-1.5 -right-1.5 bg-[#d97706] text-white font-black text-[9px] px-2 py-0.5 rounded-full shadow border border-white">
+                      ¢{item.prices.S}
+                    </div>
+                  </div>
+                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -592,47 +685,47 @@ export default function LandingScreen() {
       </div>
 
       {/* ── FRIED RICE MENU SECTION ── */}
-      <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center border-t border-gray-200/50 mt-8 scroll-anim">
+      <div className="max-w-6xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-10 items-center border-t border-gray-200/50 mt-8 scroll-anim">
         {/* Left Side: Brand Identity */}
-        <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
-          <div className="flex items-center gap-6">
-            <div className="bg-[#431407] text-white rounded-[2rem] w-32 h-32 flex flex-col items-center justify-center rotate-[10deg] animate-pulse-glow border-4 border-white transform transition hover:rotate-0 hover:scale-105 duration-300">
-               <div className="w-10 h-12 bg-[#ffefd4] rounded-t-lg rounded-b-sm mb-1 opacity-90 flex items-center justify-center font-black text-[#d97706] text-xs shadow-inner">B</div>
-               <span className="font-black text-xs">RICE BAG</span>
+        <div className="w-full lg:w-[30%] flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
+          <div className="flex items-center gap-4">
+            <div className="bg-[#431407] text-white rounded-2xl w-24 h-24 flex flex-col items-center justify-center rotate-[10deg] animate-pulse-glow border-2 border-white transform transition hover:rotate-0 hover:scale-105 duration-300 shadow-lg">
+               <div className="w-10 h-11 bg-[#ffefd4] rounded-t-md rounded-b-sm mb-0.5 opacity-90 flex items-center justify-center font-black text-[#d97706] text-[12px] shadow-inner">B</div>
+               <span className="font-black text-[10px]">RICE BAG</span>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-[#d97706] pb-1"><Flame size={32} strokeWidth={2.5} className="fill-[#d97706]"/></div>
-              <h2 className="text-2xl font-black text-[#431407] leading-none tracking-tight">FRIED RICE</h2>
-              <span className="text-[10px] font-bold text-[#d97706] tracking-widest italic mt-1">it's flaming hot</span>
+               <div className="text-[#d97706] pb-0.5"><Flame size={28} strokeWidth={2.5} className="fill-[#d97706]"/></div>
+               <h2 className="text-2xl font-black text-[#431407] leading-none tracking-tight">FRIED RICE</h2>
+               <span className="text-[10px] font-bold text-[#d97706] tracking-widest italic mt-0.5">it's flaming hot</span>
             </div>
           </div>
-          <h2 className="text-[2.75rem] font-black mt-12 italic text-[#343a40] tracking-tighter">Bells Fried Menu</h2>
+          <h2 className="text-3xl lg:text-4xl font-black mt-4 italic text-[#343a40] tracking-tight leading-none">Bells Fried Menu</h2>
         </div>
 
         {/* Right Side: Slider & Details */}
-        <div className="w-full lg:w-[65%]">
+        <div className="w-full lg:w-[70%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if( featuredFried.available) setPendingPublicItem(featuredFried); }}>
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl group bg-amber-100 aspect-[16/7] cursor-pointer" onClick={() => { if( featuredFried.available) setPendingPublicItem(featuredFried); }}>
             <img src={featuredFried.imageUrl} alt={featuredFried.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-            <button onClick={(e) => { e.stopPropagation(); setFriedIndex((p) => (p > 0 ? p - 1 : friedItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
-            <button onClick={(e) => { e.stopPropagation(); setFriedIndex((p) => (p < friedItems.length - 1 ? p + 1 : 0)); }} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+            <button onClick={(e) => { e.stopPropagation(); setFriedIndex((p) => (p > 0 ? p - 1 : friedItems.length - 1)); }} className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setFriedIndex((p) => (p < friedItems.length - 1 ? p + 1 : 0)); }} className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
               {friedItems.map((_, i) => (
-                <button key={i} onClick={(e) => { e.stopPropagation(); setFriedIndex(i); }} className={`h-2 rounded-full transition-all ${i === friedIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
+                <button key={i} onClick={(e) => { e.stopPropagation(); setFriedIndex(i); }} className={`h-1.5 rounded-full transition-all ${i === friedIndex ? 'w-5 bg-[#d97706]' : 'w-1.5 bg-white/60 hover:bg-white'}`} />
               ))}
             </div>
           </div>
 
           {/* Details */}
-          <div className="mt-8 flex flex-col items-start max-w-2xl">
+          <div className="mt-6 flex flex-col items-start max-w-xl">
             <h3 className="text-3xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
               {featuredFried.name} <ArrowUpRight size={20} strokeWidth={3} />
             </h3>
-            <p className="text-[#6c757d] mt-4 leading-relaxed font-semibold text-[15px]">
+            <p className="text-[#6c757d] mt-2.5 leading-relaxed font-semibold text-base">
               {featuredFried.description}
             </p>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
-              <button disabled={!featuredFried.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredFried)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-5">
+              <button disabled={!featuredFried.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredFried)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-xs tracking-wider py-3 px-10 rounded-full shadow-[0_8px_16px_rgba(217,119,6,0.2)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
                 {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
@@ -643,13 +736,18 @@ export default function LandingScreen() {
           </div>
 
           {/* Sub Items */}
-          <div className="mt-16 pt-4 border-t border-gray-200/60">
-            <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Fried Rice</h4>
-            <div className="flex gap-4 overflow-x-auto pb-4 pt-2 hide-scrollbar">
+          <div className="mt-10 pt-6 border-t border-gray-200/60">
+            <h4 className="text-xl font-black italic mb-6 text-[#343a40]">Our Signature Fried Rice</h4>
+            <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar">
               {friedItems.map((item, i) => (
                 <div key={item.id} onClick={() => { setFriedIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
-                  <img src={item.imageUrl} alt={item.name} className={`w-[80px] h-[80px] rounded-full object-cover shadow-lg border-[4px] transition-all duration-300 group-hover:shadow-2xl ${i === friedIndex ? 'border-[#d97706]' : 'border-white'}`} />
-                  <div className={`text-white text-[9px] font-black py-2 px-2 rounded-xl mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                  <div className="relative">
+                    <img src={item.imageUrl} alt={item.name} className={`w-[72px] h-[72px] rounded-full object-cover shadow-lg border-[3px] transition-all duration-300 group-hover:shadow-2xl ${i === friedIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                    <div className="absolute -top-1.5 -right-1.5 bg-[#d97706] text-white font-black text-[9px] px-2 py-0.5 rounded-full shadow border border-white">
+                      ¢{item.prices.S}
+                    </div>
+                  </div>
+                  <div className={`text-white text-[10px] font-black py-1.5 px-2 rounded-lg mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === friedIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -660,21 +758,21 @@ export default function LandingScreen() {
       </div>
 
       {/* ── PACKAGING EXPERIENCE SECTION ── */}
-      <div className="max-w-6xl mx-auto px-4 py-10 scroll-anim" id="packaging">
+      <div className="max-w-6xl mx-auto px-4 py-16 scroll-anim" id="packaging">
         <div className="bg-[#431407] rounded-3xl overflow-hidden shadow-2xl relative flex flex-col md:flex-row items-center border-4 border-[#d97706]/20">
           <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center"/>
           <div className="w-full md:w-1/2 p-8 lg:p-14 relative z-10">
              <h2 className="text-[#d97706] text-xs font-black uppercase tracking-[0.2em] mb-3">The Bells Experience</h2>
-             <h3 className="text-3xl md:text-4xl font-black italic mb-4 leading-tight text-white">Unbox <br/>Unforgettable <br/>Flavors.</h3>
-             <p className="text-white/80 font-medium leading-relaxed mb-6 text-base">
+             <h3 className="text-4xl md:text-5xl font-black italic mb-4 leading-tight text-white">Unbox <br/>Unforgettable <br/>Flavors.</h3>
+             <p className="text-white/80 font-medium leading-relaxed mb-6 text-lg">
                Our premium packaging is designed to keep your food piping hot and perfectly intact. From our kitchen to your table, we ensure every detail reflects our commitment to excellence.
              </p>
-             <button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="hover-sweep text-white font-black text-xs tracking-wider py-2.5 px-8 rounded-full shadow-[0_8px_16px_rgba(217,119,6,0.2)] hover:-translate-y-0.5 transition-all">
+             <button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="hover-sweep text-white font-black text-xs tracking-wider py-3 px-10 rounded-full shadow-[0_8px_16px_rgba(217,119,6,0.2)] hover:-translate-y-0.5 transition-all">
                ORDER NOW
              </button>
           </div>
           <div className="w-full md:w-1/2 p-6 relative z-10 flex justify-center">
-             <img src="/packaging_trio.jpg" alt="Bells Packaging" className="w-[75%] rounded-2xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 border-[6px] border-white/10 animate-float" />
+             <img src="/packaging_trio.jpg" alt="Bells Packaging" className="w-[85%] rounded-2xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 border-[6px] border-white/10 animate-float" />
           </div>
         </div>
       </div>
@@ -1340,9 +1438,10 @@ export default function LandingScreen() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Phone Number</label>
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Phone Number *</label>
                   <input
                     type="text"
+                    required
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     placeholder="e.g. 0501234567"
@@ -1376,7 +1475,7 @@ export default function LandingScreen() {
 
               <button
                 type="submit"
-                disabled={!customerName.trim() || !deliveryLocation.trim()}
+                disabled={!customerName.trim() || !customerPhone.trim() || !deliveryLocation.trim()}
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none bg-[#25D366] hover:bg-[#1ebd57] select-none mt-2"
               >
                 <Send size={16} /> Send Order via WhatsApp
@@ -1386,6 +1485,172 @@ export default function LandingScreen() {
         </div>
       )}
       
+      {/* INTERACTIVE USER GUIDE TOUR */}
+      {tourStep !== null && (
+        <>
+          {/* Backdrop mask helper to block clicks and slightly dim background */}
+          <div className="fixed inset-0 z-[140] bg-black/35 backdrop-blur-[2px] pointer-events-auto cursor-pointer" onClick={() => setTourStep(null)} />
+          
+          {/* Spotlight highlight border around targeted element */}
+          {targetRect && (
+            <div 
+              className="absolute rounded-[1.5rem] border-[4px] border-[#d97706] shadow-[0_0_30px_rgba(217,119,6,0.65),_0_0_0_9999px_rgba(0,0,0,0.65)] transition-all duration-500 ease-out pointer-events-none z-[145]"
+              style={{
+                top: `${targetRect.top - 6}px`,
+                left: `${targetRect.left - 6}px`,
+                width: `${targetRect.width + 12}px`,
+                height: `${targetRect.height + 12}px`,
+              }}
+            />
+          )}
+
+          {/* Floating interactive tooltip card */}
+          <div 
+            className="absolute bg-[#431407]/95 border-2 border-[#d97706]/40 text-white rounded-[2rem] p-6 w-[320px] shadow-[0_20px_50px_rgba(0,0,0,0.85)] z-[150] transition-all duration-500 flex flex-col pointer-events-auto animate-scale-in"
+            style={
+              targetRect
+                ? {
+                    top: `${targetRect.top + targetRect.height + 20}px`,
+                    left: `${Math.max(16, Math.min(window.innerWidth - 336, targetRect.left + targetRect.width / 2 - 160))}px`,
+                  }
+                : {
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                  }
+            }
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Background glowing blobs */}
+            <div className="absolute -top-10 -right-10 w-24 h-24 bg-[#d97706]/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+
+            {/* Custom Arrow pointing directly to target center */}
+            {targetRect && (
+              <div 
+                className="absolute -top-3 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[12px] border-b-[#431407]/95"
+                style={{
+                  left: `${targetRect.left + targetRect.width / 2 - Math.max(16, Math.min(window.innerWidth - 336, targetRect.left + targetRect.width / 2 - 160))}px`,
+                  transform: 'translateX(-50%)'
+                }}
+              />
+            )}
+
+            {/* Step Counter */}
+            <div className="flex justify-between items-center mb-5 relative z-10">
+              <span className="text-[9px] bg-[#d97706]/35 border border-[#d97706]/50 px-2.5 py-1 rounded-full font-black uppercase tracking-wider text-[#ffefd4]">
+                Guide: Step {tourStep} of 3
+              </span>
+              <button 
+                onClick={() => setTourStep(null)} 
+                className="text-white/60 hover:text-white hover:bg-white/10 w-7 h-7 rounded-full flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X size={14} />
+              </button>
+            </div>
+
+            {/* Content Switch */}
+            {tourStep === 1 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
+                  <Flame size={28} />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">1. Select Your Food</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  Scroll through our menu sections (Jollof, Banku, Fried Rice). We show starting price tags directly on each dish.
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(null)} className="flex-1 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
+                    Skip
+                  </button>
+                  <button onClick={() => setTourStep(2)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 2 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md rotate-3">
+                  <Plus size={28} />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">2. Customize Tray</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  Tap directly on any dish thumbnail to open customizations. Choose sizes (S, M, L) and add premium sides like chicken, sausage, and egg!
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(1)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
+                    Back
+                  </button>
+                  <button onClick={() => setTourStep(3)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 3 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
+                  <ShoppingBag size={28} />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">3. Submit via WhatsApp</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  Review your tray via the shopping bag button. Fill in your name/phone and submit to WhatsApp to send us a ticket receipt instantly!
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(2)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
+                    Back
+                  </button>
+                  <button onClick={handleFinishTour} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
+                    Finish & Order
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Welcome Step Tour (Centered Modal Overlay) */}
+      {tourStep === 0 && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/65 backdrop-blur-md animate-fade-in" onClick={() => setTourStep(null)}>
+          <div className="bg-[#431407]/95 border-2 border-[#d97706]/40 text-white rounded-[2rem] p-8 max-w-md w-[90%] shadow-[0_20px_50px_rgba(0,0,0,0.85)] relative overflow-hidden select-none animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#d97706]/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+            
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-[10px] bg-[#d97706]/35 border border-[#d97706]/50 px-3 py-1 rounded-full font-black uppercase tracking-wider text-[#ffefd4]">
+                Interactive Guide
+              </span>
+              <button onClick={() => setTourStep(null)} className="text-white/60 hover:text-white hover:bg-white/10 w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-6 shadow-lg rotate-3">
+                <Sparkles size={32} />
+              </div>
+              <h3 className="text-2xl font-black italic mb-3 text-white">Welcome to Bells Kitchen!</h3>
+              <p className="text-white/80 text-sm font-semibold leading-relaxed mb-8">
+                Let's take a quick 30-second live spotlight tour to show you how to order the most delicious, premium Jollof and Fried Rice in Kumasi.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button onClick={() => setTourStep(null)} className="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-black text-xs py-3 px-6 rounded-full transition-colors cursor-pointer">
+                  Skip
+                </button>
+                <button onClick={() => setTourStep(1)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-xs py-3 px-6 rounded-full shadow-lg transition-colors cursor-pointer">
+                  Start Tour
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hide scrollbars class addition to head */}
       <style>{`
         .hide-scrollbar::-webkit-scrollbar { display: none; }
