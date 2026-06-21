@@ -42,6 +42,8 @@ const faqs = [
   { id: 3, q: 'What payment methods do you accept?', a: 'We accept Mobile Money (MTN, Vodafone, AT) and Cash on Delivery.' },
 ];
 
+const branches = ['KNUST BRANCH', 'ADUM BRANCH', 'BANTAMA BRANCH', 'AHODWO BRANCH'];
+
 /* ─── Components ─── */
 
 const NavItem = ({ icon, label, active = false, onClick }: { icon: React.ReactNode, label: string, active?: boolean, onClick?: () => void }) => (
@@ -143,7 +145,7 @@ const CategorySlider = ({ id, categoryName, items, isOpen, onOrder, disableScrol
                 } else {
                   setIndex(i);
                 }
-              }} className="flex flex-col items-center flex-shrink-0 w-28 cursor-pointer group hover:scale-110 transition-transform duration-300">
+              }} id={i === 0 && id ? `${id}-first-item` : undefined} className="flex flex-col items-center flex-shrink-0 w-28 cursor-pointer group hover:scale-110 transition-transform duration-300">
                 <div className="relative">
                   <img src={item.imageUrl || "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&q=80&w=800"} alt={item.name} className={`w-[84px] h-[84px] rounded-full object-cover shadow-lg border-[4px] food-thumbnail ${i === index ? 'food-thumbnail-active' : 'border-white'} ${!item.available ? 'opacity-50 grayscale' : ''}`} />
                   <div className="absolute -top-1 -right-1 bg-[#d97706] text-white font-black text-[9px] px-2 py-0.5 rounded-full shadow border border-white">
@@ -209,17 +211,19 @@ export default function LandingScreen() {
   };
 
   useEffect(() => {
-    // Synchronize modal, cart, and mock order data based on the active tour step
-    if (tourStep === 2) {
+    // Synchronize modal, cart, details modal, and mock order data based on the active tour step
+    if (tourStep === 3 || tourStep === 4) {
       const targetItem = jollofItems[0] || landingMenu[0];
       setPendingPublicItem(targetItem);
       setPublicSize(targetItem.hasSizes ? (targetItem.prices.M ? 'M' : 'S') : 'M');
       setPublicQty(1);
       setPublicAddons([]);
       setIsPublicCartOpen(false);
-    } else if (tourStep === 3) {
+      setIsDeliveryModalOpen(false);
+    } else if (tourStep === 5) {
       setPendingPublicItem(null);
       setIsPublicCartOpen(true);
+      setIsDeliveryModalOpen(false);
       const targetItem = jollofItems[0] || landingMenu[0];
       const tourCartItem = {
         cartItemId: 'tour-cart-item-id',
@@ -233,9 +237,14 @@ export default function LandingScreen() {
       if (!publicCart.some((c: any) => c.cartItemId === 'tour-cart-item-id')) {
         setPublicCart((prev: any[]) => [...prev, tourCartItem]);
       }
+    } else if (tourStep === 6) {
+      setPendingPublicItem(null);
+      setIsPublicCartOpen(false);
+      setIsDeliveryModalOpen(true);
     } else {
       setPendingPublicItem(null);
       setIsPublicCartOpen(false);
+      setIsDeliveryModalOpen(false);
       // Clean up mock tour item if exiting or going back
       setPublicCart((prev: any[]) => prev.filter(c => c.cartItemId !== 'tour-cart-item-id'));
     }
@@ -249,9 +258,15 @@ export default function LandingScreen() {
     if (tourStep === 1) {
       activeTargetId = view === 'menu' ? 'menu-jollof-slider' : 'jollof-slider';
     } else if (tourStep === 2) {
-      activeTargetId = 'modal-size-selector';
+      activeTargetId = view === 'menu' ? 'menu-jollof-slider-first-item' : 'first-jollof-item';
     } else if (tourStep === 3) {
+      activeTargetId = 'modal-size-selector';
+    } else if (tourStep === 4) {
+      activeTargetId = 'modal-add-to-order-btn';
+    } else if (tourStep === 5) {
       activeTargetId = 'cart-whatsapp-btn';
+    } else if (tourStep === 6) {
+      activeTargetId = 'checkout-details-modal-form';
     }
 
     const updateRect = () => {
@@ -273,7 +288,12 @@ export default function LandingScreen() {
     const attemptScrollAndPosition = () => {
       const element = document.getElementById(activeTargetId);
       if (element) {
-        if (activeTargetId !== 'modal-size-selector' && activeTargetId !== 'cart-whatsapp-btn') {
+        if (
+          activeTargetId !== 'modal-size-selector' && 
+          activeTargetId !== 'modal-add-to-order-btn' && 
+          activeTargetId !== 'cart-whatsapp-btn' && 
+          activeTargetId !== 'checkout-details-modal-form'
+        ) {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         
@@ -308,6 +328,8 @@ export default function LandingScreen() {
   /* ── Checkout Details State ── */
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
+  const [pickupBranch, setPickupBranch] = useState(branches[0]);
   const [deliveryLocation, setDeliveryLocation] = useState('');
   const [specialNotes, setSpecialNotes] = useState('');
 
@@ -320,8 +342,6 @@ export default function LandingScreen() {
   
   /* ── FAQ State ── */
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  /* ── Branches State ── */
-  const branches = ['KNUST BRANCH', 'ADUM BRANCH', 'BANTAMA BRANCH', 'AHODWO BRANCH'];
   const [selectedBranch, setSelectedBranch] = useState(branches[0]);
 
   /* ── Scroll effect for header, nav bar hiding & image toggling ── */
@@ -1299,6 +1319,7 @@ export default function LandingScreen() {
                   </div>
                   <div className="flex gap-3">
                     <button 
+                      id="modal-add-to-order-btn"
                       type="button" 
                       onClick={handleAddPublicCart} 
                       className={`flex-grow flex items-center justify-center py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg active:translate-y-0 ${
@@ -1480,12 +1501,43 @@ export default function LandingScreen() {
           <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl p-6 sm:p-8 relative overflow-hidden animate-scale-in flex flex-col gap-5" onClick={(e) => e.stopPropagation()}>
             <button type="button" onClick={() => setIsDeliveryModalOpen(false)} className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all cursor-pointer"><X size={16} /></button>
             <div className="text-center pb-2 border-b border-gray-100">
-              <div className="w-12 h-12 bg-[#fff8ed] rounded-full flex items-center justify-center mx-auto mb-3 text-[#d97706] shadow-sm"><MapPin size={22}/></div>
-              <h2 className="text-xl font-black text-gray-900 tracking-tight">Delivery Details</h2>
-              <p className="text-xs text-gray-500 mt-1 font-semibold">Where should we deliver your hot food?</p>
+              <div className="w-12 h-12 bg-[#fff8ed] rounded-full flex items-center justify-center mx-auto mb-3 text-[#d97706] shadow-sm">
+                {orderType === 'delivery' ? <MapPin size={22}/> : <Store size={22}/>}
+              </div>
+              <h2 className="text-xl font-black text-gray-900 tracking-tight">Checkout Details</h2>
+              <p className="text-xs text-gray-500 mt-1 font-semibold">Choose your order type and complete your details.</p>
             </div>
             
-            <form onSubmit={(e) => { e.preventDefault(); handleWhatsAppSubmit(); }} className="space-y-4">
+            <form id="checkout-details-modal-form" onSubmit={(e) => { e.preventDefault(); handleWhatsAppSubmit(); }} className="space-y-4">
+              {/* Order Type Toggle */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Order Type *</label>
+                <div className="flex gap-2">
+                  <button 
+                    type="button" 
+                    onClick={() => setOrderType('delivery')}
+                    className={`flex-1 py-2 px-4 rounded-xl text-xs font-black tracking-wider transition-all border flex items-center justify-center gap-1.5 ${
+                      orderType === 'delivery'
+                        ? 'bg-[#431407] text-[#ffefd4] border-[#d97706] shadow-sm'
+                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                    }`}
+                  >
+                    🏍️ Delivery
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setOrderType('pickup')}
+                    className={`flex-1 py-2 px-4 rounded-xl text-xs font-black tracking-wider transition-all border flex items-center justify-center gap-1.5 ${
+                      orderType === 'pickup'
+                        ? 'bg-[#431407] text-[#ffefd4] border-[#d97706] shadow-sm'
+                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                    }`}
+                  >
+                    🛍️ Self-Pickup
+                  </button>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Your Name *</label>
@@ -1511,17 +1563,32 @@ export default function LandingScreen() {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Hostel / Delivery Location *</label>
-                <input
-                  type="text"
-                  required
-                  value={deliveryLocation}
-                  onChange={(e) => setDeliveryLocation(e.target.value)}
-                  placeholder="e.g. No Weapon Hostel Annex, Room 24"
-                  className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:bg-white focus:ring-4 focus:ring-[#d97706]/10 rounded-xl px-3.5 py-2.5 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all shadow-inner"
-                />
-              </div>
+              {orderType === 'pickup' ? (
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Select Pickup Outlet *</label>
+                  <select 
+                    value={pickupBranch} 
+                    onChange={(e) => setPickupBranch(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:bg-white focus:ring-4 focus:ring-[#d97706]/10 rounded-xl px-3.5 py-2.5 text-xs font-bold text-gray-900 outline-none transition-all shadow-inner"
+                  >
+                    {branches.map(b => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Hostel / Delivery Location *</label>
+                  <input
+                    type="text"
+                    required={orderType === 'delivery'}
+                    value={deliveryLocation}
+                    onChange={(e) => setDeliveryLocation(e.target.value)}
+                    placeholder="e.g. No Weapon Hostel Annex, Room 24"
+                    className="w-full bg-gray-50 border border-gray-200 focus:border-[#d97706] focus:bg-white focus:ring-4 focus:ring-[#d97706]/10 rounded-xl px-3.5 py-2.5 text-xs font-bold text-gray-900 placeholder-gray-400 outline-none transition-all shadow-inner"
+                  />
+                </div>
+              )}
 
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Special Requests / Notes</label>
@@ -1535,8 +1602,9 @@ export default function LandingScreen() {
               </div>
 
               <button
+                id="send-order-whatsapp-btn"
                 type="submit"
-                disabled={!customerName.trim() || !customerPhone.trim() || !deliveryLocation.trim()}
+                disabled={!customerName.trim() || !customerPhone.trim() || (orderType === 'delivery' && !deliveryLocation.trim())}
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-full text-white text-sm font-black tracking-wider uppercase transition-all shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none bg-[#25D366] hover:bg-[#1ebd57] select-none mt-2"
               >
                 <Send size={16} /> Send Order via WhatsApp
@@ -1591,13 +1659,13 @@ export default function LandingScreen() {
             <div className="flex justify-between items-center mb-5 relative z-10">
               <div className="flex flex-col items-start gap-1">
                 <span className="text-[9px] bg-[#d97706]/35 border border-[#d97706]/50 px-2.5 py-1 rounded-full font-black uppercase tracking-wider text-[#ffefd4]">
-                  Guide: Step {tourStep} of 3
+                  Guide: Step {tourStep} of 6
                 </span>
                 {/* Visual Level Pills */}
                 <div className="flex gap-1 mt-1.5 pl-1">
-                  <div className={`w-3 h-1.5 rounded-full transition-all ${tourStep >= 1 ? 'bg-[#d97706] w-6' : 'bg-white/20'}`} />
-                  <div className={`w-3 h-1.5 rounded-full transition-all ${tourStep >= 2 ? 'bg-[#d97706] w-6' : 'bg-white/20'}`} />
-                  <div className={`w-3 h-1.5 rounded-full transition-all ${tourStep >= 3 ? 'bg-[#d97706] w-6' : 'bg-white/20'}`} />
+                  {[1, 2, 3, 4, 5, 6].map(step => (
+                    <div key={step} className={`w-2 h-1.5 rounded-full transition-all ${tourStep >= step ? 'bg-[#d97706] w-4' : 'bg-white/20'}`} />
+                  ))}
                 </div>
               </div>
               <button 
@@ -1614,9 +1682,9 @@ export default function LandingScreen() {
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
                   <Flame size={28} />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">1. Select Your Food</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">1. Select Category</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  Scroll through our menu sections (Jollof, Banku, Fried Rice). We show starting price tags directly on each dish.
+                  Scroll through our menu categories (Jollof, Fried Rice, Banku). We show starting price tags directly on each banner.
                 </p>
                 <div className="flex gap-2 w-full">
                   <button onClick={() => setTourStep(null)} className="flex-1 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
@@ -1632,11 +1700,11 @@ export default function LandingScreen() {
             {tourStep === 2 && (
               <div className="flex flex-col items-center text-center relative z-10">
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md rotate-3">
-                  <Plus size={28} />
+                  <Flame size={28} className="rotate-12" />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">2. Customize Tray</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">2. Circular Food Items</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  We've automatically opened the Jollof Rice tray configuration so you can see it live! Try choosing sizes (S, M, L) and adding premium sides.
+                  Hover or tap circular item thumbnails. Notice the bright gold glowing ring serving as an active visual cue!
                 </p>
                 <div className="flex gap-2 w-full">
                   <button onClick={() => setTourStep(1)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
@@ -1652,14 +1720,74 @@ export default function LandingScreen() {
             {tourStep === 3 && (
               <div className="flex flex-col items-center text-center relative z-10">
                 <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
-                  <ShoppingBag size={28} />
+                  <Plus size={28} />
                 </div>
-                <h3 className="text-xl font-black italic mb-2 text-white">3. Review & Checkout</h3>
+                <h3 className="text-xl font-black italic mb-2 text-white">3. Customize Tray</h3>
                 <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
-                  We've automatically opened the order cart drawer! You can review items, see total pricing, and click here to trigger the WhatsApp checkout form.
+                  We've automatically opened the customization modal! Select your size (S, M, L) and choose premium extra sides.
                 </p>
                 <div className="flex gap-2 w-full">
                   <button onClick={() => setTourStep(2)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
+                    Back
+                  </button>
+                  <button onClick={() => setTourStep(4)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 4 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md rotate-3">
+                  <Plus size={28} className="-rotate-12" />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">4. Add to Cart Plate</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  Tap 'Add to Order' inside the configuration tray to save your customized details and place it in your shopping tray.
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(3)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
+                    Back
+                  </button>
+                  <button onClick={() => setTourStep(5)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 5 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md -rotate-3">
+                  <ShoppingBag size={28} />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">5. Review Order Cart</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  We've automatically opened the order cart drawer! Review receipt details and click 'Complete via WhatsApp'.
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(4)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
+                    Back
+                  </button>
+                  <button onClick={() => setTourStep(6)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 6 && (
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-14 h-14 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-4 shadow-md rotate-3">
+                  <MapPin size={28} />
+                </div>
+                <h3 className="text-xl font-black italic mb-2 text-white">6. Pickup / Delivery</h3>
+                <p className="text-white/80 text-xs font-semibold leading-relaxed mb-6">
+                  Select Delivery or Self-Pickup, specify your hostel or pickup outlet, and submit your order securely to WhatsApp!
+                </p>
+                <div className="flex gap-2 w-full">
+                  <button onClick={() => setTourStep(5)} className="bg-white/10 hover:bg-white/20 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
                     Back
                   </button>
                   <button onClick={handleFinishTour} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
