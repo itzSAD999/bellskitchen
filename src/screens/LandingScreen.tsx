@@ -424,7 +424,7 @@ export default function LandingScreen() {
       {view === 'home' && (
       <>
         {/* ── MASSIVE HERO SECTION ── */}
-      <div className="relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden mt-0" id="home">
+      <div className="relative w-full min-h-[75vh] flex items-center justify-center overflow-hidden mt-0" id="home">
         {/* Background Image & Overlay */}
         <div className="absolute inset-0 w-full h-full bg-black pointer-events-none">
            <img src="https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&q=80&w=2000" alt="Delicious Food Background" className="w-full h-full object-cover opacity-60 scale-105 animate-[slow-zoom_20s_ease-in-out_infinite_alternate] pointer-events-none" />
@@ -433,29 +433,29 @@ export default function LandingScreen() {
         </div>
         
         {/* Floating Decorative Elements */}
-        <div className="absolute top-1/4 left-10 w-24 h-24 bg-[#d97706]/20 rounded-full blur-2xl animate-float pointer-events-none" />
-        <div className="absolute bottom-1/4 right-10 w-32 h-32 bg-[#ffefd4]/10 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/4 left-10 w-16 h-16 bg-[#d97706]/20 rounded-full blur-xl animate-float pointer-events-none" />
+        <div className="absolute bottom-1/4 right-10 w-24 h-24 bg-[#ffefd4]/10 rounded-full blur-2xl animate-float pointer-events-none" style={{ animationDelay: '2s' }} />
         
         {/* Hero Content */}
-        <div className="relative z-10 text-center max-w-5xl mx-auto px-4 mt-20 scroll-anim">
-           <div className="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-[#ffefd4] font-black px-6 py-2.5 rounded-full text-xs tracking-[0.3em] mb-8 shadow-xl uppercase relative overflow-hidden group">
+        <div className="relative z-10 text-center max-w-5xl mx-auto px-4 mt-16 scroll-anim">
+           <div className="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-[#ffefd4] font-black px-4 py-2 rounded-full text-[11px] tracking-[0.25em] mb-6 shadow-xl uppercase relative overflow-hidden group">
              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"/>
              Welcome to Bells Kitchen
            </div>
            
-           <div className="relative pt-6 pb-6">
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#d97706]/40 blur-[100px] rounded-full pointer-events-none"/>
-             <h1 className="text-white text-4xl md:text-6xl lg:text-[4.5rem] font-black mb-6 tracking-tight leading-[1.1] relative z-10 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
-                Redefining <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffefd4] to-[#d97706] italic drop-shadow-[0_5px_15px_rgba(217,119,6,0.5)]">Everyday</span> Meals.
+           <div className="relative pt-4 pb-4">
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#d97706]/40 blur-[80px] rounded-full pointer-events-none"/>
+             <h1 className="text-white text-3xl md:text-5xl lg:text-[3.5rem] font-black mb-4 tracking-tight leading-[1.1] relative z-10 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
+                Redefining <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffefd4] to-[#d97706] italic drop-shadow-[0_4px_10px_rgba(217,119,6,0.5)]">Everyday</span> Meals.
              </h1>
-             <p className="text-white/90 text-base md:text-lg font-medium leading-relaxed mb-10 max-w-2xl mx-auto relative z-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+             <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed mb-6 max-w-xl mx-auto relative z-10 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                 Experience the finest Jollof and Fried Rice, delivered hot in our signature premium packaging. <span className="text-[#ffefd4]">True flavors of Kumasi.</span>
              </p>
-             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10">
-                <button disabled={!state.storeSettings.isOpen} onClick={() => setView('menu')} className="w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed hover-sweep text-white font-black text-sm tracking-wider py-4 px-12 rounded-full shadow-[0_10px_30px_rgba(217,119,6,0.5)] hover:shadow-[0_15px_40px_rgba(217,119,6,0.7)] hover:-translate-y-1 hover:scale-105 transition-all">
+             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+                <button disabled={!state.storeSettings.isOpen} onClick={() => setView('menu')} className="w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed hover-sweep text-white font-black text-xs tracking-wider py-3 px-8 rounded-full shadow-[0_8px_20px_rgba(217,119,6,0.3)] hover:shadow-[0_12px_30px_rgba(217,119,6,0.5)] hover:-translate-y-0.5 hover:scale-105 transition-all">
                   {state.storeSettings.isOpen ? 'EXPLORE MENU' : 'STORE CLOSED'}
                 </button>
-                <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-black text-sm tracking-wider py-4 px-12 rounded-full hover:bg-white hover:text-[#431407] hover:border-white transition-all shadow-lg hover:-translate-y-1 hover:scale-105">
+                <button onClick={() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-black text-xs tracking-wider py-3 px-8 rounded-full hover:bg-white hover:text-[#431407] hover:border-white transition-all shadow-lg hover:-translate-y-0.5 hover:scale-105">
                   FIND US
                 </button>
              </div>
@@ -464,60 +464,60 @@ export default function LandingScreen() {
       </div>
 
       {/* ── JOLLOF MENU SECTION ── */}
-      <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center scroll-anim" id="our-menu">
+      <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-8 items-center scroll-anim" id="our-menu">
         {/* Left Side: Brand Identity */}
-        <div className="w-full lg:w-[40%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
-          <div className="flex items-center gap-6">
-            <div className="bg-[#431407] text-white rounded-[2rem] w-24 h-24 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-4 border-white">
-               <span className="font-black text-[10px]">BELLS</span>
+        <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
+          <div className="flex items-center gap-4">
+            <div className="bg-[#431407] text-white rounded-2xl w-16 h-16 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-2 border-white">
+               <span className="font-black text-[9px]">BELLS</span>
             </div>
           </div>
-          <h2 className="text-3xl lg:text-4xl font-black mt-6 italic text-[#343a40] tracking-tight leading-none">Bells Jollof</h2>
+          <h2 className="text-2xl lg:text-3xl font-black mt-4 italic text-[#343a40] tracking-tight leading-none">Bells Jollof</h2>
         </div>
 
         {/* Right Side: Slider & Details */}
-        <div className="w-full lg:w-[60%]">
+        <div className="w-full lg:w-[65%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if( featuredJollof.available) setPendingPublicItem(featuredJollof); }}>
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/8] cursor-pointer" onClick={() => { if( featuredJollof.available) setPendingPublicItem(featuredJollof); }}>
             <img src={featuredJollof.imageUrl} alt={featuredJollof.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             {/* Arrows */}
-            <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p > 0 ? p - 1 : jollofItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
-            <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p < jollofItems.length - 1 ? p + 1 : 0)); }} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p > 0 ? p - 1 : jollofItems.length - 1)); }} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={20}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setJollofIndex((p) => (p < jollofItems.length - 1 ? p + 1 : 0)); }} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={20}/></button>
             {/* Dots */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
               {jollofItems.map((_, i) => (
-                <button key={i} onClick={(e) => { e.stopPropagation(); setJollofIndex(i); }} className={`h-2 rounded-full transition-all ${i === jollofIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
+                <button key={i} onClick={(e) => { e.stopPropagation(); setJollofIndex(i); }} className={`h-1.5 rounded-full transition-all ${i === jollofIndex ? 'w-5 bg-[#d97706]' : 'w-1.5 bg-white/60 hover:bg-white'}`} />
               ))}
             </div>
           </div>
 
           {/* Details */}
-          <div className="mt-8 flex flex-col items-start max-w-2xl">
-            <h3 className="text-3xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
-              {featuredJollof.name} <ArrowUpRight size={20} strokeWidth={3} />
+          <div className="mt-5 flex flex-col items-start max-w-xl">
+            <h3 className="text-2xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
+              {featuredJollof.name} <ArrowUpRight size={18} strokeWidth={3} />
             </h3>
-            <p className="text-[#6c757d] mt-4 leading-relaxed font-semibold text-[15px]">
+            <p className="text-[#6c757d] mt-2 leading-relaxed font-semibold text-sm">
               {featuredJollof.description}
             </p>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
-              <button disabled={!featuredJollof.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredJollof)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-4">
+              <button disabled={!featuredJollof.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredJollof)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-xs tracking-wider py-2.5 px-8 rounded-full shadow-[0_8px_16px_rgba(217,119,6,0.2)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
                 {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
-                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
-                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredJollof.hasSizes ? (featuredJollof.prices.S || featuredJollof.prices.M) : (featuredJollof.prices as any).fixed}</span>
+                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-0.5">Starting From</span>
+                <span className="text-xl font-black text-gray-900 leading-none">¢{featuredJollof.hasSizes ? (featuredJollof.prices.S || featuredJollof.prices.M) : (featuredJollof.prices as any).fixed}</span>
               </div>
             </div>
           </div>
 
           {/* Sub Items */}
-          <div className="mt-16 pt-4 border-t border-gray-200/60">
-            <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Jollofs</h4>
-            <div className="flex gap-4 overflow-x-auto pb-4 pt-2 hide-scrollbar">
+          <div className="mt-8 pt-4 border-t border-gray-200/60">
+            <h4 className="text-lg font-black italic mb-4 text-[#343a40]">Our Signature Jollofs</h4>
+            <div className="flex gap-3 overflow-x-auto pb-3 pt-1 hide-scrollbar">
               {jollofItems.map((item, i) => (
-                <div key={item.id} onClick={() => { setJollofIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
-                  <img src={item.imageUrl} alt={item.name} className={`w-[80px] h-[80px] rounded-full object-cover shadow-lg border-[4px] transition-all duration-300 group-hover:shadow-2xl ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
-                  <div className={`text-white text-[9px] font-black py-2 px-2 rounded-xl mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                <div key={item.id} onClick={() => { setJollofIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-20 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                  <img src={item.imageUrl} alt={item.name} className={`w-14 h-14 rounded-full object-cover shadow-lg border-[3px] transition-all duration-300 group-hover:shadow-2xl ${i === jollofIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                  <div className={`text-white text-[8px] font-black py-1 px-1.5 rounded-lg mt-[-8px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors ${i === jollofIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -528,60 +528,60 @@ export default function LandingScreen() {
       </div>
 
       {/* ── BANKU MENU SECTION ── */}
-      <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col lg:flex-row gap-12 items-center scroll-anim" id="banku-menu">
+      <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-8 items-center scroll-anim" id="banku-menu">
         {/* Left Side: Brand Identity */}
-        <div className="w-full lg:w-[40%] flex flex-col items-center lg:items-start text-center lg:text-left pt-10">
-          <div className="flex items-center gap-6">
-            <div className="bg-[#431407] text-white rounded-[2rem] w-24 h-24 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-4 border-white">
-               <span className="font-black text-[10px] text-center">BELLS<br/>LOCAL</span>
+        <div className="w-full lg:w-[35%] flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
+          <div className="flex items-center gap-4">
+            <div className="bg-[#431407] text-white rounded-2xl w-16 h-16 flex flex-col items-center justify-center -rotate-[10deg] animate-pulse-glow border-2 border-white">
+               <span className="font-black text-[9px] text-center">BELLS<br/>LOCAL</span>
             </div>
           </div>
-          <h2 className="text-3xl lg:text-4xl font-black mt-6 italic text-[#343a40] tracking-tight leading-none">Bells Banku</h2>
+          <h2 className="text-2xl lg:text-3xl font-black mt-4 italic text-[#343a40] tracking-tight leading-none">Bells Banku</h2>
         </div>
 
         {/* Right Side: Slider & Details */}
-        <div className="w-full lg:w-[60%]">
+        <div className="w-full lg:w-[65%]">
           {/* Main Image Slider */}
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/9] cursor-pointer" onClick={() => { if( featuredBanku.available) setPendingPublicItem(featuredBanku); }}>
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl group bg-amber-100 aspect-[21/8] cursor-pointer" onClick={() => { if( featuredBanku.available) setPendingPublicItem(featuredBanku); }}>
             <img src={featuredBanku.imageUrl} alt={featuredBanku.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             {/* Arrows */}
-            <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p > 0 ? p - 1 : bankuItems.length - 1)); }} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={24}/></button>
-            <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p < bankuItems.length - 1 ? p + 1 : 0)); }} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={24}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p > 0 ? p - 1 : bankuItems.length - 1)); }} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronLeft size={20}/></button>
+            <button onClick={(e) => { e.stopPropagation(); setBankuIndex((p) => (p < bankuItems.length - 1 ? p + 1 : 0)); }} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-[#d97706] shadow-xl hover:bg-white transition-all hover:scale-110 active:scale-95 z-10"><ChevronRight size={20}/></button>
             {/* Dots */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
               {bankuItems.map((_, i) => (
-                <button key={i} onClick={(e) => { e.stopPropagation(); setBankuIndex(i); }} className={`h-2 rounded-full transition-all ${i === bankuIndex ? 'w-6 bg-[#d97706]' : 'w-2 bg-white/60 hover:bg-white'}`} />
+                <button key={i} onClick={(e) => { e.stopPropagation(); setBankuIndex(i); }} className={`h-1.5 rounded-full transition-all ${i === bankuIndex ? 'w-5 bg-[#d97706]' : 'w-1.5 bg-white/60 hover:bg-white'}`} />
               ))}
             </div>
           </div>
 
           {/* Details */}
-          <div className="mt-8 flex flex-col items-start max-w-2xl">
-            <h3 className="text-3xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
-              {featuredBanku.name} <ArrowUpRight size={20} strokeWidth={3} />
+          <div className="mt-5 flex flex-col items-start max-w-xl">
+            <h3 className="text-2xl font-black text-[#d97706] italic flex items-center gap-2 tracking-tight">
+              {featuredBanku.name} <ArrowUpRight size={18} strokeWidth={3} />
             </h3>
-            <p className="text-[#6c757d] mt-4 leading-relaxed font-semibold text-[15px]">
+            <p className="text-[#6c757d] mt-2 leading-relaxed font-semibold text-sm">
               {featuredBanku.description}
             </p>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-6">
-              <button disabled={!featuredBanku.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredBanku)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider py-3.5 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-4">
+              <button disabled={!featuredBanku.available || !state.storeSettings.isOpen} onClick={() => setPendingPublicItem(featuredBanku)} className="hover-sweep disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black text-xs tracking-wider py-2.5 px-8 rounded-full shadow-[0_8px_16px_rgba(217,119,6,0.2)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
                 {state.storeSettings.isOpen ? 'ORDER NOW' : 'CLOSED'}
               </button>
               <div className="flex flex-col">
-                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Starting From</span>
-                <span className="text-2xl font-black text-gray-900 leading-none">¢{featuredBanku.hasSizes ? (featuredBanku.prices.S || featuredBanku.prices.M) : (featuredBanku.prices as any).fixed}</span>
+                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-0.5">Starting From</span>
+                <span className="text-xl font-black text-gray-900 leading-none">¢{featuredBanku.hasSizes ? (featuredBanku.prices.S || featuredBanku.prices.M) : (featuredBanku.prices as any).fixed}</span>
               </div>
             </div>
           </div>
 
           {/* Sub Items */}
-          <div className="mt-16 pt-4 border-t border-gray-200/60">
-            <h4 className="text-2xl font-black italic mb-8 text-[#343a40]">Our Signature Banku</h4>
-            <div className="flex gap-4 overflow-x-auto pb-4 pt-2 hide-scrollbar">
+          <div className="mt-8 pt-4 border-t border-gray-200/60">
+            <h4 className="text-lg font-black italic mb-4 text-[#343a40]">Our Signature Banku</h4>
+            <div className="flex gap-3 overflow-x-auto pb-3 pt-1 hide-scrollbar">
               {bankuItems.map((item, i) => (
-                <div key={item.id} onClick={() => { setBankuIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-24 cursor-pointer group hover:scale-110 transition-transform duration-300">
-                  <img src={item.imageUrl} alt={item.name} className={`w-[80px] h-[80px] rounded-full object-cover shadow-lg border-[4px] transition-all duration-300 group-hover:shadow-2xl ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
-                  <div className={`text-white text-[9px] font-black py-2 px-2 rounded-xl mt-[-10px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
+                <div key={item.id} onClick={() => { setBankuIndex(i); if( item.available) setPendingPublicItem(item); }} className="flex flex-col items-center flex-shrink-0 w-20 cursor-pointer group hover:scale-110 transition-transform duration-300">
+                  <img src={item.imageUrl} alt={item.name} className={`w-14 h-14 rounded-full object-cover shadow-lg border-[3px] transition-all duration-300 group-hover:shadow-2xl ${i === bankuIndex ? 'border-[#d97706]' : 'border-white'}`} />
+                  <div className={`text-white text-[8px] font-black py-1 px-1.5 rounded-lg mt-[-8px] z-10 shadow-md text-center italic w-full uppercase tracking-wider transition-colors line-clamp-1 ${i === bankuIndex ? 'bg-[#d97706]' : 'bg-[#431407] group-hover:bg-[#2a0e05]'}`}>
                      {item.name}
                   </div>
                 </div>
@@ -660,109 +660,109 @@ export default function LandingScreen() {
       </div>
 
       {/* ── PACKAGING EXPERIENCE SECTION ── */}
-      <div className="max-w-7xl mx-auto px-4 py-16 scroll-anim" id="packaging">
-        <div className="bg-[#431407] rounded-[3rem] overflow-hidden shadow-2xl relative flex flex-col md:flex-row items-center border-4 border-[#d97706]/20">
+      <div className="max-w-6xl mx-auto px-4 py-10 scroll-anim" id="packaging">
+        <div className="bg-[#431407] rounded-3xl overflow-hidden shadow-2xl relative flex flex-col md:flex-row items-center border-4 border-[#d97706]/20">
           <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center"/>
-          <div className="w-full md:w-1/2 p-12 lg:p-20 relative z-10">
-             <h2 className="text-[#d97706] text-xs font-black uppercase tracking-[0.2em] mb-4">The Bells Experience</h2>
-             <h3 className="text-4xl md:text-[3rem] font-black italic mb-8 leading-tight text-white">Unbox <br/>Unforgettable <br/>Flavors.</h3>
-             <p className="text-white/80 font-medium leading-relaxed mb-10 text-lg">
+          <div className="w-full md:w-1/2 p-8 lg:p-14 relative z-10">
+             <h2 className="text-[#d97706] text-xs font-black uppercase tracking-[0.2em] mb-3">The Bells Experience</h2>
+             <h3 className="text-3xl md:text-4xl font-black italic mb-4 leading-tight text-white">Unbox <br/>Unforgettable <br/>Flavors.</h3>
+             <p className="text-white/80 font-medium leading-relaxed mb-6 text-base">
                Our premium packaging is designed to keep your food piping hot and perfectly intact. From our kitchen to your table, we ensure every detail reflects our commitment to excellence.
              </p>
-             <button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="hover-sweep text-white font-black text-sm tracking-wider py-4 px-10 rounded-full shadow-[0_10px_20px_rgba(217,119,6,0.25)] hover:-translate-y-1 transition-all">
+             <button onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="hover-sweep text-white font-black text-xs tracking-wider py-2.5 px-8 rounded-full shadow-[0_8px_16px_rgba(217,119,6,0.2)] hover:-translate-y-0.5 transition-all">
                ORDER NOW
              </button>
           </div>
-          <div className="w-full md:w-1/2 p-8 relative z-10 flex justify-center">
-             <img src="/packaging_trio.jpg" alt="Bells Packaging" className="w-[85%] rounded-[2rem] shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 border-[8px] border-white/10 animate-float" />
+          <div className="w-full md:w-1/2 p-6 relative z-10 flex justify-center">
+             <img src="/packaging_trio.jpg" alt="Bells Packaging" className="w-[75%] rounded-2xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 border-[6px] border-white/10 animate-float" />
           </div>
         </div>
       </div>
 
 
       {/* ── OUR OUTLETS SECTION ── */}
-      <div className="max-w-7xl mx-auto px-4 py-20 mt-12 border-t border-gray-200/50 scroll-anim" id="our-outlets">
+      <div className="max-w-6xl mx-auto px-4 py-10 mt-6 border-t border-gray-200/50 scroll-anim" id="our-outlets">
         
         {/* Timeline Branch Selector */}
-        <div className="flex items-center gap-4 mb-16 relative">
-           <button className="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm z-10 hover:bg-gray-50 flex-shrink-0"><ChevronLeft size={20}/></button>
+        <div className="flex items-center gap-4 mb-8 relative">
+           <button className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm z-10 hover:bg-gray-50 flex-shrink-0"><ChevronLeft size={16}/></button>
            
-           <div className="absolute left-[3.5rem] right-[3.5rem] h-0 border-t-2 border-dashed border-gray-300 top-1/2 -translate-y-1/2 z-0" />
+           <div className="absolute left-[3rem] right-[3rem] h-0 border-t-2 border-dashed border-gray-300 top-1/2 -translate-y-1/2 z-0" />
 
-           <div className="flex gap-6 overflow-x-auto relative z-10 hide-scrollbar flex-1 items-center px-4 py-2">
+           <div className="flex gap-4 overflow-x-auto relative z-10 hide-scrollbar flex-1 items-center px-4 py-2">
              {branches.map((branch) => {
                const active = selectedBranch === branch;
                return (
-                 <div key={branch} onClick={() => setSelectedBranch(branch)} className={`flex items-center gap-3 px-6 py-3.5 rounded-full flex-shrink-0 font-black text-xs tracking-wider cursor-pointer border transition-all ${active ? 'bg-[#431407] text-white border-[#431407] shadow-[0_8px_16px_rgba(67,20,7,0.2)]' : 'bg-white text-gray-500 border-gray-200 shadow-sm hover:bg-gray-50'}`}>
-                   <div className={`w-[18px] h-[18px] rounded-full flex items-center justify-center ${active ? 'bg-[#ffefd4]' : 'bg-gray-200'}`}>
-                     <div className={`w-2.5 h-2.5 rounded-full ${active ? 'bg-[#d97706] shadow-sm' : 'bg-gray-400'}`}/>
+                 <div key={branch} onClick={() => setSelectedBranch(branch)} className={`flex items-center gap-2 px-4 py-2.5 rounded-full flex-shrink-0 font-black text-xs tracking-wider cursor-pointer border transition-all ${active ? 'bg-[#431407] text-white border-[#431407] shadow-[0_6px_12px_rgba(67,20,7,0.15)]' : 'bg-white text-gray-500 border-gray-200 shadow-sm hover:bg-gray-50'}`}>
+                   <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center ${active ? 'bg-[#ffefd4]' : 'bg-gray-200'}`}>
+                     <div className={`w-2 h-2 rounded-full ${active ? 'bg-[#d97706] shadow-sm' : 'bg-gray-400'}`}/>
                    </div>
-                   {active ? <MapPin size={16}/> : <Store size={16}/>} 
+                   {active ? <MapPin size={14}/> : <Store size={14}/>} 
                    {branch}
                  </div>
                );
              })}
            </div>
 
-           <button className="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm z-10 hover:bg-gray-50 flex-shrink-0"><ChevronRight size={20}/></button>
+           <button className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm z-10 hover:bg-gray-50 flex-shrink-0"><ChevronRight size={16}/></button>
         </div>
 
         {/* Map & Details */}
-        <div className="flex flex-col lg:flex-row gap-8 h-[550px]">
+        <div className="flex flex-col lg:flex-row gap-6 h-[480px]">
           {selectedBranch === 'KNUST BRANCH' ? (
             <>
               {/* Details panel */}
-              <div className="w-full lg:w-[35%] flex flex-col gap-6 h-full">
+              <div className="w-full lg:w-[35%] flex flex-col gap-4 h-full">
                 <div className="relative">
-                  <input type="text" placeholder="Search for branches by name or location" className="w-full border border-gray-200 rounded-full py-4 px-6 text-sm font-semibold shadow-sm focus:outline-none focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] transition-all text-gray-700"/>
-                  <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
+                  <input type="text" placeholder="Search for branches by name or location" className="w-full border border-gray-200 rounded-full py-3 px-5 text-sm font-semibold shadow-sm focus:outline-none focus:border-[#d97706] focus:ring-1 focus:ring-[#d97706] transition-all text-gray-700"/>
+                  <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" size={18}/>
                 </div>
                 
                 <div 
-                  className="bg-[#431407] rounded-[2rem] border-[4px] border-[#d97706]/20 shadow-2xl p-8 flex-1 flex flex-col hover:shadow-[0_15px_30px_rgba(217,119,6,0.2)] transition-shadow relative overflow-hidden cursor-pointer group" 
+                  className="bg-[#431407] rounded-3xl border-[3px] border-[#d97706]/20 shadow-2xl p-6 flex-1 flex flex-col hover:shadow-[0_12px_24px_rgba(217,119,6,0.15)] transition-shadow relative overflow-hidden cursor-pointer group" 
                   onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(selectedBranch + ' Kumasi Ghana')}`, '_blank')}
                   style={{ backgroundImage: bgPatternBrownUrl }}
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none"/>
-                  <div className="flex justify-between items-start mb-6 relative z-10">
-                    <h3 className="font-black text-xl text-white uppercase tracking-wide">{selectedBranch}</h3>
-                    <div className="w-10 h-10 rounded-full bg-[#d97706] border border-[#b45309] flex items-center justify-center shadow-lg"><ArrowUpRight size={18} className="text-white"/></div>
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none"/>
+                  <div className="flex justify-between items-start mb-4 relative z-10">
+                    <h3 className="font-black text-lg text-white uppercase tracking-wide">{selectedBranch}</h3>
+                    <div className="w-8 h-8 rounded-full bg-[#d97706] border border-[#b45309] flex items-center justify-center shadow-lg"><ArrowUpRight size={16} className="text-white"/></div>
                   </div>
-                  <div className="text-sm text-white/80 mb-8 font-semibold leading-relaxed relative z-10">
+                  <div className="text-sm text-white/80 mb-6 font-semibold leading-relaxed relative z-10">
                     Opposite No Weapon Hostel Annex<br/>
                     KUMASI REGION
                   </div>
-                  <h4 className="font-black text-[#d97706] mb-4 relative z-10 tracking-widest uppercase text-[10px]">Hours Of Operation</h4>
-                  <div className="text-sm text-white font-semibold relative z-10 bg-white/5 rounded-xl p-4 border border-white/10 shadow-inner">
+                  <h4 className="font-black text-[#d97706] mb-2 relative z-10 tracking-widest uppercase text-[9px]">Hours Of Operation</h4>
+                  <div className="text-xs text-white font-semibold relative z-10 bg-white/5 rounded-xl p-3 border border-white/10 shadow-inner">
                     <p>Sunday - Saturday<br/>09:00 - 22:00</p>
                   </div>
                 </div>
               </div>
 
               {/* Map panel */}
-              <div className="w-full lg:w-[65%] h-full rounded-[2.5rem] overflow-hidden shadow-lg border border-gray-200 bg-white relative p-2">
-                <div className="w-full h-full rounded-[2rem] overflow-hidden relative">
+              <div className="w-full lg:w-[65%] h-full rounded-3xl overflow-hidden shadow-lg border border-gray-200 bg-white relative p-1.5">
+                <div className="w-full h-full rounded-2xl overflow-hidden relative">
                   <iframe title="map" src="https://maps.google.com/maps?q=No%20Weapon%20Hostel,%20KNUST,%20Kumasi,%20Ghana&t=&z=16&ie=UTF8&iwloc=&output=embed" className="w-full h-full border-0 filter brightness-95 contrast-125 saturate-50 hover:filter-none transition-all duration-700"/>
                   {/* Map pin overlay mimicking image */}
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none drop-shadow-xl animate-bounce">
-                    <MapPin size={48} className="text-[#d97706] fill-[#d97706]" />
+                    <MapPin size={40} className="text-[#d97706] fill-[#d97706]" />
                   </div>
                 </div>
               </div>
             </>
           ) : (
-            <div className="w-full h-full bg-[#431407] rounded-[2.5rem] border-4 border-[#d97706]/20 shadow-2xl p-12 flex flex-col items-center justify-center text-center relative overflow-hidden group" style={{ backgroundImage: bgPatternBrownUrl }}>
+            <div className="w-full h-full bg-[#431407] rounded-3xl border-4 border-[#d97706]/20 shadow-2xl p-10 flex flex-col items-center justify-center text-center relative overflow-hidden group" style={{ backgroundImage: bgPatternBrownUrl }}>
                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-5 filter grayscale group-hover:grayscale-0 transition-all duration-1000"/>
                <div className="absolute inset-0 bg-gradient-to-t from-[#431407] via-[#431407]/80 to-transparent"/>
-               <div className="absolute top-0 right-0 w-64 h-64 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none blur-3xl animate-pulse"/>
-               <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#ffefd4] rounded-tr-full opacity-10 pointer-events-none blur-3xl animate-pulse delay-700"/>
+               <div className="absolute top-0 right-0 w-48 h-48 bg-[#d97706] rounded-bl-full opacity-10 pointer-events-none blur-3xl animate-pulse"/>
+               <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#ffefd4] rounded-tr-full opacity-10 pointer-events-none blur-3xl animate-pulse delay-700"/>
                
-               <Store size={80} className="text-[#d97706] mb-8 relative z-10 animate-bounce shadow-xl rounded-full bg-white/5 p-4 border border-white/10" />
-               <h3 className="font-black text-5xl md:text-6xl text-white uppercase tracking-tighter italic mb-6 relative z-10 drop-shadow-lg">{selectedBranch}</h3>
-               <div className="bg-[#d97706] text-white font-black px-6 py-2 rounded-full text-xs sm:text-sm tracking-[0.3em] shadow-xl uppercase relative z-10 mb-6 border border-[#ffefd4]/30">
+               <Store size={64} className="text-[#d97706] mb-6 relative z-10 animate-bounce shadow-xl rounded-full bg-white/5 p-3 border border-white/10" />
+               <h3 className="font-black text-4xl md:text-5xl text-white uppercase tracking-tighter italic mb-4 relative z-10 drop-shadow-lg">{selectedBranch}</h3>
+               <div className="bg-[#d97706] text-white font-black px-4 py-1.5 rounded-full text-xs tracking-[0.25em] shadow-xl uppercase relative z-10 mb-4 border border-[#ffefd4]/30">
                  Coming Soon
                </div>
-               <p className="text-white/80 font-medium text-lg max-w-xl mx-auto relative z-10 leading-relaxed">
+               <p className="text-white/80 font-medium text-base max-w-lg mx-auto relative z-10 leading-relaxed">
                  We are actively preparing to bring the authentic Bells Kitchen experience to this location. Stay tuned for our grand opening!
                </p>
             </div>
@@ -771,32 +771,32 @@ export default function LandingScreen() {
       </div>
 
       {/* ── REVIEWS SECTION ── */}
-      <div className="max-w-7xl mx-auto px-4 py-20 bg-[#d97706] rounded-[3rem] shadow-2xl border-4 border-[#ffefd4]/20 my-12 scroll-anim relative overflow-hidden" id="reviews">
+      <div className="max-w-6xl mx-auto px-4 py-12 bg-[#d97706] rounded-3xl shadow-2xl border-4 border-[#ffefd4]/20 my-6 scroll-anim relative overflow-hidden" id="reviews">
         {/* Decorative background circle */}
         <div className="absolute top-[-20%] left-[-10%] w-96 h-96 bg-[#b45309] rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse"></div>
         <div className="absolute bottom-[-20%] right-[-10%] w-96 h-96 bg-[#ffefd4] rounded-full mix-blend-overlay filter blur-3xl opacity-20"></div>
         
-        <div className="text-center max-w-2xl mx-auto mb-16 relative z-10">
-          <h2 className="text-[#ffefd4] text-xs font-black uppercase tracking-[0.2em] mb-2 drop-shadow-sm">Testimonials</h2>
-          <h3 className="text-4xl font-black text-white italic tracking-tight drop-shadow-md">What Our Family Says</h3>
+        <div className="text-center max-w-xl mx-auto mb-8 relative z-10">
+          <h2 className="text-[#ffefd4] text-xs font-black uppercase tracking-[0.2em] mb-1.5 drop-shadow-sm">Testimonials</h2>
+          <h3 className="text-2xl font-black text-white italic tracking-tight drop-shadow-md">What Our Family Says</h3>
         </div>
-        <div className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto md:overflow-x-visible pb-8 md:pb-0 px-4 lg:px-8 relative z-10 hide-scrollbar snap-x snap-mandatory">
+        <div className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto md:overflow-x-visible pb-6 md:pb-0 px-4 lg:px-8 relative z-10 hide-scrollbar snap-x snap-mandatory">
           {[
             { name: "Ama K.", review: "The best Jollof in Kumasi! The packaging kept it so hot, and the flavors are incredibly rich.", rating: 5 },
             { name: "Kwame D.", review: "I order the Assorted Fried Rice every weekend. Consistent quality and the delivery is always swift.", rating: 5 },
             { name: "Sarah O.", review: "Finally, proper party Jollof without having to wait for a wedding. Absolutely love the new branding too!", rating: 5 },
           ].map((rev, i) => (
-            <div key={i} className="flex-shrink-0 w-[85%] md:w-auto snap-center bg-[#431407] p-10 rounded-[2rem] border-2 border-[#b45309]/50 shadow-xl hover:shadow-2xl transition-all relative group hover:-translate-y-2" style={{ backgroundImage: bgPatternBrownUrl }}>
-               <div className="absolute top-8 right-8 text-white/5 group-hover:text-white/10 transition-colors">
-                 <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+            <div key={i} className="flex-shrink-0 w-[85%] md:w-auto snap-center bg-[#431407] p-6 rounded-2xl border-2 border-[#b45309]/50 shadow-xl hover:shadow-2xl transition-all relative group hover:-translate-y-1" style={{ backgroundImage: bgPatternBrownUrl }}>
+               <div className="absolute top-6 right-6 text-white/5 group-hover:text-white/10 transition-colors">
+                 <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
                </div>
-               <div className="flex gap-1.5 mb-6 text-[#ffefd4]">
-                 {[1,2,3,4,5].map(star => <Flame key={star} size={20} className="fill-[#ffefd4] drop-shadow-sm"/>)}
+               <div className="flex gap-1.5 mb-4 text-[#ffefd4]">
+                 {[1,2,3,4,5].map(star => <Flame key={star} size={16} className="fill-[#ffefd4] drop-shadow-sm"/>)}
                </div>
-               <p className="text-white/90 font-semibold leading-relaxed mb-8 italic text-lg relative z-10">"{rev.review}"</p>
-               <div className="flex items-center gap-4">
-                 <div className="w-12 h-12 bg-[#ffefd4] rounded-full flex items-center justify-center font-black text-[#d97706] text-xl shadow-inner group-hover:scale-110 group-hover:opacity-100 opacity-90 transition-all duration-500">{rev.name.charAt(0)}</div>
-                 <h4 className="font-black text-white uppercase tracking-wider">{rev.name}</h4>
+               <p className="text-white/90 font-semibold leading-relaxed mb-4 italic text-sm relative z-10">"{rev.review}"</p>
+               <div className="flex items-center gap-3">
+                 <div className="w-10 h-10 bg-[#ffefd4] rounded-full flex items-center justify-center font-black text-[#d97706] text-lg shadow-inner group-hover:scale-110 group-hover:opacity-100 opacity-90 transition-all duration-500">{rev.name.charAt(0)}</div>
+                 <h4 className="font-black text-white uppercase tracking-wider text-xs">{rev.name}</h4>
                </div>
             </div>
           ))}
@@ -804,26 +804,26 @@ export default function LandingScreen() {
       </div>
 
       {/* ── FAQ SECTION ── */}
-      <div className="max-w-4xl mx-auto px-4 py-20 mt-12 scroll-anim" id="faq">
-        <div className="flex items-center justify-center gap-3 mb-12">
-          <div className="w-12 h-12 rounded-full bg-[#d97706]/10 flex items-center justify-center text-[#d97706]">
-            <HelpCircle size={24} />
+      <div className="max-w-4xl mx-auto px-4 py-12 mt-6 scroll-anim" id="faq">
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-[#d97706]/10 flex items-center justify-center text-[#d97706]">
+            <HelpCircle size={20} />
           </div>
-          <h2 className="text-4xl font-black italic text-gray-900 tracking-tight">Frequently Asked</h2>
+          <h2 className="text-2xl font-black italic text-gray-900 tracking-tight">Frequently Asked</h2>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {faqs.map((faq) => (
-            <div key={faq.id} onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)} className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 group hover:border-[#d97706] hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden relative">
-              <HelpCircle size={80} className="absolute -top-4 -right-4 text-gray-50 opacity-0 group-hover:opacity-100 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500" />
+            <div key={faq.id} onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 group hover:border-[#d97706] hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden relative">
+              <HelpCircle size={64} className="absolute -top-4 -right-4 text-gray-50 opacity-0 group-hover:opacity-100 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500" />
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-black text-gray-900 text-lg group-hover:text-[#d97706] transition-colors">{faq.q}</h3>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${openFaq === faq.id ? 'bg-[#d97706] text-white rotate-180' : 'bg-gray-50 text-gray-400 group-hover:bg-[#d97706] group-hover:text-white'}`}>
-                    <ChevronDown size={16} />
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="font-black text-gray-900 text-base group-hover:text-[#d97706] transition-colors">{faq.q}</h3>
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${openFaq === faq.id ? 'bg-[#d97706] text-white rotate-180' : 'bg-gray-50 text-gray-400 group-hover:bg-[#d97706] group-hover:text-white'}`}>
+                    <ChevronDown size={14} />
                   </div>
                 </div>
                 {openFaq === faq.id && (
-                   <p className="text-gray-500 font-medium leading-relaxed pr-8 mt-4 animate-fade-in">{faq.a}</p>
+                   <p className="text-gray-500 font-medium leading-relaxed pr-8 mt-3 animate-fade-in text-sm">{faq.a}</p>
                 )}
               </div>
             </div>
@@ -831,13 +831,13 @@ export default function LandingScreen() {
         </div>
         
         {/* Ask Question Card */}
-        <div className="mt-12 bg-[#431407] rounded-3xl p-10 relative overflow-hidden group hover:shadow-[0_20px_40px_rgba(67,20,7,0.3)] transition-all duration-500 max-w-2xl mx-auto text-center">
-           <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-[#d97706] rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-           <div className="absolute -left-10 -top-10 w-40 h-40 bg-[#ffefd4] rounded-full blur-3xl opacity-10" />
-           <h3 className="text-white font-black text-2xl mb-3 relative z-10">Still have questions?</h3>
-           <p className="text-white/70 font-medium text-base mb-8 relative z-10">Can't find the answer you're looking for? Please chat with our friendly team.</p>
-           <button className="bg-[#d97706] text-white font-black text-sm uppercase tracking-widest py-4 px-8 rounded-full hover:bg-white hover:text-[#d97706] transition-colors inline-flex items-center justify-center gap-2 relative z-10">
-             Get in touch <ArrowRight size={16} />
+        <div className="mt-8 bg-[#431407] rounded-2xl p-6 relative overflow-hidden group hover:shadow-[0_15px_30px_rgba(67,20,7,0.25)] transition-all duration-500 max-w-xl mx-auto text-center">
+           <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-[#d97706] rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
+           <div className="absolute -left-10 -top-10 w-32 h-32 bg-[#ffefd4] rounded-full blur-3xl opacity-10" />
+           <h3 className="text-white font-black text-xl mb-2 relative z-10">Still have questions?</h3>
+           <p className="text-white/70 font-medium text-sm mb-6 relative z-10">Can't find the answer you're looking for? Please chat with our friendly team.</p>
+           <button className="bg-[#d97706] text-white font-black text-xs uppercase tracking-widest py-3 px-6 rounded-full hover:bg-white hover:text-[#d97706] transition-colors inline-flex items-center justify-center gap-2 relative z-10">
+             Get in touch <ArrowRight size={14} />
            </button>
         </div>
       </div>
@@ -880,7 +880,7 @@ export default function LandingScreen() {
       )}
 
       {/* ── FOOTER ── */}
-      <footer className="bg-[#431407] text-white pt-24 pb-8 border-t-[12px] border-[#d97706] relative overflow-hidden mt-20">
+      <footer className="bg-[#431407] text-white pt-12 pb-6 border-t-[12px] border-[#d97706] relative overflow-hidden mt-10">
         {/* Massive Background Text watermark */}
         <div className="absolute top-0 left-0 w-full overflow-hidden flex items-center justify-center opacity-5 pointer-events-none select-none">
           <span className="text-[15rem] font-black leading-none whitespace-nowrap">BELLS KITCHEN</span>
@@ -888,16 +888,16 @@ export default function LandingScreen() {
 
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           {/* Newsletter Section */}
-          <div className="bg-[#d97706] rounded-[2.5rem] p-10 md:p-14 mb-20 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 border-4 border-[#ffefd4]/20 relative overflow-hidden">
+          <div className="bg-[#d97706] rounded-3xl p-6 md:p-10 mb-10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 border-4 border-[#ffefd4]/20 relative overflow-hidden">
             <div className="absolute right-[-10%] top-[-50%] w-64 h-64 bg-white/20 rounded-full blur-3xl" />
             <div className="max-w-xl relative z-10">
-              <h3 className="text-3xl md:text-5xl font-black italic tracking-tight mb-4 text-white">Join the Family.</h3>
-              <p className="text-white/90 font-semibold text-lg">Subscribe to our newsletter for exclusive deals, new menu drops, and <span className="font-black text-[#ffefd4]">20% off your first online order.</span></p>
+              <h3 className="text-2xl md:text-3xl font-black italic tracking-tight mb-3 text-white">Join the Family.</h3>
+              <p className="text-white/90 font-semibold text-sm">Subscribe to our newsletter for exclusive deals, new menu drops, and <span className="font-black text-[#ffefd4]">20% off your first online order.</span></p>
             </div>
             <div className="w-full md:w-auto flex-1 max-w-md relative z-10">
-              <input type="email" placeholder="Enter your email address" className="w-full bg-[#431407]/40 border-2 border-[#b45309] text-white placeholder-white/50 rounded-full py-5 pl-6 pr-36 focus:outline-none focus:border-white focus:bg-[#431407]/60 transition-colors font-bold" />
-              <button className="absolute right-2 top-2 bottom-2 bg-white text-[#d97706] rounded-full px-6 font-black uppercase tracking-wider text-sm hover:bg-[#ffefd4] transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl active:scale-95">
-                Subscribe <ArrowRight size={16} />
+              <input type="email" placeholder="Enter your email address" className="w-full bg-[#431407]/40 border-2 border-[#b45309] text-white placeholder-white/50 rounded-full py-3.5 pl-5 pr-32 focus:outline-none focus:border-white focus:bg-[#431407]/60 transition-colors font-bold text-sm" />
+              <button className="absolute right-1.5 top-1.5 bottom-1.5 bg-white text-[#d97706] rounded-full px-5 font-black uppercase tracking-wider text-xs hover:bg-[#ffefd4] transition-colors flex items-center gap-1.5 shadow-lg hover:shadow-xl active:scale-95">
+                Subscribe <ArrowRight size={14} />
               </button>
             </div>
           </div>
