@@ -1172,7 +1172,7 @@ export default function LandingScreen() {
                 categoryName={friendlyName}
                 items={items}
                 isOpen={state.storeSettings.isOpen}
-                disableScrollSpy={true}
+                disableScrollSpy={false}
                 onOrder={(item) => {
                   setPendingPublicItem(item);
                   setPublicSize(item.hasSizes ? (item.prices.M ? 'M' : 'S') : 'M');
