@@ -171,9 +171,9 @@ export default function LandingScreen() {
   const [jollofIndex, setJollofIndex] = useState(0);
   const [friedIndex, setFriedIndex] = useState(0);
   const [bankuIndex, setBankuIndex] = useState(0);
-  const jollofItems = landingMenu.filter(m => m.category === 'jollof' || m.name.toLowerCase() === 'mixture');
-  const friedItems = landingMenu.filter(m => m.category === 'fried');
-  const bankuItems = landingMenu.filter(m => m.category === 'banku');
+  const jollofItems = useMemo(() => landingMenu.filter(m => m.category === 'jollof' || m.name.toLowerCase() === 'mixture'), []);
+  const friedItems = useMemo(() => landingMenu.filter(m => m.category === 'fried'), []);
+  const bankuItems = useMemo(() => landingMenu.filter(m => m.category === 'banku'), []);
   const featuredJollof = jollofItems[jollofIndex] || jollofItems[0];
   const featuredFried = friedItems[friedIndex] || friedItems[0];
   const featuredBanku = bankuItems[bankuIndex] || bankuItems[0];
@@ -205,12 +205,23 @@ export default function LandingScreen() {
     }
   }, []);
 
+  const resetTour = () => {
+    setTourStep(null);
+    setPendingPublicItem(null);
+    setIsPublicCartOpen(false);
+    setIsDeliveryModalOpen(false);
+    // Clean up mock tour item
+    setPublicCart((prev: any[]) => prev.filter(c => c.cartItemId !== 'tour-cart-item-id'));
+  };
+
   const handleFinishTour = () => {
     localStorage.setItem('bells_tour_completed', 'true');
-    setTourStep(null);
+    resetTour();
   };
 
   useEffect(() => {
+    if (tourStep === null) return;
+
     // Synchronize modal, cart, details modal, and mock order data based on the active tour step
     if (tourStep === 3 || tourStep === 4) {
       const targetItem = jollofItems[0] || landingMenu[0];
@@ -249,7 +260,7 @@ export default function LandingScreen() {
       setPublicCart((prev: any[]) => prev.filter(c => c.cartItemId !== 'tour-cart-item-id'));
     }
 
-    if (tourStep === null || tourStep === 0) {
+    if (tourStep === 0) {
       setTargetRect(null);
       return;
     }
@@ -274,8 +285,8 @@ export default function LandingScreen() {
       if (element) {
         const rect = element.getBoundingClientRect();
         setTargetRect({
-          top: rect.top + window.scrollY,
-          left: rect.left + window.scrollX,
+          top: rect.top,
+          left: rect.left,
           width: rect.width,
           height: rect.height,
         });
@@ -533,7 +544,6 @@ export default function LandingScreen() {
             <NavItem icon={<Home/>} label="Home" active={view === 'home'} onClick={() => { setView('home'); window.scrollTo({top: 0, behavior: 'smooth'}); }} />
             <NavItem icon={<MenuIcon/>} label="OUR MENU" active={view === 'menu'} onClick={() => { setView('menu'); window.scrollTo({top: 0, behavior: 'smooth'}); }} />
             <NavItem icon={<Store/>} label="Outlets" onClick={() => { setView('home'); setTimeout(() => document.getElementById('our-outlets')?.scrollIntoView({ behavior: 'smooth' }), 100); }} />
-            <NavItem icon={<HelpCircle/>} label="Guide" onClick={() => { setTourStep(0); }} />
           </div>
 
           {/* Right: Order Now Button & Login */}
@@ -1172,9 +1182,9 @@ export default function LandingScreen() {
 
       {/* PUBLIC ORDER CONFIG MODAL */}
       {pendingPublicItem && (
-        <div className="fixed inset-0 z-[80] flex justify-center sm:items-center sm:p-4 bg-black/60 backdrop-blur-md" onClick={() => setPendingPublicItem(null)}>
+        <div className="fixed inset-0 flex justify-center sm:items-center sm:p-4 bg-black/60 backdrop-blur-md" style={{ zIndex: (tourStep === 3 || tourStep === 4) ? 142 : 80 }} onClick={() => { if (tourStep !== null) resetTour(); else setPendingPublicItem(null); }}>
           <div className="w-full h-full sm:h-auto sm:max-h-[85vh] sm:max-w-3xl sm:w-[90vw] lg:max-w-4xl bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col relative animate-slide-up sm:animate-none overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <button type="button" onClick={() => setPendingPublicItem(null)} className="absolute top-4 right-4 p-2 rounded-full bg-black/25 text-white hover:bg-black/45 transition-all z-30 shadow-md backdrop-blur-sm"><X size={18} strokeWidth={3} /></button>
+            <button type="button" onClick={() => { if (tourStep !== null) resetTour(); else setPendingPublicItem(null); }} className="absolute top-4 right-4 p-2 rounded-full bg-black/25 text-white hover:bg-black/45 transition-all z-30 shadow-md backdrop-blur-sm"><X size={18} strokeWidth={3} /></button>
             
             <div className="flex flex-col sm:flex-row h-full sm:h-[75vh] md:h-[80vh] overflow-hidden">
               {/* Left Side: Image Hero & Category switcher */}
@@ -1349,15 +1359,15 @@ export default function LandingScreen() {
 
       {/* PUBLIC CART DRAWER */}
       {isPublicCartOpen && (
-        <div className="fixed inset-0 backdrop-blur-sm z-[80] flex justify-end animate-fade-in" style={{ background: 'rgba(0,0,0,0.5)' }}>
-          <div className="w-full h-[100dvh] sm:h-[85vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-slide-up sm:animate-none">
+        <div className="fixed inset-0 backdrop-blur-sm flex justify-end animate-fade-in" style={{ zIndex: tourStep === 5 ? 142 : 80, background: 'rgba(0,0,0,0.5)' }} onClick={() => { if (tourStep !== null) resetTour(); else setIsPublicCartOpen(false); }}>
+          <div className="w-full h-[100dvh] sm:h-[85vh] sm:max-w-md bg-white sm:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-slide-up sm:animate-none" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-black text-gray-900">Your Order Plate</h2>
                 <p className="text-xs text-gray-500 font-bold mt-1 uppercase tracking-wider">{publicCart.length} Items Selected</p>
               </div>
-              <button type="button" onClick={() => setIsPublicCartOpen(false)} className="p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all"><X size={18} /></button>
+              <button type="button" onClick={() => { if (tourStep !== null) resetTour(); else setIsPublicCartOpen(false); }} className="p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all"><X size={18} /></button>
             </div>
             
             {/* Scrollable Body Container */}
@@ -1497,9 +1507,9 @@ export default function LandingScreen() {
 
       {/* DELIVERY DETAILS MODAL */}
       {isDeliveryModalOpen && (
-        <div className="fixed inset-0 backdrop-blur-md z-[85] flex items-center justify-center p-4 bg-black/60 animate-fade-in" onClick={() => setIsDeliveryModalOpen(false)}>
+        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center p-4 bg-black/60 animate-fade-in" style={{ zIndex: tourStep === 6 ? 142 : 85 }} onClick={() => { if (tourStep !== null) resetTour(); else setIsDeliveryModalOpen(false); }}>
           <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl p-6 sm:p-8 relative overflow-hidden animate-scale-in flex flex-col gap-5" onClick={(e) => e.stopPropagation()}>
-            <button type="button" onClick={() => setIsDeliveryModalOpen(false)} className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all cursor-pointer"><X size={16} /></button>
+            <button type="button" onClick={() => { if (tourStep !== null) resetTour(); else setIsDeliveryModalOpen(false); }} className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 transition-all cursor-pointer"><X size={16} /></button>
             <div className="text-center pb-2 border-b border-gray-100">
               <div className="w-12 h-12 bg-[#fff8ed] rounded-full flex items-center justify-center mx-auto mb-3 text-[#d97706] shadow-sm">
                 {orderType === 'delivery' ? <MapPin size={22}/> : <Store size={22}/>}
@@ -1618,12 +1628,12 @@ export default function LandingScreen() {
       {tourStep !== null && (
         <>
           {/* Backdrop mask helper to block clicks and slightly dim background */}
-          <div className="fixed inset-0 z-[140] bg-black/35 backdrop-blur-[2px] pointer-events-auto cursor-pointer" onClick={() => setTourStep(null)} />
+          <div className="fixed inset-0 z-[140] bg-black/35 backdrop-blur-[2px] pointer-events-auto cursor-pointer" onClick={resetTour} />
           
           {/* Spotlight highlight border around targeted element */}
           {targetRect && (
             <div 
-              className="absolute rounded-[1.5rem] border-[4px] pointer-events-none z-[145] animate-spotlight-pulse"
+              className="fixed rounded-[1.5rem] border-[4px] pointer-events-none z-[145] animate-spotlight-pulse"
               style={{
                 top: `${targetRect.top - 6}px`,
                 left: `${targetRect.left - 6}px`,
@@ -1669,7 +1679,7 @@ export default function LandingScreen() {
                 </div>
               </div>
               <button 
-                onClick={() => setTourStep(null)} 
+                onClick={resetTour} 
                 className="text-white/60 hover:text-white hover:bg-white/10 w-7 h-7 rounded-full flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X size={14} />
@@ -1687,7 +1697,7 @@ export default function LandingScreen() {
                   Scroll through our menu categories (Jollof, Fried Rice, Banku). We show starting price tags directly on each banner.
                 </p>
                 <div className="flex gap-2 w-full">
-                  <button onClick={() => setTourStep(null)} className="flex-1 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
+                  <button onClick={resetTour} className="flex-1 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-black text-[10px] py-2.5 px-4 rounded-full transition-colors cursor-pointer">
                     Skip
                   </button>
                   <button onClick={() => setTourStep(2)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-[10px] py-2.5 px-4 rounded-full shadow-lg transition-colors cursor-pointer">
@@ -1802,7 +1812,7 @@ export default function LandingScreen() {
 
       {/* Welcome Step Tour (Centered Modal Overlay) */}
       {tourStep === 0 && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/65 backdrop-blur-md animate-fade-in" onClick={() => setTourStep(null)}>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/65 backdrop-blur-md animate-fade-in" onClick={resetTour}>
           <div className="bg-[#431407]/95 border-2 border-[#d97706]/40 text-white rounded-[2rem] p-8 max-w-md w-[90%] shadow-[0_20px_50px_rgba(0,0,0,0.85)] relative overflow-hidden select-none animate-scale-in" onClick={(e) => e.stopPropagation()}>
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#d97706]/20 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
@@ -1811,11 +1821,11 @@ export default function LandingScreen() {
               <span className="text-[10px] bg-[#d97706]/35 border border-[#d97706]/50 px-3 py-1 rounded-full font-black uppercase tracking-wider text-[#ffefd4]">
                 Interactive Guide
               </span>
-              <button onClick={() => setTourStep(null)} className="text-white/60 hover:text-white hover:bg-white/10 w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer">
+              <button onClick={resetTour} className="text-white/60 hover:text-white hover:bg-white/10 w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer">
                 <X size={16} />
               </button>
             </div>
-
+ 
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 bg-[#ffefd4] text-[#d97706] rounded-2xl flex items-center justify-center mb-6 shadow-lg rotate-3">
                 <Compass size={32} />
@@ -1825,7 +1835,7 @@ export default function LandingScreen() {
                 Let's take a quick 30-second live spotlight tour to show you how to order the most delicious, premium Jollof and Fried Rice in Kumasi.
               </p>
               <div className="flex gap-3 w-full">
-                <button onClick={() => setTourStep(null)} className="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-black text-xs py-3 px-6 rounded-full transition-colors cursor-pointer">
+                <button onClick={resetTour} className="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-black text-xs py-3 px-6 rounded-full transition-colors cursor-pointer">
                   Skip
                 </button>
                 <button onClick={() => setTourStep(1)} className="flex-1 bg-[#d97706] hover:bg-[#b45309] text-white font-black text-xs py-3 px-6 rounded-full shadow-lg transition-colors cursor-pointer">
