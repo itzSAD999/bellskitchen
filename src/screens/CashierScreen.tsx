@@ -6,7 +6,6 @@ import MenuGrid from '../components/cashier/MenuGrid';
 
 import AddonSheet from '../components/cashier/AddonSheet';
 import CartPanel from '../components/cashier/CartPanel';
-import ReceiptView from '../components/receipt/ReceiptView';
 import OnlineOrdersModal from '../components/cashier/OnlineOrdersModal';
 import { MenuItem } from '../types';
 
@@ -78,11 +77,6 @@ export default function CashierScreen() {
 
       {/* Addon Sheet — driven by state.pendingBundle (set by START_BUNDLE reducer) */}
       {state.pendingBundle && <AddonSheet />}
-
-      {/* Hidden print-only receipt view. Will be captured by window.print() but not visible in UI */}
-      <div className="hidden print:block">
-        {state.currentOrder && <ReceiptView order={state.currentOrder} />}
-      </div>
     </div>
   );
 }

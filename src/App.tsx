@@ -1,12 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
-import { ShoppingCart, Settings, LogOut, ShieldCheck, User, Clock } from 'lucide-react';
+import { ShoppingCart, Settings, LogOut, ShieldCheck, User, Clock, CloudOff } from 'lucide-react';
 import { AppProvider, useApp } from './context/AppContext';
 import CashierScreen from './screens/CashierScreen';
 import AdminScreen from './screens/AdminScreen';
 import LandingScreen from './screens/LandingScreen';
 import OrdersScreen from './screens/OrdersScreen';
 import { bgPatternUrl } from './utils/bgPattern';
+import { useOfflineSync } from './hooks/useOfflineSync';
 import './styles/index.css';
 import './styles/print.css';
 
@@ -14,6 +15,7 @@ import OnlineOrder from './routes/OnlineOrder';
 
 function MainApp() {
   const { state, dispatch } = useApp();
+  const { pendingCount, isOnline } = useOfflineSync();
 
   // If not logged in, intercept and show the B2C Landing Screen with Login Gate
   if (!state.currentUser) {
@@ -37,6 +39,21 @@ function MainApp() {
             <span className="text-white font-black text-sm md:text-base tracking-tight select-none">Bells Kitchen</span>
             <span className="text-[8px] md:text-[9px] text-amber-300 font-bold uppercase tracking-wider leading-none">Terminal POS</span>
           </div>
+          {pendingCount > 0 && (
+            <span
+              className="flex items-center gap-1 bg-amber-500/90 text-[#431407] text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full shadow-md select-none"
+              title="Orders waiting to sync to the server"
+            >
+              <CloudOff size={10} strokeWidth={2.5} />
+              {pendingCount} pending sync
+            </span>
+          )}
+          {!isOnline && pendingCount === 0 && (
+            <span className="flex items-center gap-1 bg-white/15 text-amber-200 text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full select-none">
+              <CloudOff size={10} strokeWidth={2.5} />
+              Offline
+            </span>
+          )}
         </div>
         
         <div className="flex items-center gap-3">

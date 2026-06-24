@@ -1,10 +1,14 @@
 // components/cashier/CartPanel.tsx
 import React, { useState } from 'react';
+import { flushSync } from 'react-dom';
 import { ShoppingBag, ChevronUp, ChevronDown, Trash2, Printer, ArrowRight, Pause } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import BundleItem from './BundleItem';
 import PaymentToggle from './PaymentToggle';
-import { calcCartTotal, saveOrderToSupabase, formatOrderNumber, getNextDailyNumber, formatDailyOrderNumber } from '../../utils/orderUtils';
+import { calcCartTotal, createLocalOrder } from '../../utils/orderUtils';
+import { submitOrderWithOfflineSupport } from '../../utils/offlineQueue';
+import ReceiptPreviewSheet from '../receipt/ReceiptPreviewSheet';
+import { Order } from '../../types';
 
 interface Props {
   forceExpanded?: boolean;
@@ -14,6 +18,7 @@ export default function CartPanel({ forceExpanded = false }: Props) {
   const { state, dispatch } = useApp();
   const [expanded, setExpanded] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState<'pay' | 'hold' | 'clear' | null>(null);
+  const [receiptPreview, setReceiptPreview] = useState<Order | null>(null);
 
   const cart  = state.cart;
   const total = calcCartTotal(cart);
@@ -36,71 +41,53 @@ export default function CartPanel({ forceExpanded = false }: Props) {
     setShowConfirmModal('clear');
   };
 
-  const handleHoldConfirm = async () => {
+  const handleHoldConfirm = () => {
     if (isEmpty) return;
 
-    const newOrder = {
-      id:            crypto.randomUUID(),
-      orderNumber:   state._nextOrderNumber,
-      items:         [...cart],
-      total,
+    const newOrder = createLocalOrder({
+      cart,
+      orderNumber: state._nextOrderNumber,
       paymentMethod: state.paymentMethod,
-      status:        'pending' as const,
-      createdAt:     new Date().toISOString(),
-    };
-
-    // Trigger Supabase save in background
-    saveOrderToSupabase(newOrder);
-
-    // Confirm local order with status 'pending'
-    dispatch({
-      type: 'CONFIRM_ORDER',
-      payload: { status: 'pending', paymentMethod: state.paymentMethod }
+      status: 'pending',
     });
 
-    // Reset cart and close panel
+    flushSync(() => {
+      dispatch({
+        type: 'CONFIRM_ORDER',
+        payload: { status: 'pending', paymentMethod: state.paymentMethod, order: newOrder },
+      });
+    });
+
     dispatch({ type: 'NEW_ORDER' });
     setShowConfirmModal(null);
     setExpanded(false);
+
+    submitOrderWithOfflineSupport(newOrder);
   };
 
-  const handlePayAndPrintConfirm = async () => {
+  const handlePayAndPrintConfirm = () => {
     if (isEmpty) return;
 
-    const newOrder = {
-      id:            crypto.randomUUID(),
-      orderNumber:   state._nextOrderNumber,
-      items:         [...cart],
-      total,
+    const newOrder = createLocalOrder({
+      cart,
+      orderNumber: state._nextOrderNumber,
       paymentMethod: state.paymentMethod,
-      status:        'completed' as const,
-      createdAt:     new Date().toISOString(),
-    };
-
-    // Trigger Supabase save in background
-    saveOrderToSupabase(newOrder);
-
-    // Confirm order (stores in state.orders, sets currentOrder)
-    dispatch({
-      type: 'CONFIRM_ORDER',
-      payload: { status: 'completed', paymentMethod: state.paymentMethod }
+      status: 'completed',
     });
 
-    // Adjust document title so browser saves receipt with order number + date timestamp by default
-    const originalTitle = document.title;
-    const date = new Date(newOrder.createdAt);
-    const dateStr = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
-    document.title = `Order_${formatOrderNumber(state._nextOrderNumber)}_Ticket_${formatDailyOrderNumber(getNextDailyNumber(state.orders))}_${dateStr}`;
+    flushSync(() => {
+      dispatch({
+        type: 'CONFIRM_ORDER',
+        payload: { status: 'completed', paymentMethod: state.paymentMethod, order: newOrder },
+      });
+    });
 
-    // Print receipt and clear cart automatically
-    setTimeout(() => {
-      window.print();
-      document.title = originalTitle;
-      dispatch({ type: 'NEW_ORDER' });
-    }, 100);
-
+    setReceiptPreview(newOrder);
+    dispatch({ type: 'NEW_ORDER' });
     setShowConfirmModal(null);
     setExpanded(false);
+
+    submitOrderWithOfflineSupport(newOrder);
   };
 
   const handleClearCart = () => {
@@ -281,6 +268,12 @@ export default function CartPanel({ forceExpanded = false }: Props) {
             </div>
           </div>
         )}
+        <ReceiptPreviewSheet
+          order={receiptPreview}
+          open={!!receiptPreview}
+          onClose={() => setReceiptPreview(null)}
+          title="Payment Confirmed"
+        />
       </div>
     );
   }
@@ -471,6 +464,12 @@ export default function CartPanel({ forceExpanded = false }: Props) {
           </div>
         </div>
       )}
+      <ReceiptPreviewSheet
+        order={receiptPreview}
+        open={!!receiptPreview}
+        onClose={() => setReceiptPreview(null)}
+        title="Payment Confirmed"
+      />
     </div>
   );
 }

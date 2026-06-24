@@ -1,11 +1,13 @@
 // screens/OrdersScreen.tsx
 import React, { useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Search, Printer, Calendar, CreditCard, DollarSign, Clock, ChevronDown, ChevronUp, Pause, Check, Trash2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useOrders } from '../hooks/useOrders';
 import { useMenu } from '../hooks/useMenu';
-import { formatOrderNumber, getDailyOrderNumber, formatDailyOrderNumber, formatGHS, updateOrderStatusInSupabase } from '../utils/orderUtils';
-import ReceiptView from '../components/receipt/ReceiptView';
+import { formatOrderNumber, getDailyOrderNumber, formatDailyOrderNumber, formatGHS } from '../utils/orderUtils';
+import { submitOrderStatusUpdateWithOfflineSupport, mergeOrderIntoCache } from '../utils/offlineQueue';
+import ReceiptPreviewSheet from '../components/receipt/ReceiptPreviewSheet';
 import { Order } from '../types';
 
 export default function OrdersScreen() {
@@ -24,8 +26,8 @@ export default function OrdersScreen() {
   const [payingOrder, setPayingOrder] = useState<Order | null>(null);
   const [payingMethod, setPayingMethod] = useState<'cash' | 'momo'>('cash');
   
-  // Target order to render in hidden printable ReceiptView
-  const [printOrder, setPrintOrder] = useState<Order | null>(null);
+  // Receipt preview for reprint / pay & print
+  const [receiptPreview, setReceiptPreview] = useState<Order | null>(null);
 
   // Filter orders based on queries
   const filteredOrders = state.orders.filter(o => {
@@ -57,17 +59,7 @@ export default function OrdersScreen() {
   };
 
   const handleReprint = (order: Order) => {
-    setPrintOrder(order);
-    const originalTitle = document.title;
-    const date = new Date(order.createdAt);
-    const dateStr = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
-    document.title = `Order_${formatOrderNumber(order.orderNumber)}_Ticket_${formatDailyOrderNumber(getDailyOrderNumber(order, state.orders))}_${dateStr}`;
-
-    setTimeout(() => {
-      window.print();
-      document.title = originalTitle;
-      setPrintOrder(null);
-    }, 100);
+    setReceiptPreview(order);
   };
 
   const initiatePayment = (order: Order) => {
@@ -75,53 +67,42 @@ export default function OrdersScreen() {
     setPayingMethod(order.paymentMethod === 'card' ? 'cash' : (order.paymentMethod as 'cash' | 'momo'));
   };
 
-  const handlePayConfirm = async () => {
+  const handlePayConfirm = () => {
     if (!payingOrder) return;
 
-    // 1. Update status to 'completed' in Supabase
-    updateOrderStatusInSupabase(payingOrder.id, 'completed', payingMethod);
-
-    // 2. Dispatch to local state
-    dispatch({
-      type: 'COMPLETE_PENDING_ORDER',
-      payload: { id: payingOrder.id, paymentMethod: payingMethod }
-    });
-
-    // 3. Set print order to render ReceiptView & trigger print
     const finalOrder: Order = {
       ...payingOrder,
       status: 'completed',
-      paymentMethod: payingMethod
+      paymentMethod: payingMethod,
     };
-    
-    setPrintOrder(finalOrder);
 
-    const originalTitle = document.title;
-    const date = new Date(payingOrder.createdAt);
-    const dateStr = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
-    document.title = `Order_${formatOrderNumber(payingOrder.orderNumber)}_Ticket_${formatDailyOrderNumber(getDailyOrderNumber(payingOrder, state.orders))}_${dateStr}`;
+    flushSync(() => {
+      dispatch({
+        type: 'COMPLETE_PENDING_ORDER',
+        payload: { id: payingOrder.id, paymentMethod: payingMethod },
+      });
+    });
 
-    setTimeout(() => {
-      window.print();
-      document.title = originalTitle;
-      setPrintOrder(null);
-    }, 100);
-
+    mergeOrderIntoCache(finalOrder);
+    setReceiptPreview(finalOrder);
     setPayingOrder(null);
+
+    submitOrderStatusUpdateWithOfflineSupport(payingOrder, 'completed', payingMethod);
   };
 
-  const handleVoidDraft = async (orderId: string) => {
+  const handleVoidDraft = (order: Order) => {
     const confirmVoid = window.confirm('Are you sure you want to void/cancel this draft order?');
     if (!confirmVoid) return;
 
-    // Update status to 'cancelled' in Supabase
-    updateOrderStatusInSupabase(orderId, 'cancelled');
+    const cancelledOrder: Order = { ...order, status: 'cancelled' };
 
-    // Dispatch to local state
     dispatch({
       type: 'CANCEL_PENDING_ORDER',
-      payload: orderId
+      payload: order.id,
     });
+
+    mergeOrderIntoCache(cancelledOrder);
+    submitOrderStatusUpdateWithOfflineSupport(order, 'cancelled');
   };
 
   return (
@@ -274,6 +255,11 @@ export default function OrdersScreen() {
                       <div className="flex flex-col">
                         <span className="text-xs font-black text-dark-900 flex items-center gap-2">
                           Ticket #{formatDailyOrderNumber(getDailyOrderNumber(order, state.orders))} <span className="text-dark-400 font-semibold">· Ref #{formatOrderNumber(order.orderNumber)}</span>
+                          {order.source === 'online' && (
+                            <span className="bg-blue-50 border border-blue-100 text-blue-700 text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full uppercase">
+                              Online
+                            </span>
+                          )}
                           {order.status === 'pending' && (
                             <span className="bg-red-50 border border-red-100 text-red-700 text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 animate-pulse">
                               <Pause size={8} /> DRAFT / UNPAID
@@ -404,7 +390,7 @@ export default function OrdersScreen() {
                             </button>
                             <button
                               type="button"
-                              onClick={() => handleVoidDraft(order.id)}
+                              onClick={() => handleVoidDraft(order)}
                               className="w-full border border-red-200 hover:bg-red-50 text-red-500 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1 active:scale-[0.98] transition-all"
                             >
                               <Trash2 size={12} />
@@ -499,10 +485,12 @@ export default function OrdersScreen() {
         </div>
       )}
 
-      {/* Hidden print-only receipt view. Targeted by browser printing when printOrder is set */}
-      <div className="hidden print:block">
-        {printOrder && <ReceiptView order={printOrder} />}
-      </div>
+      <ReceiptPreviewSheet
+        order={receiptPreview}
+        open={!!receiptPreview}
+        onClose={() => setReceiptPreview(null)}
+        title="Receipt"
+      />
     </div>
   );
 }

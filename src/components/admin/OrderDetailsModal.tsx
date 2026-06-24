@@ -1,9 +1,11 @@
 // components/admin/OrderDetailsModal.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { X, Clock, Banknote, Smartphone, Receipt, Ban, Printer } from 'lucide-react';
 import { Order } from '../../types';
 import { formatOrderNumber } from '../../utils/orderUtils';
 import { useApp } from '../../context/AppContext';
+import { submitOrderStatusUpdateWithOfflineSupport, mergeOrderIntoCache } from '../../utils/offlineQueue';
+import ReceiptPreviewSheet from '../receipt/ReceiptPreviewSheet';
 
 interface Props {
   order: Order;
@@ -12,6 +14,7 @@ interface Props {
 
 export default function OrderDetailsModal({ order, onClose }: Props) {
   const { dispatch } = useApp();
+  const [receiptPreview, setReceiptPreview] = useState(false);
 
   const time = new Date(order.createdAt).toLocaleTimeString('en-US', {
     hour: 'numeric', minute: '2-digit', hour12: true,
@@ -23,22 +26,20 @@ export default function OrderDetailsModal({ order, onClose }: Props) {
 
   const handleRefund = () => {
     if (window.confirm(`Are you sure you want to void/refund Order #${formatOrderNumber(order.orderNumber)}?`)) {
+      const cancelledOrder: Order = { ...order, status: 'cancelled' };
       dispatch({ type: 'CANCEL_PENDING_ORDER', payload: order.id });
+      mergeOrderIntoCache(cancelledOrder);
+      submitOrderStatusUpdateWithOfflineSupport(order, 'cancelled');
       onClose();
     }
   };
 
   const handlePrint = () => {
-    const originalTitle = document.title;
-    const dateStr = new Date().toISOString().split('T')[0];
-    document.title = `Receipt_BellsKitchen_Order_${formatOrderNumber(order.orderNumber)}_${dateStr}`;
-    window.print();
-    setTimeout(() => {
-      document.title = originalTitle;
-    }, 1000);
+    setReceiptPreview(true);
   };
 
   return (
+    <>
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm select-none">
       <div className="bg-white rounded-[2rem] w-full max-w-md shadow-2xl flex flex-col overflow-hidden animate-slide-up-fade">
         {/* Header */}
@@ -127,5 +128,13 @@ export default function OrderDetailsModal({ order, onClose }: Props) {
         </div>
       </div>
     </div>
+
+      <ReceiptPreviewSheet
+        order={order}
+        open={receiptPreview}
+        onClose={() => setReceiptPreview(false)}
+        title="Receipt"
+      />
+    </>
   );
 }

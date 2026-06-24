@@ -13,6 +13,20 @@
     visibility: hidden;
   }
 
+  /* Keep the receipt preview sheet and receipt content visible when printing */
+  .receipt-preview-sheet,
+  .receipt-preview-sheet .receipt-view,
+  .receipt-preview-sheet .receipt-view * {
+    visibility: visible;
+  }
+
+  .receipt-preview-sheet {
+    position: absolute !important;
+    inset: 0 !important;
+    background: #fff !important;
+    z-index: 99999 !important;
+  }
+
   /* Make sure the receipt-view is visible and takes up full bounds */
   .receipt-view,
   .receipt-view * {

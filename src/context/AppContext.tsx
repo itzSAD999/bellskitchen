@@ -7,6 +7,7 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { AppState, MenuItem, Order, CashierUser } from '../types';
 import { defaultMenu } from '../data/defaultMenu';
+import { createLocalOrder } from '../utils/orderUtils';
 
 // ─── Action Types (Section 7.2) ────────────────────────────────────────────────
 
@@ -21,9 +22,10 @@ export type AppAction =
 
   // Payment + checkout
   | { type: 'SET_PAYMENT';     payload: 'cash' | 'momo' }
-  | { type: 'CONFIRM_ORDER';   payload?: { status?: 'completed' | 'pending'; paymentMethod?: 'cash' | 'momo' } }
+  | { type: 'CONFIRM_ORDER';   payload?: { status?: 'completed' | 'pending'; paymentMethod?: 'cash' | 'momo'; order?: Order } }
   | { type: 'COMPLETE_PENDING_ORDER'; payload: { id: string; paymentMethod: 'cash' | 'momo' } }
   | { type: 'CANCEL_PENDING_ORDER'; payload: string } // orderId
+  | { type: 'MARK_ORDER_PRINTED'; payload: string }   // orderId
   | { type: 'CANCEL_ORDER' }
   | { type: 'NEW_ORDER' }
 
@@ -190,21 +192,17 @@ function appReducer(state: State, action: AppAction): State {
     // ── Order lifecycle ──────────────────────────────────────────────────────
 
     case 'CONFIRM_ORDER': {
-      // Total is always derived from cart bundles × their quantities — never passed in by the caller.
-      const total = parseFloat(
-        state.cart.reduce((sum, b) => sum + b.bundleTotal * b.quantity, 0).toFixed(2)
-      );
       const status = action.payload?.status ?? 'completed';
       const paymentMethod = action.payload?.paymentMethod ?? state.paymentMethod;
-      const order: Order = {
-        id:            crypto.randomUUID(),
-        orderNumber:   state._nextOrderNumber,
-        items:         [...state.cart],
-        total,
+      if (!action.payload?.order) {
+        console.warn('CONFIRM_ORDER called without a pre-built order — generating one locally.');
+      }
+      const order: Order = action.payload?.order ?? createLocalOrder({
+        cart: state.cart,
+        orderNumber: state._nextOrderNumber,
         paymentMethod,
         status,
-        createdAt:     new Date().toISOString(),
-      };
+      });
       return {
         ...state,
         currentOrder:     order,
@@ -228,6 +226,15 @@ function appReducer(state: State, action: AppAction): State {
         ...state,
         orders: state.orders.map(o =>
           o.id === action.payload ? { ...o, status: 'cancelled' as const } : o
+        ),
+      };
+    }
+
+    case 'MARK_ORDER_PRINTED': {
+      return {
+        ...state,
+        orders: state.orders.map(o =>
+          o.id === action.payload ? { ...o, printed: true } : o
         ),
       };
     }

@@ -1,11 +1,17 @@
 // hooks/useOrders.ts
 // Fetches orders (with items + addons) from Supabase.
-// Dispatches SET_ORDERS to global state.
+// Caches locally and merges unsynced offline orders on load.
 
 import { useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAppContext } from '../context/AppContext';
 import { Order, BundleItem, AddOn } from '../types';
+import {
+  cacheOrders,
+  getCachedOrders,
+  getUnsyncedOrdersFromQueue,
+  mergeOrdersWithLocal,
+} from '../utils/offlineQueue';
 
 function mapOrder(row: Record<string, unknown>): Order {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,7 +37,7 @@ function mapOrder(row: Record<string, unknown>): Order {
     items,
     total:         Number(row.total),
     paymentMethod: row.payment_method as 'cash' | 'momo' | 'card',
-    status:        row.status as 'completed' | 'cancelled',
+    status:        row.status as 'completed' | 'cancelled' | 'pending',
     paystackRef:   row.paystack_ref as string | undefined,
     platformFee:   row.platform_fee ? Number(row.platform_fee) : undefined,
     vendorAmount:  row.vendor_amount ? Number(row.vendor_amount) : undefined,
@@ -47,6 +53,13 @@ export function useOrders() {
   useEffect(() => {
     let cancelled = false;
 
+    const cached = getCachedOrders() ?? [];
+    const queued = getUnsyncedOrdersFromQueue();
+    const initial = mergeOrdersWithLocal(cached, queued);
+    if (initial.length > 0) {
+      dispatch({ type: 'SET_ORDERS', payload: initial });
+    }
+
     async function fetchOrders() {
       const { data, error } = await supabase
         .from('orders')
@@ -58,10 +71,23 @@ export function useOrders() {
 
       if (error) {
         console.warn('Could not fetch orders from Supabase:', error.message);
+        if (initial.length > 0) return;
+        const fallback = mergeOrdersWithLocal([], getUnsyncedOrdersFromQueue());
+        if (fallback.length > 0) {
+          dispatch({ type: 'SET_ORDERS', payload: fallback });
+        }
         return;
       }
 
-      dispatch({ type: 'SET_ORDERS', payload: (data ?? []).map(mapOrder) });
+      const serverOrders = (data ?? []).map(mapOrder);
+      const merged = mergeOrdersWithLocal(serverOrders, [
+        ...getUnsyncedOrdersFromQueue(),
+        ...(getCachedOrders() ?? []).filter(
+          cachedOrder => !serverOrders.some(serverOrder => serverOrder.id === cachedOrder.id)
+        ),
+      ]);
+      dispatch({ type: 'SET_ORDERS', payload: merged });
+      cacheOrders(merged);
     }
 
     fetchOrders();

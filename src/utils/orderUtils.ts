@@ -88,7 +88,38 @@ export function getNextDailyNumber(allOrders: Order[]): number {
 }
 
 /**
+ * Build an order locally with a stable ID before any network call.
+ * The same ID is used for localStorage, Supabase inserts, and retries.
+ */
+export function createLocalOrder(params: {
+  cart: BundleItem[];
+  orderNumber: number;
+  paymentMethod: 'cash' | 'momo';
+  status: 'completed' | 'pending';
+}): Order {
+  return {
+    id:            crypto.randomUUID(),
+    orderNumber:   params.orderNumber,
+    items:         [...params.cart],
+    total:         calcCartTotal(params.cart),
+    paymentMethod: params.paymentMethod,
+    status:        params.status,
+    createdAt:     new Date().toISOString(),
+  };
+}
+
+function isDuplicateKeyError(err: unknown): boolean {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'code' in err &&
+    (err as { code: string }).code === '23505'
+  );
+}
+
+/**
  * Saves a completed order, its items, and addons to Supabase.
+ * Uses the order's pre-assigned local ID so retries are idempotent.
  * Returns true if saved successfully, or false if it failed / fell back (offline/placeholder).
  */
 export async function saveOrderToSupabase(order: Order): Promise<boolean> {
@@ -99,22 +130,29 @@ export async function saveOrderToSupabase(order: Order): Promise<boolean> {
   }
 
   try {
-    // 1. Get and increment order number from settings
+    const { data: existingOrder } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('id', order.id)
+      .maybeSingle();
+
+    if (existingOrder) {
+      return true;
+    }
+
     const { data: settingsData, error: settingsError } = await supabase
       .from('settings')
       .select('*')
       .single();
 
-    let orderNum = order.orderNumber;
-    if (!settingsError && settingsData) {
-      orderNum = settingsData.next_order_number;
+    const orderNum = order.orderNumber;
+    if (!settingsError && settingsData && orderNum >= settingsData.next_order_number) {
       await supabase
         .from('settings')
         .update({ next_order_number: orderNum + 1 })
         .eq('id', settingsData.id);
     }
 
-    // 2. Insert order header
     const { error: orderError } = await supabase
       .from('orders')
       .insert({
@@ -126,9 +164,11 @@ export async function saveOrderToSupabase(order: Order): Promise<boolean> {
         created_at: order.createdAt
       });
 
-    if (orderError) throw orderError;
+    if (orderError) {
+      if (isDuplicateKeyError(orderError)) return true;
+      throw orderError;
+    }
 
-    // 3. Insert order items
     for (const bundle of order.items) {
       const { error: itemError } = await supabase
         .from('order_items')
@@ -143,9 +183,11 @@ export async function saveOrderToSupabase(order: Order): Promise<boolean> {
           created_at: order.createdAt
         });
 
-      if (itemError) throw itemError;
+      if (itemError) {
+        if (isDuplicateKeyError(itemError)) continue;
+        throw itemError;
+      }
 
-      // 4. Insert addons
       if (bundle.addons.length > 0) {
         const { error: addonsError } = await supabase
           .from('order_item_addons')
@@ -158,7 +200,7 @@ export async function saveOrderToSupabase(order: Order): Promise<boolean> {
             }))
           );
 
-        if (addonsError) throw addonsError;
+        if (addonsError && !isDuplicateKeyError(addonsError)) throw addonsError;
       }
     }
 

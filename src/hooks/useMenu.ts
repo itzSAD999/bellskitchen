@@ -1,12 +1,12 @@
 // hooks/useMenu.ts
-// Fetches and subscribes to menu_items from Supabase.
-// Dispatches SET_MENU to global state on load.
+// Fetches menu_items from Supabase and caches locally for offline use.
 
 import { useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAppContext } from '../context/AppContext';
 import { MenuItem } from '../types';
 import { defaultMenu } from '../data/defaultMenu';
+import { cacheMenuItems, getCachedMenuItems } from '../utils/offlineQueue';
 
 function mapRow(row: Record<string, unknown>): MenuItem {
   return {
@@ -33,6 +33,11 @@ export function useMenu() {
   useEffect(() => {
     let cancelled = false;
 
+    const cached = getCachedMenuItems();
+    if (cached) {
+      dispatch({ type: 'SET_MENU', payload: cached });
+    }
+
     async function fetchMenu() {
       const { data, error } = await supabase
         .from('menu_items')
@@ -42,11 +47,14 @@ export function useMenu() {
       if (cancelled) return;
 
       if (error || !data || data.length === 0) {
-        // Fall back to local default menu if Supabase is unavailable
-        console.warn('Using default menu (Supabase unavailable or empty):', error?.message);
-        dispatch({ type: 'SET_MENU', payload: defaultMenu });
+        if (!cached) {
+          console.warn('Using default menu (Supabase unavailable or empty):', error?.message);
+          dispatch({ type: 'SET_MENU', payload: defaultMenu });
+        }
       } else {
-        dispatch({ type: 'SET_MENU', payload: data.map(mapRow) });
+        const menu = data.map(mapRow);
+        cacheMenuItems(menu);
+        dispatch({ type: 'SET_MENU', payload: menu });
       }
     }
 
